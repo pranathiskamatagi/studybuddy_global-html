@@ -1,0 +1,46 @@
+StudyBuddy Global is an AI-powered peer-to-peer learning platform that connects students from around
+the world to learn, teach, collaborate, and grow together. The platform combines social learning, intelligent
+matchmaking, gamification, and AI assistance to create a modern educational community where knowledge is shared without borders.
+
+Users can create profiles, discover study partners, chat with learners worldwide, earn XP and achievement badges,
+build learning streaks, explore trending educational topics, and receive personalized guidance from Buddy,
+an AI assistant that will eventually be available on every screen of the application. Buddy is designed
+to act as an intelligent learning companion capable of understanding user needs and providing accurate educational assistance.
+
+The project follows a modern full-stack architecture with a responsive frontend and a Flask + PostgreSQL backend.
+User authentication is secured using JWT, passwords are encrypted with Bcrypt, and the database is managed using SQLAlchemy and Flask-Migrate.
+
+Features
+🌍 Global student community
+🤖 Buddy AI assistant
+💬 Real-time learning chats
+🎯 Find study partners and mentors
+📚 Subject-based learning
+🏆 XP, Levels, Streaks & Badges
+🔒 Secure authentication with JWT
+🚫 User reporting and blocking system
+👤 Personalized user profiles
+📈 Gamified learning experience
+📱 Responsive and modern UI
+
+🛠 Tech Stack
+
+Frontend
+HTML5
+CSS3
+JavaScript
+
+Backend
+Python
+Flask
+SQLAlchemy
+PostgreSQL
+Flask-JWT-Extended
+Flask-Bcrypt
+Flask-Migrate
+Flask-CORS
+
+🚀 Vision
+Our vision is to build the world's largest student learning community where anyone can instantly connect with learners across different countries,
+ask questions, share knowledge, and learn with the help of advanced AI. StudyBuddy Global aims to make quality education collaborative,
+engaging, and accessible to everyone.
