@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat | StudyBuddy Global</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="chat.css">
+<link rel="stylesheet" href="report-block.css">
+</head>
+<body>
+
+  <!-- ===== CHAT HEADER ===== -->
+  <header class="chat-header">
+    <button class="icon-btn" onclick="window.location.href='home.html'">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <div class="chat-person">
+      <img src="https://i.pravatar.cc/100?img=32" alt="" class="person-avatar">
+      <div>
+        <h2 id="personName">Ananya Sharma</h2>
+        <span class="status-dot online"></span>
+        <span class="status-text" id="statusText">Online · Teaching Algebra</span>
+      </div>
+    </div>
+
+    <button class="icon-btn safety-btn" id="openReportModal">
+      <i class="fa-solid fa-shield-halved"></i>
+    </button>
+  </header>
+
+  <!-- ===== VIDEO/VOICE BAR (placeholder for future WebRTC) ===== -->
+  <div class="call-bar">
+    <button class="call-btn"><i class="fa-solid fa-phone"></i> Voice Call</button>
+    <button class="call-btn"><i class="fa-solid fa-video"></i> Video Call</button>
+  </div>
+
+  <!-- ===== PARTNER LEFT / REMATCHING BANNER (hidden by default) ===== -->
+  <div class="rematch-banner" id="rematchBanner">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <span id="rematchText">Ananya left the session — finding you a new match...</span>
+  </div>
+
+  <!-- ===== MESSAGES ===== -->
+  <main class="chat-messages" id="chatMessages">
+
+    <div class="message-bubble received">
+      <p>Hey! Ready to go over algebra basics?</p>
+      <span class="msg-time">10:02 AM</span>
+    </div>
+
+    <div class="message-bubble sent">
+      <p>Yes! I was stuck on solving for x in linear equations</p>
+      <span class="msg-time">10:03 AM</span>
+    </div>
+
+    <div class="message-bubble received">
+      <p>No worries, let's start with a simple one: 2x + 6 = 14</p>
+      <span class="msg-time">10:03 AM</span>
+    </div>
+
+    <div class="typing-indicator" id="typingIndicator">
+      <span></span><span></span><span></span>
+    </div>
+
+  </main>
+
+  <!-- ===== CHAT INPUT ===== -->
+  <div class="chat-input-bar">
+    <button class="attach-btn" id="imageBtn"><i class="fa-solid fa-image"></i></button>
+    <button class="attach-btn" id="voiceBtn"><i class="fa-solid fa-microphone"></i></button>
+    <input type="text" id="messageInput" class="message-input" placeholder="Type a message...">
+    <button class="send-btn" id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+  </div>
+
+  <!-- ===== REPORT / BLOCK MODAL ===== -->
+  <div class="modal-overlay" id="reportOverlay">
+    <div class="modal-card">
+
+      <div class="modal-step" id="stepChoose">
+        <div class="modal-icon warn"><i class="fa-solid fa-shield-halved"></i></div>
+        <h2>Feeling unsafe?</h2>
+        <p>You can report this person, block them, or both. We'll review every report.</p>
+
+        <button class="modal-option" id="btnReport">
+          <i class="fa-solid fa-flag"></i>
+          <div>
+            <h4>Report this user</h4>
+            <span>Flag inappropriate behavior for our team to review</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <button class="modal-option" id="btnBlock">
+          <i class="fa-solid fa-ban"></i>
+          <div>
+            <h4>Block this user</h4>
+            <span>They won't be able to match or message you again</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <button class="modal-cancel" id="btnCancelChoose">Cancel</button>
+      </div>
+
+      <div class="modal-step hidden" id="stepReason">
+        <div class="modal-icon warn"><i class="fa-solid fa-flag"></i></div>
+        <h2>What happened?</h2>
+        <p>Select a reason so we can act on this quickly.</p>
+
+        <div class="reason-list">
+          <label class="reason-item">
+            <input type="radio" name="reason" value="harassment">
+            <span>Harassment or bullying</span>
+          </label>
+          <label class="reason-item">
+            <input type="radio" name="reason" value="inappropriate">
+            <span>Inappropriate content</span>
+          </label>
+          <label class="reason-item">
+            <input type="radio" name="reason" value="spam">
+            <span>Spam or scam</span>
+          </label>
+          <label class="reason-item">
+            <input type="radio" name="reason" value="impersonation">
+            <span>Fake profile / impersonation</span>
+          </label>
+          <label class="reason-item">
+            <input type="radio" name="reason" value="other">
+            <span>Something else</span>
+          </label>
+        </div>
+
+        <textarea class="reason-notes" id="reasonNotes" placeholder="Add any extra details (optional)"></textarea>
+
+        <button class="modal-submit" id="btnSubmitReport" disabled>
+          <i class="fa-solid fa-paper-plane"></i> Submit Report
+        </button>
+        <button class="modal-cancel" id="btnBackFromReason">Go back</button>
+      </div>
+
+      <div class="modal-step hidden" id="stepBlockConfirm">
+        <div class="modal-icon danger"><i class="fa-solid fa-ban"></i></div>
+        <h2>Block this user?</h2>
+        <p>They won't be matched with you again and can't send you messages. You can undo this anytime in Settings.</p>
+
+        <button class="modal-submit danger" id="btnConfirmBlock">
+          <i class="fa-solid fa-ban"></i> Yes, Block
+        </button>
+        <button class="modal-cancel" id="btnBackFromBlock">Go back</button>
+      </div>
+
+      <div class="modal-step hidden" id="stepSuccess">
+        <div class="modal-icon success"><i class="fa-solid fa-check"></i></div>
+        <h2 id="successTitle">Thanks — you're safe now</h2>
+        <p id="successMessage">We've received your report and our team will review it shortly.</p>
+        <button class="modal-submit" id="btnDone">Done</button>
+      </div>
+
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="distraction-watch.css">
+  <script src="chat.js"></script>
+  <script src="report-block.js"></script>
+  <script src="distraction-watch.js"></script>
+</body>
+</html>

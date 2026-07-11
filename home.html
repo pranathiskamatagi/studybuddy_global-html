@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>StudyBuddy Global</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="home-container">
+
+<div class="header">
+
+<div>
+<h2>👋 Good Evening!</h2>
+<p>Welcome back to StudyBuddy Global</p>
+</div>
+
+<div class="notification">🔔</div>
+
+</div>
+
+<div class="buddy-card">
+
+<div class="buddy">🤖</div>
+
+<div>
+
+<h3>Buddy says...</h3>
+
+<p>What would you like to learn today?</p>
+
+</div>
+
+</div>
+
+<!-- ===== XP / LEVEL CARD ===== -->
+<div class="xp-card">
+
+  <div class="xp-ring-wrap">
+    <svg class="xp-ring" viewBox="0 0 120 120">
+      <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+      <circle class="ring-fill" id="xpRingFill" cx="60" cy="60" r="52"></circle>
+    </svg>
+    <div class="xp-ring-center">
+      <span id="xpLevel">7</span>
+      <small>Level</small>
+    </div>
+  </div>
+
+  <div class="xp-info">
+    <h4>Keep it up! 🚀</h4>
+    <p><span id="xpCurrent">0</span> / <span id="xpTarget">500</span> XP to next level</p>
+    <div class="streak-pill">🔥 <span id="streakCount">0</span> day streak</div>
+  </div>
+
+</div>
+
+<!-- ===== BADGES CARD ===== -->
+<div class="badges-card">
+  <div class="badges-header">
+    <h4>🏅 Your Badges</h4>
+  </div>
+  <div class="badges-row">
+    <div class="badge earned">🏅<span>Mentor</span></div>
+    <div class="badge earned">🔥<span>On Fire</span></div>
+    <div class="badge earned">💬<span>Helper</span></div>
+    <div class="badge locked">🔒<span>Scholar</span></div>
+    <div class="badge locked">🔒<span>Legend</span></div>
+  </div>
+</div>
+
+<input
+class="search-bar"
+type="text"
+placeholder="🔍 Ask any question..."
+>
+
+<h3 class="section-title">📚 Popular Subjects</h3>
+
+<div class="subjects">
+
+<div class="subject">📐<br>Math</div>
+
+<div class="subject">🧪<br>Science</div>
+
+<div class="subject">💻<br>Coding</div>
+
+<div class="subject">📖<br>English</div>
+
+<div class="subject">🌍<br>Geography</div>
+
+<div class="subject">⚛️<br>Physics</div>
+
+</div>
+
+<div class="online-card">
+
+<h3>🌍 Students Online</h3>
+
+<p>12,458 learners online now</p>
+
+</div>
+
+<div class="trending">
+
+<h3>🔥 Trending Questions</h3>
+
+<ul>
+
+<li>How does photosynthesis work?</li>
+
+<li>Explain quadratic equations.</li>
+
+<li>Why is the sky blue?</li>
+
+</ul>
+
+</div>
+
+<button class="ask-btn">
+
+➕ Ask a Question
+
+</button>
+
+<div class="bottom-nav">
+
+<div>🏠<br>Home</div>
+
+<div>🔍<br>Explore</div>
+
+<div>💬<br>Chats</div>
+
+<div>👤<br>Profile</div>
+
+</div>
+
+</div>
+
+<script src="home.js"></script>
+</body>
+
+</html>

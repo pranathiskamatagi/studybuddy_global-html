@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report / Block User</title>
+
+    <link rel="stylesheet" href="report-block.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<div class="overlay">
+
+    <div class="popup">
+
+        <div class="top">
+
+            <div>
+                <h2>Safety Center</h2>
+                <p>Manage your interaction with this user.</p>
+            </div>
+
+            <button class="close-btn">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div class="options">
+
+            <div class="card report">
+
+                <div class="icon red">
+                    <i class="fa-solid fa-flag"></i>
+                </div>
+
+                <div class="text">
+                    <h3>Report User</h3>
+                    <p>
+                        Report harassment, scams,
+                        fake identity or inappropriate behaviour.
+                    </p>
+                </div>
+
+                <button id="reportBtn">
+                    Report
+                </button>
+
+            </div>
+
+
+            <div class="card block">
+
+                <div class="icon orange">
+                    <i class="fa-solid fa-user-slash"></i>
+                </div>
+
+                <div class="text">
+                    <h3>Block User</h3>
+
+                    <p>
+                        Block this user from messaging,
+                        calling or viewing your profile.
+                    </p>
+                </div>
+
+                <button id="blockBtn">
+                    Block
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="report-block.js"></script>
+
+</body>
+</html>

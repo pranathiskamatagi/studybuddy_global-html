@@ -28,20 +28,24 @@
 Join thousands of students learning together worldwide.
 </p>
 
-<input type="text" placeholder="Full Name">
+<form id="signupForm">
 
-<input type="email" placeholder="Email Address">
+<input type="text" id="fullName" placeholder="Full Name">
 
-<input type="password" placeholder="Password">
+<input type="email" id="email" placeholder="Email Address">
 
-<input type="password" placeholder="Confirm Password">
+<input type="password" id="password" placeholder="Password">
+
+<input type="password" id="confirmPassword" placeholder="Confirm Password">
 
 <label class="terms">
-<input type="checkbox">
+<input type="checkbox" id="terms">
 I agree to the Terms & Privacy Policy
 </label>
 
-<button>Create Account</button>
+<button type="submit">Create Account</button>
+
+</form>
 
 <p class="login-link">
 Already have an account?
@@ -51,7 +55,10 @@ Already have an account?
 </div>
 
 </div>
-
+<script src="signup.js"></script>
 </body>
 
 </html>
+<p style="font-size:12px;color:#64748B;margin:-10px 0 16px;text-align:left;">
+  🔒 Your email is private and never shown to other students.
+</p>

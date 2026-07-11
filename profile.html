@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StudyBuddy Global — Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= HEADER ================= -->
+  <div class="profile-header">
+    <h2>Profile</h2>
+    <div class="edit-icon-btn" id="editBtn"><i class="fa-solid fa-pen"></i></div>
+  </div>
+
+  <!-- ================= PROFILE HERO CARD ================= -->
+  <div class="profile-hero">
+    <div class="avatar-wrap">
+      <div class="profile-avatar">JS</div>
+      <div class="online-dot"></div>
+      <div class="avatar-edit-btn" id="avatarEditBtn"><i class="fa-solid fa-camera"></i></div>
+    </div>
+    <h3 class="profile-name" id="profileName">Jordan Silva</h3>
+    <p class="profile-meta"><i class="fa-solid fa-location-dot"></i> 🇧🇷 Brazil · Grade 10</p>
+
+    <p class="profile-bio" id="profileBio">Aspiring engineer who loves helping others with math. Always down to swap physics tips for language practice 🌍</p>
+
+    <div class="profile-stats-row">
+      <div class="stat-mini">
+        <div class="num">4.9</div>
+        <div class="lbl"><i class="fa-solid fa-star"></i> Rating</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-mini">
+        <div class="num">38</div>
+        <div class="lbl">Taught</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-mini">
+        <div class="num">52</div>
+        <div class="lbl">Learned</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= XP / LEVEL CARD ================= -->
+  <div class="xp-bar-wrap">
+    <div class="xp-bar-top">
+      <strong>Level 7 Tutor</strong>
+      <span id="xpLabel">700 / 900 XP</span>
+    </div>
+    <div class="xp-track">
+      <div class="xp-fill" id="xpFill"></div>
+    </div>
+    <div class="streak-row">
+      <i class="fa-solid fa-fire"></i>
+      <span>4-day learning streak — keep it going!</span>
+    </div>
+  </div>
+
+  <!-- ================= INTERESTS ================= -->
+  <div class="section-row">
+    <div class="section-label">Interests</div>
+  </div>
+  <div class="chip-row">
+    <div class="chip">🎸 Music</div>
+    <div class="chip">⚽ Football</div>
+    <div class="chip">🎮 Gaming</div>
+    <div class="chip">📚 Reading</div>
+    <div class="chip">🌍 Languages</div>
+  </div>
+
+  <!-- ================= SUBJECTS ================= -->
+  <div class="section-row">
+    <div class="section-label">Subjects</div>
+  </div>
+  <div class="subject-tags">
+    <div class="subject-tag blue"><i class="fa-solid fa-square-root-variable"></i> Mathematics</div>
+    <div class="subject-tag green"><i class="fa-solid fa-atom"></i> Physics</div>
+    <div class="subject-tag yellow"><i class="fa-solid fa-language"></i> Portuguese</div>
+  </div>
+
+  <!-- ================= BADGES ================= -->
+  <div class="section-row">
+    <div class="section-label">Badges</div>
+    <span class="see-all" id="seeAllBadges">See all</span>
+  </div>
+  <div class="badge-scroll">
+    <div class="badge-item">
+      <div class="badge-circle gold"><i class="fa-solid fa-medal"></i></div>
+      <span>Great Tutor</span>
+    </div>
+    <div class="badge-item">
+      <div class="badge-circle blue"><i class="fa-solid fa-fire"></i></div>
+      <span>4-Day Streak</span>
+    </div>
+    <div class="badge-item">
+      <div class="badge-circle green"><i class="fa-solid fa-bolt"></i></div>
+      <span>Fast Helper</span>
+    </div>
+    <div class="badge-item">
+      <div class="badge-circle blue"><i class="fa-solid fa-chalkboard-user"></i></div>
+      <span>50 Sessions</span>
+    </div>
+    <div class="badge-item locked">
+      <div class="badge-circle gray"><i class="fa-solid fa-lock"></i></div>
+      <span>Global Mentor</span>
+    </div>
+  </div>
+
+  <!-- ================= ACHIEVEMENTS ================= -->
+  <div class="section-row">
+    <div class="section-label">Achievements</div>
+  </div>
+
+  <div class="achievement-card">
+    <div class="achievement-icon"><i class="fa-solid fa-trophy"></i></div>
+    <div class="achievement-body">
+      <h4>Top 5% Tutor This Month</h4>
+      <p>Ranked among the most helpful tutors in Mathematics</p>
+    </div>
+  </div>
+  <div class="achievement-card">
+    <div class="achievement-icon"><i class="fa-solid fa-people-group"></i></div>
+    <div class="achievement-body">
+      <h4>Helped 50+ Students</h4>
+      <p>Reached across 12 different countries</p>
+    </div>
+  </div>
+
+  <!-- ================= AI CARD ================= -->
+  <div class="ai-card">
+    <div class="ai-icon"><i class="fa-solid fa-sparkles"></i></div>
+    <div>
+      <h4>AI Growth Insight</h4>
+      <p>Your teaching score improved 8% this month. Keep explaining with examples!</p>
+    </div>
+  </div>
+
+  <!-- ================= EDIT PROFILE BUTTON ================= -->
+  <button class="btn" id="editProfileBtn"><i class="fa-solid fa-pen-to-square"></i> Edit Profile</button>
+
+  <div style="height:20px;"></div>
+
+</div>
+
+<!-- ================= EDIT PROFILE MODAL ================= -->
+<div class="modal-overlay" id="editModalOverlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Edit Profile</h3>
+      <div class="modal-close" id="modalCloseBtn"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+
+    <label class="modal-label">Full Name</label>
+    <input class="modal-input" id="editNameInput" type="text" value="Jordan Silva">
+
+    <label class="modal-label">Country</label>
+    <input class="modal-input" id="editCountryInput" type="text" value="Brazil">
+
+    <label class="modal-label">Grade</label>
+    <input class="modal-input" id="editGradeInput" type="text" value="Grade 10">
+
+    <label class="modal-label">Bio</label>
+    <textarea class="modal-textarea" id="editBioInput">Aspiring engineer who loves helping others with math. Always down to swap physics tips for language practice 🌍</textarea>
+
+    <button class="btn" id="saveProfileBtn"><i class="fa-solid fa-check"></i> Save Changes</button>
+  </div>
+</div>
+
+<!-- ================= FLOATING BUDDY BUTTON ================= -->
+<div class="buddy-float" id="buddyFloat" onclick="alert('Buddy full chat panel will connect here once buddy.js is built.')">
+  <i class="fa-solid fa-robot"></i>
+</div>
+
+<!-- ================= BOTTOM NAVIGATION ================= -->
+<div class="bottom-nav">
+  <div class="nav-item"><i class="fa-solid fa-house"></i>Home</div>
+  <div class="nav-item"><i class="fa-solid fa-compass"></i>Explore</div>
+  <div class="nav-item"><i class="fa-solid fa-circle-question"></i>Ask</div>
+  <div class="nav-item"><i class="fa-solid fa-comments"></i>Chats</div>
+  <div class="nav-item active"><i class="fa-solid fa-user"></i>Profile</div>
+</div>
+
+<script src="profile.js"></script>
+</body>
+</html>

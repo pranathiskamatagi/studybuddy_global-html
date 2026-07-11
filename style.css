@@ -6,17 +6,18 @@ font-family:'Poppins',sans-serif;
 }
 
 body{
+font-family:'Poppins',sans-serif;
+}
 
-height:100vh;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-overflow:hidden;
-
-background:linear-gradient(135deg,#2563EB,#22C55E);
-
+body{
+    margin:0;
+    padding:0;
+    font-family:'Poppins',sans-serif;
+    background:#F3F8FF;
+}
+.background{
+position:absolute;
+inset:0;
 }
 
 /* Floating Background */
@@ -591,3 +592,289 @@ color:#22C55E;
 font-weight:600;
 
 }
+/* =======================
+HOME SCREEN
+======================= */
+
+.home-container{
+
+padding:20px;
+
+background:#F3F8FF;
+
+min-height:100vh;
+
+padding-bottom:100px;
+
+}
+
+.header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:25px;
+
+}
+
+.header h2{
+
+color:#2563EB;
+
+}
+
+.header p{
+
+color:#666;
+
+}
+
+.notification{
+
+font-size:28px;
+
+cursor:pointer;
+
+}
+
+.buddy-card{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+background:linear-gradient(135deg,#2563EB,#22C55E);
+
+padding:20px;
+
+border-radius:20px;
+
+color:white;
+
+margin-bottom:25px;
+
+}
+
+.buddy{
+
+font-size:60px;
+
+}
+
+.search-bar{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:15px;
+
+font-size:16px;
+
+margin-bottom:25px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.section-title{
+
+margin-bottom:15px;
+
+color:#2563EB;
+
+}
+
+.subjects{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:15px;
+
+margin-bottom:25px;
+
+}
+
+.subject{
+
+background:white;
+
+padding:20px;
+
+text-align:center;
+
+border-radius:18px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+font-size:20px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.subject:hover{
+
+transform:translateY(-5px);
+
+}
+
+.online-card{
+
+background:white;
+
+padding:20px;
+
+border-radius:18px;
+
+margin-bottom:25px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.trending{
+
+background:white;
+
+padding:20px;
+
+border-radius:18px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+margin-bottom:25px;
+
+}
+
+.trending li{
+
+margin:10px 0;
+
+}
+
+.ask-btn{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:15px;
+
+background:linear-gradient(90deg,#2563EB,#22C55E);
+
+color:white;
+
+font-size:18px;
+
+cursor:pointer;
+
+margin-bottom:25px;
+
+}
+
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:white;
+display:flex;
+justify-content:space-around;
+padding:15px 0;
+box-shadow:0 -5px 20px rgba(0,0,0,.08);
+font-size:14px;
+text-align:center;
+}
+
+/* ===== XP CARD ===== */
+.xp-card{
+display:flex;
+align-items:center;
+gap:15px;
+background:white;
+padding:20px;
+border-radius:18px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+margin-bottom:25px;
+}
+
+.xp-ring-wrap{ position:relative; width:80px; height:80px; flex-shrink:0; }
+.xp-ring{ width:100%; height:100%; transform:rotate(-90deg); }
+.ring-track{ fill:none; stroke:#F3F8FF; stroke-width:10; }
+.ring-fill{
+fill:none;
+stroke:#2563EB;
+stroke-width:10;
+stroke-linecap:round;
+stroke-dasharray:327;
+stroke-dashoffset:327;
+transition:stroke-dashoffset 1.2s ease;
+}
+.xp-ring-center{
+position:absolute; inset:0;
+display:flex; flex-direction:column;
+align-items:center; justify-content:center;
+}
+.xp-ring-center span{ font-size:20px; font-weight:700; color:#1E293B; }
+.xp-ring-center small{ font-size:9px; color:#64748B; text-transform:uppercase; }
+
+.xp-info{ flex:1; }
+.xp-info h4{ font-size:15px; color:#1E293B; margin-bottom:4px; }
+.xp-info p{ font-size:12px; color:#64748B; margin-bottom:8px; }
+.xp-info p span{ font-weight:600; color:#2563EB; }
+
+.streak-pill{
+display:inline-block;
+background:#FEF3C7;
+color:#B45309;
+font-size:11px;
+font-weight:600;
+padding:5px 12px;
+border-radius:20px;
+}
+
+/* ===== BADGES CARD ===== */
+.badges-card{
+background:white;
+padding:20px;
+border-radius:18px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+margin-bottom:25px;
+}
+
+.badges-header h4{ color:#1E293B; margin-bottom:14px; font-size:15px; }
+
+.badges-row{
+display:flex;
+gap:16px;
+overflow-x:auto;
+padding-bottom:4px;
+}
+
+.badge{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:6px;
+flex-shrink:0;
+font-size:26px;
+min-width:60px;
+text-align:center;
+}
+
+.badge span{ font-size:10px; color:#64748B; }
+.badge.locked{ opacity:.4; }

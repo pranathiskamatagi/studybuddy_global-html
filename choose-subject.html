@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Subject | StudyBuddy Global</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="choose-subject.css">
+</head>
+<body>
+
+  <header class="page-header">
+    <button class="icon-btn" onclick="window.location.href='home.html'">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <h1 class="page-title">Choose a Subject</h1>
+    <div class="header-spacer"></div>
+  </header>
+
+  <div class="search-wrap">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" id="subjectSearch" class="search-input" placeholder="Search subjects...">
+  </div>
+
+  <p class="intro-text">Pick a subject to start learning or teaching 🎓</p>
+
+  <main class="subject-grid" id="subjectGrid">
+
+    <div class="subject-card" data-name="mathematics" style="--accent:#2563EB">
+      <div class="icon-circle"><i class="fa-solid fa-square-root-variable"></i></div>
+      <h3>Mathematics</h3>
+      <span class="sub-meta">312 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="physics" style="--accent:#22C55E">
+      <div class="icon-circle"><i class="fa-solid fa-atom"></i></div>
+      <h3>Physics</h3>
+      <span class="sub-meta">198 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="chemistry" style="--accent:#FACC15">
+      <div class="icon-circle"><i class="fa-solid fa-flask"></i></div>
+      <h3>Chemistry</h3>
+      <span class="sub-meta">154 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="biology" style="--accent:#2563EB">
+      <div class="icon-circle"><i class="fa-solid fa-dna"></i></div>
+      <h3>Biology</h3>
+      <span class="sub-meta">176 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="computer science" style="--accent:#22C55E">
+      <div class="icon-circle"><i class="fa-solid fa-laptop-code"></i></div>
+      <h3>Computer Science</h3>
+      <span class="sub-meta">402 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="english" style="--accent:#FACC15">
+      <div class="icon-circle"><i class="fa-solid fa-book-open"></i></div>
+      <h3>English</h3>
+      <span class="sub-meta">265 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="history" style="--accent:#2563EB">
+      <div class="icon-circle"><i class="fa-solid fa-landmark"></i></div>
+      <h3>History</h3>
+      <span class="sub-meta">89 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="geography" style="--accent:#22C55E">
+      <div class="icon-circle"><i class="fa-solid fa-earth-americas"></i></div>
+      <h3>Geography</h3>
+      <span class="sub-meta">72 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="economics" style="--accent:#FACC15">
+      <div class="icon-circle"><i class="fa-solid fa-chart-line"></i></div>
+      <h3>Economics</h3>
+      <span class="sub-meta">61 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="languages" style="--accent:#2563EB">
+      <div class="icon-circle"><i class="fa-solid fa-language"></i></div>
+      <h3>Languages</h3>
+      <span class="sub-meta">140 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="art design" style="--accent:#22C55E">
+      <div class="icon-circle"><i class="fa-solid fa-palette"></i></div>
+      <h3>Art &amp; Design</h3>
+      <span class="sub-meta">54 tutors online</span>
+    </div>
+
+    <div class="subject-card" data-name="music" style="--accent:#FACC15">
+      <div class="icon-circle"><i class="fa-solid fa-music"></i></div>
+      <h3>Music</h3>
+      <span class="sub-meta">47 tutors online</span>
+    </div>
+
+  </main>
+
+  <div class="empty-state" id="emptyState">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <p>No subjects match your search</p>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="choose-subject.html" class="nav-item active">
+      <i class="fa-solid fa-compass"></i>
+      <span>Explore</span>
+    </a>
+    <a href="ask.html" class="nav-item">
+      <i class="fa-solid fa-circle-question"></i>
+      <span>Ask</span>
+    </a>
+    <a href="chats.html" class="nav-item">
+      <i class="fa-solid fa-comments"></i>
+      <span>Chats</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <i class="fa-solid fa-user"></i>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script src="choose-subject.js"></script>
+</body>
+</html>
