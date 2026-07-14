@@ -1,48 +1,48 @@
 # 🌍 StudyBuddy Global
 
-StudyBuddy Global is an AI-powered peer-to-peer learning platform that connects students from around the world to learn together, ask questions, share knowledge, and grow through collaboration.
+StudyBuddy Global is a student-to-student learning platform that connects learners across the world.
 
-## 🚀 Vision
+## 🚀 Features
 
-Education should have no borders.
-
-StudyBuddy Global aims to create a global community where students can:
-- 📚 Learn together
-- 🤖 Use AI for studying
 - 🌎 Connect with students worldwide
-- 💬 Chat and collaborate
-- 🏆 Earn XP and achievements
+- 💬 Real-time chat
+- 📚 Ask and answer academic questions
+- 🤖 AI-powered study assistance
+- 🌐 Language translation
+- 🏆 XP, badges, and leaderboards
+- 📷 Image sharing
+- 🎤 Voice messages
+- 🔒 Secure authentication
 
-## ✨ Current Features
+## 🛠 Tech Stack
 
-- User Authentication
-- Student Profiles
-- AI Study Assistant
-- Real-time Chat
-- Subject-based Learning
-- XP & Badges
-- Global Community
-
-## 🛠️ Tech Stack
-
-### Frontend
+Frontend:
 - HTML
 - CSS
 - JavaScript
 
-### Backend
-- Python
+Backend:
 - Flask
-
-### Database
 - PostgreSQL
+- SQLAlchemy
+- Socket.IO
 
-## 🤝 Contributing
+## 📌 Status
 
-Contributions are welcome!
+This project is under active development.
 
-If you'd like to improve StudyBuddy Global, please open an Issue or submit a Pull Request.
+## 🤝 Looking for Contributors
 
-## ⭐ Support
+I'm a student building this project and would love contributors who can help with:
 
-If you like this project, consider giving it a ⭐ on GitHub.
+- Frontend
+- Backend
+- UI/UX
+- Flask
+- Socket.IO
+- Database
+- Testing
+
+Every contribution is welcome!
+
+## ⭐ Star this repository if you like the idea!
