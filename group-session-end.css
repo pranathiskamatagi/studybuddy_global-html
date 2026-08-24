@@ -1,0 +1,12 @@
+/* session-end.css styles .home-btn as the quiet SECONDARY option (since
+   it normally sits below the rating button). Here it's the only action
+   on the page, so it needs to look primary instead - loaded after
+   session-end.css, this overrides just that one rule. */
+.home-btn.primary {
+  border: none;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+}
+.home-btn.primary:hover {
+  transform: translateY(-2px);
+}

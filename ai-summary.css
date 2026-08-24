@@ -1,0 +1,244 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 640px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 45%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 32px 28px 36px;
+  display: flex;
+  flex-direction: column;
+}
+
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+  margin-bottom: 14px;
+}
+
+/* Shows what was "asked" of the AI, styled like a little chat bubble */
+.request-badge {
+  align-self: flex-start;
+  background: white;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 28px;
+}
+
+/* ---------- Loading state ---------- */
+#loading-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 0;
+}
+.spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 4px solid #dce6fb;
+  border-top-color: #3f6fe0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3f6fe0;
+  margin-bottom: 18px;
+  animation: spin 1s linear infinite;
+}
+.spinner svg {
+  width: 24px;
+  height: 24px;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.loading-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #8892b3;
+}
+
+/* ---------- Section headings ---------- */
+.section-heading {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 16px;
+}
+
+/* ---------- Mind map ----------
+   A simple top-down "tree": one central topic box, a trunk line down,
+   then a horizontal line branching out to 3 child boxes below it. */
+.mindmap {
+  margin-bottom: 28px;
+}
+.mindmap-central {
+  width: fit-content;
+  margin: 0 auto;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  color: white;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+.mindmap-trunk {
+  width: 2px;
+  height: 18px;
+  background: #dfe6f7;
+  margin: 0 auto;
+}
+.mindmap-branches {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  position: relative;
+  padding-top: 18px;
+}
+/* The horizontal line connecting all 3 branches together, spanning from
+   the first branch's center to the last branch's center. */
+.mindmap-branches::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(100% / 6);   /* center of the 1st of 3 equal-width columns */
+  right: calc(100% / 6);  /* center of the 3rd of 3 equal-width columns */
+  height: 2px;
+  background: #dfe6f7;
+}
+.branch-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+/* The short vertical stub connecting each branch node up to the
+   horizontal line above it. */
+.branch-wrap::before {
+  content: "";
+  position: absolute;
+  top: -18px;
+  height: 18px;
+  width: 2px;
+  background: #dfe6f7;
+}
+.branch-node {
+  background: white;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #1b2340;
+  text-align: center;
+}
+
+/* ---------- Summary ---------- */
+.summary-card {
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+.summary-list {
+  list-style: none; /* we draw our own bullet marks below for consistent styling */
+}
+.summary-list li {
+  position: relative;
+  padding-left: 16px;
+  font-size: 13px;
+  color: #3d476b;
+  line-height: 1.7;
+}
+.summary-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3f6fe0;
+}
+
+/* ---------- Save button ---------- */
+.save-summary-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.save-summary-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.save-summary-btn:hover {
+  transform: translateY(-2px);
+}
+/* Applied via JS once it's been saved, so re-clicking doesn't save a
+   second duplicate copy. */
+.save-summary-btn.saved {
+  background: #eaf8f0;
+  color: #21894f;
+  cursor: default;
+  transform: none;
+}
+
+/* ---------- Back to Home ---------- */
+.home-link-btn {
+  width: 100%;
+  padding: 14px 24px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #56618a;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: auto; /* pushes this to the bottom of the card */
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.home-link-btn:hover {
+  border-color: #3f6fe0;
+  color: #3f6fe0;
+}

@@ -1,0 +1,198 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 780px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 40%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 28px 28px 36px;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+}
+
+/* ---------- Podium ---------- */
+.podium {
+  display: flex;
+  align-items: flex-end; /* bottoms of all 3 columns line up, pedestal heights do the rest */
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.podium-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+}
+.podium-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  font-weight: 800;
+  border: 3px solid white;
+  box-shadow: 0 8px 18px rgba(30, 41, 90, 0.15);
+  margin-bottom: 8px;
+}
+/* The #1 column gets a bigger avatar and a crown - everything about it
+   should read as "the winner" at a glance. */
+.podium-col.rank-1 .podium-avatar {
+  width: 76px;
+  height: 76px;
+  font-size: 26px;
+}
+.crown {
+  width: 26px;
+  height: 26px;
+  margin-bottom: 2px;
+}
+.podium-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 2px;
+}
+.podium-highest {
+  font-size: 10px;
+  font-weight: 600;
+  color: #34c77b;
+  margin-bottom: 8px;
+}
+.avatar-blue   { background: linear-gradient(135deg, #4f7de0, #3f6fe0); }
+.avatar-pink   { background: linear-gradient(135deg, #f472b6, #ec4899); }
+.avatar-orange { background: linear-gradient(135deg, #fbbf24, #f5a623); }
+.avatar-green  { background: linear-gradient(135deg, #34c77b, #21a866); }
+
+/* The colored blocks under each avatar - different heights is what
+   actually creates the "podium" shape. */
+.pedestal {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+}
+.pedestal-1 { height: 76px; background: linear-gradient(180deg, #f9cf6b, #f5a623); }
+.pedestal-2 { height: 56px; background: linear-gradient(180deg, #c9d2e8, #a7b0cc); }
+.pedestal-3 { height: 40px; background: linear-gradient(180deg, #e3b48f, #cd8b5f); }
+
+/* ---------- Ranked list ---------- */
+.rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 14px;
+  padding: 11px 14px;
+}
+.rank-number {
+  width: 22px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #a7b0cc;
+  text-align: center;
+  flex-shrink: 0;
+}
+.rank-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.rank-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b2340;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rank-stats {
+  text-align: right;
+  flex-shrink: 0;
+}
+.rank-points {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #1b2340;
+}
+.rank-diamonds {
+  font-size: 10.5px;
+  color: #8892b3;
+}
+
+/* The current user's own row - the light gradient tint + colored
+   border makes it stand out from every other row without needing an
+   icon or extra label beyond the name itself. */
+.rank-row.is-you {
+  background: linear-gradient(90deg, #eaf0fd, #eafaf1);
+  border-color: #b9cdf5;
+}
+.rank-row.is-you .rank-name {
+  color: #3f6fe0;
+}

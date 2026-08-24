@@ -1,0 +1,177 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 640px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 45%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 32px 28px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.kicker {
+  align-self: flex-start;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #34c77b;
+  margin-bottom: 20px;
+}
+
+.success-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  box-shadow: 0 12px 28px rgba(52, 199, 123, 0.25);
+}
+.success-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 8px;
+}
+.session-summary {
+  font-size: 14px;
+  color: #8892b3;
+  margin-bottom: 24px;
+}
+
+/* ---------- "Want AI summaries" card ---------- */
+.ai-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 16px;
+  padding: 14px 16px;
+  cursor: pointer;
+  margin-bottom: 24px;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.ai-card:hover {
+  border-color: #3f6fe0;
+  transform: translateY(-1px);
+}
+.ai-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ai-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.ai-text {
+  flex: 1;
+}
+.ai-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1b2340;
+}
+.ai-desc {
+  font-size: 11.5px;
+  color: #8892b3;
+  margin-top: 2px;
+}
+.ai-arrow {
+  width: 16px;
+  height: 16px;
+  color: #a7b0cc;
+  flex-shrink: 0;
+}
+
+/* ---------- Primary action: Back to Home ----------
+   This is now the big, obvious choice - swapped to sit above the
+   smaller "Rate your partner" link below it. */
+/* ---------- Primary action: Rate your partner ----------
+   Comes FIRST now and stays a full, prominent button - the small
+   "Earn 10 points" hint sits underneath it, not the button itself. */
+.rate-section {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.rate-toggle-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.rate-toggle-btn:hover {
+  transform: translateY(-2px);
+}
+.rate-hint {
+  font-size: 11px;
+  color: #a7b0cc;
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* ---------- Secondary action: Home ----------
+   Comes SECOND now - still a full-width real button, just styled as
+   the quieter, secondary option (outline instead of filled gradient). */
+.home-btn {
+  width: 100%;
+  padding: 15px 24px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #56618a;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.home-btn:hover {
+  border-color: #3f6fe0;
+  color: #3f6fe0;
+}

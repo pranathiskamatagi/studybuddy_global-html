@@ -1,0 +1,287 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 700px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 40%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 28px 28px 36px;
+}
+
+/* ---------- Top row: back button + progress bar ---------- */
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.progress-track {
+  flex: 1;
+  height: 8px;
+  background: #e2e7f5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  width: 66%; /* step 2 of ~3 in the "I wanna teach" flow */
+  height: 100%;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  border-radius: 999px;
+}
+
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+  margin-bottom: 16px;
+}
+
+/* ---------- Quiz header row: title + "X/5" counter ---------- */
+.quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1b2340;
+}
+.question-counter {
+  font-size: 13px;
+  font-weight: 700;
+  color: #3f6fe0;
+  background: #eaf0fd;
+  padding: 5px 12px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.question-text {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1b2340;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* ---------- Answer options ---------- */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+/* Each option is a full-width button styled like a selectable row, with
+   a letter badge (A/B/C/D) on the left and a circular "radio" indicator
+   on the right that fills in once selected. */
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 14px;
+  background: white;
+  font-family: inherit;
+  font-size: 14px;
+  color: #1b2340;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.option-btn:hover {
+  border-color: #b9c6ea;
+}
+.option-letter {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #eef1fb;
+  color: #56618a;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.option-text {
+  flex: 1;
+}
+.option-radio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #dfe6f7;
+  flex-shrink: 0;
+}
+/* Applied via JS once an option is selected. */
+.option-btn.selected {
+  border-color: #3f6fe0;
+  background: #f5f8fe;
+}
+.option-btn.selected .option-letter {
+  background: #3f6fe0;
+  color: white;
+}
+.option-btn.selected .option-radio {
+  border-color: #3f6fe0;
+  border-width: 6px; /* a thick border creates a filled-dot look with no extra element */
+}
+
+.form-error {
+  color: #e0453f;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+/* ---------- Buttons ---------- */
+.save-btn {
+  width: 100%;
+  padding: 15px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.save-btn:hover {
+  transform: translateY(-2px);
+}
+
+.quiz-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0;
+}
+.nav-text-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #56618a;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+.nav-text-btn:hover {
+  color: #3f6fe0;
+}
+.nav-text-btn:disabled {
+  color: #c7cee6;
+  cursor: not-allowed;
+}
+
+.submit-btn {
+  display: block;
+  margin-left: auto; /* pushes this button to the right, matching the sketch */
+  padding: 10px 24px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #56618a;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.submit-btn:hover {
+  border-color: #3f6fe0;
+  color: #3f6fe0;
+}
+
+/* ---------- "No quiz available" view ---------- */
+.no-quiz-text {
+  font-size: 14px;
+  color: #56618a;
+  line-height: 1.6;
+  margin: 20px 0 28px;
+  text-align: center;
+}
+
+/* ---------- Result view ---------- */
+#result-view {
+  text-align: center;
+  padding-top: 20px;
+}
+.result-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+.result-icon svg {
+  width: 32px;
+  height: 32px;
+}
+.result-title {
+  margin-bottom: 8px;
+}
+.result-score {
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 10px;
+}
+.result-message {
+  font-size: 14px;
+  color: #8892b3;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}

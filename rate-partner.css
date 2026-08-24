@@ -1,0 +1,253 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 640px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 45%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 32px 28px 36px;
+}
+
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+  margin-bottom: 6px;
+}
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 18px;
+}
+
+/* ---------- Partner/topic summary ---------- */
+.summary-box {
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 22px;
+}
+.summary-line {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2340;
+}
+.summary-topic {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #8892b3;
+  margin-top: 3px;
+}
+
+/* ---------- Star rating ---------- */
+.star-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 34px;
+  line-height: 1;
+  color: #dfe6f7;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.1s ease, transform 0.1s ease;
+}
+.star-btn:hover {
+  transform: scale(1.1);
+}
+.star-btn.filled {
+  color: #f5a623;
+}
+
+/* ---------- Comment field ---------- */
+.field {
+  margin-bottom: 22px;
+}
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 8px;
+}
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 14px;
+  background: white;
+  font-family: inherit;
+  font-size: 14px;
+  color: #1b2340;
+  outline: none;
+  resize: none; /* keeps the box from being dragged into a weird shape */
+  transition: border-color 0.15s ease;
+}
+.field textarea::placeholder {
+  color: #a7b0cc;
+}
+.field textarea:focus {
+  border-color: #3f6fe0;
+}
+
+/* ---------- Badge picker ---------- */
+.badge-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 10px;
+}
+.badge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.badge-option {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #3d476b;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.badge-option:hover {
+  border-color: #3f6fe0;
+}
+.badge-option.selected {
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  border-color: transparent;
+  color: white;
+}
+
+.choose-own-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px dashed #c7cee6;
+  border-radius: 999px;
+  background: none;
+  color: #56618a;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.choose-own-btn:hover {
+  border-color: #3f6fe0;
+  color: #3f6fe0;
+}
+.choose-own-btn.selected {
+  border-style: solid;
+  border-color: #3f6fe0;
+  color: #3f6fe0;
+}
+.custom-badge-input {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 16px;
+  border: 1.5px solid #3f6fe0;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #1b2340;
+  outline: none;
+}
+
+.form-error {
+  color: #e0453f;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin: 16px 0 0;
+  text-align: center;
+}
+
+/* ---------- Shared button + confirmation styles ---------- */
+.submit-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  margin-top: 22px;
+}
+.submit-btn:hover {
+  transform: translateY(-2px);
+}
+
+#confirmation-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 40px;
+}
+.success-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  box-shadow: 0 12px 28px rgba(52, 199, 123, 0.25);
+}
+.success-icon svg {
+  width: 32px;
+  height: 32px;
+}
+#confirmation-view .title {
+  margin-bottom: 10px;
+}
+.confirmation-detail {
+  font-size: 14px;
+  color: #56618a;
+  line-height: 1.6;
+  max-width: 280px;
+  margin-bottom: 6px;
+}
+.points-earned {
+  font-size: 15px;
+  font-weight: 800;
+  color: #34c77b;
+  margin-bottom: 8px;
+}

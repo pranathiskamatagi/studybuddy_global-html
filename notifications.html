@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifications - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="notifications.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="home.html" class="back-btn" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Notifications</p>
+    </div>
+
+    <div class="header-row">
+      <h1 class="title">Recent activity</h1>
+      <button type="button" id="mark-all-btn" class="mark-all-btn">Mark all read</button>
+    </div>
+
+    <!-- notifications.js builds one row per notification in here -->
+    <div class="notif-list" id="notif-list"></div>
+
+    <div class="empty-state" id="empty-state" hidden>
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg>
+      </div>
+      <p class="empty-title">You're all caught up</p>
+      <p class="empty-desc">New activity will show up here.</p>
+    </div>
+  </div>
+
+  <script src="notifications.js"></script>
+</body>
+</html>

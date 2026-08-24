@@ -1,37 +1,73 @@
 <!DOCTYPE html>
+<!-- <html lang="en"> tells the browser (and screen readers) this page is in English -->
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StudyBuddy Global</title>
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- charset tells the browser how to read text/symbols (UTF-8 = supports almost everything, incl. emoji) -->
+  <meta charset="UTF-8" />
+  <!-- this line makes the page behave properly on phone screens instead of zooming out -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome - StudyBuddy Global</title>
+
+  <!-- Loading a nicer rounded font from Google Fonts (free, no download needed) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- This links our CSS file to this HTML file. Without this line, none of our styling would show up! -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="splash-container">
+  <!-- This outer div represents the "phone screen" card you see centered on the page -->
+  <div class="app-screen">
 
-  <div class="background">
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
+    <!-- A handful of small decorative dots, purely visual, matching the mockup -->
+    <span class="deco-dot dot-blue" style="top:8%; left:20%;"></span>
+    <span class="deco-dot dot-green" style="top:6%; left:75%;"></span>
+    <span class="deco-dot dot-blue" style="top:16%; left:88%;"></span>
+    <span class="deco-dot dot-blue" style="top:22%; left:8%;"></span>
 
-  <div class="card">
-    <div class="robot">🤖</div>
-    <h1>Study<span>Buddy</span></h1>
-    <p class="tagline">Connecting students worldwide<br>to learn and teach together</p>
+    <!-- The dashed "LOGO" placeholder box -->
+    <div class="logo-box">LOGO</div>
 
-    <div class="loader">
-      <div class="progress"></div>
+    <!-- The globe + book "illustration" -->
+    <div class="illustration">
+      <span class="globe-emoji" aria-hidden="true">🌍</span>
+      <span class="book-emoji" aria-hidden="true">📖</span>
     </div>
 
-    <p class="loading">Preparing your learning journey...</p>
+    <!-- Main heading. The <span> lets us color just the "!" differently -->
+    <h1 class="title">Welcome<span class="accent">!</span></h1>
+
+    <!-- Three little colored bars under the title, purely decorative -->
+    <div class="divider">
+      <span class="seg seg-blue"></span>
+      <span class="seg seg-green"></span>
+      <span class="seg seg-gray"></span>
+    </div>
+
+    <p class="tagline">Connect. Learn. Grow. Together.</p>
+    <p class="subtitle">
+      A global community of students learning and teaching together.
+    </p>
+
+    <!-- This big rounded shape at the bottom mimics the "curved earth horizon" in the design -->
+    <div class="earth-curve"></div>
+
+    <!-- The main call-to-action button. type="button" stops it from accidentally submitting a form later -->
+    <button type="button" class="cta-button">
+      Let's Get Started
+      <span class="arrow">→</span>
+    </button>
+
+    <!-- The row of pagination dots showing "you're on slide 1 of 3" -->
+    <div class="pagination-dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+
   </div>
 
-</div>
-
-<script src="index.js"></script>
+  <script src="index.js"></script>
 </body>
 </html>

@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 700px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 40%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 28px 28px 36px;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+}
+.title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 20px;
+}
+
+/* ---------- FAQ accordion ---------- */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.faq-item {
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 14px;
+  overflow: hidden; /* keeps the answer's slide-open from poking past the rounded corners */
+}
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1b2340;
+  text-align: left;
+  cursor: pointer;
+}
+.faq-arrow {
+  width: 16px;
+  height: 16px;
+  color: #a7b0cc;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+/* Applied via JS when a question is expanded - rotates the chevron
+   from pointing down to pointing up. */
+.faq-item.open .faq-arrow {
+  transform: rotate(180deg);
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 16px;
+  font-size: 12.5px;
+  color: #8892b3;
+  line-height: 1.6;
+  transition: max-height 0.25s ease, padding 0.25s ease;
+}
+.faq-item.open .faq-answer {
+  max-height: 200px; /* generously large so any answer length fits while still animating */
+  padding: 0 16px 16px;
+}
+
+.contact-btn {
+  width: 100%;
+  padding: 15px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: auto;
+  transition: transform 0.15s ease;
+}
+.contact-btn:hover {
+  transform: translateY(-2px);
+}

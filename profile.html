@@ -1,193 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>StudyBuddy Global — Profile</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="profile.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="profile.css" />
+  <link rel="stylesheet" href="confirm-modal.css" />
 </head>
 <body>
 
-<div class="app">
+  <div class="app-screen">
 
-  <!-- ================= HEADER ================= -->
-  <div class="profile-header">
-    <h2>Profile</h2>
-    <div class="edit-icon-btn" id="editBtn"><i class="fa-solid fa-pen"></i></div>
-  </div>
-
-  <!-- ================= PROFILE HERO CARD ================= -->
-  <div class="profile-hero">
-    <div class="avatar-wrap">
-      <div class="profile-avatar">JS</div>
-      <div class="online-dot"></div>
-      <div class="avatar-edit-btn" id="avatarEditBtn"><i class="fa-solid fa-camera"></i></div>
+    <div class="top-row">
+      <a href="home.html" class="back-btn" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Profile</p>
     </div>
-    <h3 class="profile-name" id="profileName">Jordan Silva</h3>
-    <p class="profile-meta"><i class="fa-solid fa-location-dot"></i> 🇧🇷 Brazil · Grade 10</p>
 
-    <p class="profile-bio" id="profileBio">Aspiring engineer who loves helping others with math. Always down to swap physics tips for language practice 🌍</p>
+    <!-- ============ HEADER ============ -->
+    <div class="profile-header">
+      <div class="profile-avatar avatar-blue" id="profile-avatar" aria-hidden="true">P</div>
+      <h1 class="profile-name" id="profile-name">Pranathi K</h1>
+      <p class="profile-meta" id="profile-meta">🇮🇳 India &middot; Grade 10 &middot; English</p>
+      <p class="profile-bio" id="profile-bio">Passionate about learning new things and helping others understand tricky topics.</p>
+    </div>
 
-    <div class="profile-stats-row">
-      <div class="stat-mini">
-        <div class="num">4.9</div>
-        <div class="lbl"><i class="fa-solid fa-star"></i> Rating</div>
+    <!-- ============ STATS (same card style as home.html) ============ -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="icon-badge badge-blue">
+          <svg viewBox="0 0 24 24" fill="white" stroke="none"><circle cx="12" cy="9" r="5"></circle><path d="M8.5 13.5L7 21l5-3 5 3-1.5-7.5" fill="white"></path></svg>
+        </div>
+        <div>
+          <p class="stat-label">Badges</p>
+          <p class="stat-value">3</p>
+        </div>
       </div>
-      <div class="stat-divider"></div>
-      <div class="stat-mini">
-        <div class="num">38</div>
-        <div class="lbl">Taught</div>
+      <div class="stat-card">
+        <div class="icon-badge badge-teal">
+          <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4.5L6 21l1.5-7.5L2 9h7z"></path></svg>
+        </div>
+        <div>
+          <p class="stat-label">Rating</p>
+          <p class="stat-value">4.9</p>
+        </div>
       </div>
-      <div class="stat-divider"></div>
-      <div class="stat-mini">
-        <div class="num">52</div>
-        <div class="lbl">Learned</div>
+      <div class="stat-card">
+        <div class="icon-badge badge-green">
+          <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"></path></svg>
+        </div>
+        <div>
+          <p class="stat-label">Points</p>
+          <p class="stat-value">2,450</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ================= XP / LEVEL CARD ================= -->
-  <div class="xp-bar-wrap">
-    <div class="xp-bar-top">
-      <strong>Level 7 Tutor</strong>
-      <span id="xpLabel">700 / 900 XP</span>
-    </div>
-    <div class="xp-track">
-      <div class="xp-fill" id="xpFill"></div>
-    </div>
-    <div class="streak-row">
-      <i class="fa-solid fa-fire"></i>
-      <span>4-day learning streak — keep it going!</span>
-    </div>
-  </div>
+    <!-- ============ TOPICS LEARNT ============ -->
+    <section class="profile-section">
+      <p class="section-heading">Topics learnt</p>
+      <div class="chip-row">
+        <span class="chip">Organic Chemistry</span>
+        <span class="chip">World History</span>
+        <span class="chip">Calculus</span>
+        <span class="chip">Spanish</span>
+      </div>
+    </section>
 
-  <!-- ================= INTERESTS ================= -->
-  <div class="section-row">
-    <div class="section-label">Interests</div>
-  </div>
-  <div class="chip-row">
-    <div class="chip">🎸 Music</div>
-    <div class="chip">⚽ Football</div>
-    <div class="chip">🎮 Gaming</div>
-    <div class="chip">📚 Reading</div>
-    <div class="chip">🌍 Languages</div>
-  </div>
+    <!-- ============ TOPICS TAUGHT ============ -->
+    <section class="profile-section">
+      <p class="section-heading">Topics taught</p>
+      <div class="chip-row">
+        <span class="chip chip-teach">Python Basics</span>
+        <span class="chip chip-teach">Public Speaking</span>
+      </div>
+    </section>
 
-  <!-- ================= SUBJECTS ================= -->
-  <div class="section-row">
-    <div class="section-label">Subjects</div>
-  </div>
-  <div class="subject-tags">
-    <div class="subject-tag blue"><i class="fa-solid fa-square-root-variable"></i> Mathematics</div>
-    <div class="subject-tag green"><i class="fa-solid fa-atom"></i> Physics</div>
-    <div class="subject-tag yellow"><i class="fa-solid fa-language"></i> Portuguese</div>
-  </div>
+    <!-- ============ BADGES EARNED ============ -->
+    <section class="profile-section">
+      <p class="section-heading">Badges earned</p>
+      <div class="chip-row">
+        <span class="chip chip-badge">🌟 Great Explainer</span>
+        <span class="chip chip-badge">🙌 Patient</span>
+        <span class="chip chip-badge">📚 Well Prepared</span>
+      </div>
+    </section>
 
-  <!-- ================= BADGES ================= -->
-  <div class="section-row">
-    <div class="section-label">Badges</div>
-    <span class="see-all" id="seeAllBadges">See all</span>
-  </div>
-  <div class="badge-scroll">
-    <div class="badge-item">
-      <div class="badge-circle gold"><i class="fa-solid fa-medal"></i></div>
-      <span>Great Tutor</span>
-    </div>
-    <div class="badge-item">
-      <div class="badge-circle blue"><i class="fa-solid fa-fire"></i></div>
-      <span>4-Day Streak</span>
-    </div>
-    <div class="badge-item">
-      <div class="badge-circle green"><i class="fa-solid fa-bolt"></i></div>
-      <span>Fast Helper</span>
-    </div>
-    <div class="badge-item">
-      <div class="badge-circle blue"><i class="fa-solid fa-chalkboard-user"></i></div>
-      <span>50 Sessions</span>
-    </div>
-    <div class="badge-item locked">
-      <div class="badge-circle gray"><i class="fa-solid fa-lock"></i></div>
-      <span>Global Mentor</span>
-    </div>
-  </div>
-
-  <!-- ================= ACHIEVEMENTS ================= -->
-  <div class="section-row">
-    <div class="section-label">Achievements</div>
-  </div>
-
-  <div class="achievement-card">
-    <div class="achievement-icon"><i class="fa-solid fa-trophy"></i></div>
-    <div class="achievement-body">
-      <h4>Top 5% Tutor This Month</h4>
-      <p>Ranked among the most helpful tutors in Mathematics</p>
-    </div>
-  </div>
-  <div class="achievement-card">
-    <div class="achievement-icon"><i class="fa-solid fa-people-group"></i></div>
-    <div class="achievement-body">
-      <h4>Helped 50+ Students</h4>
-      <p>Reached across 12 different countries</p>
-    </div>
-  </div>
-
-  <!-- ================= AI CARD ================= -->
-  <div class="ai-card">
-    <div class="ai-icon"><i class="fa-solid fa-sparkles"></i></div>
-    <div>
-      <h4>AI Growth Insight</h4>
-      <p>Your teaching score improved 8% this month. Keep explaining with examples!</p>
-    </div>
-  </div>
-
-  <!-- ================= EDIT PROFILE BUTTON ================= -->
-  <button class="btn" id="editProfileBtn"><i class="fa-solid fa-pen-to-square"></i> Edit Profile</button>
-
-  <div style="height:20px;"></div>
-
-</div>
-
-<!-- ================= EDIT PROFILE MODAL ================= -->
-<div class="modal-overlay" id="editModalOverlay">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3>Edit Profile</h3>
-      <div class="modal-close" id="modalCloseBtn"><i class="fa-solid fa-xmark"></i></div>
+    <!-- ============ QUICK LINKS ============ -->
+    <div class="quick-links">
+      <button type="button" class="link-row" data-action="Editing your profile">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg>
+        </div>
+        <span>Edit profile</span>
+        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </button>
+      <button type="button" class="link-row" data-action="Saved">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"></path></svg>
+        </div>
+        <span>Saved</span>
+        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </button>
+      <button type="button" class="link-row" data-action="Settings">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><circle cx="9" cy="6" r="2"></circle><line x1="4" y1="12" x2="20" y2="12"></line><circle cx="15" cy="12" r="2"></circle><line x1="4" y1="18" x2="20" y2="18"></line><circle cx="9" cy="18" r="2"></circle></svg>
+        </div>
+        <span>Settings</span>
+        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </button>
+      <button type="button" class="link-row" data-action="Safety Center">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V6l7-3z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        </div>
+        <span>Safety Center</span>
+        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </button>
     </div>
 
-    <label class="modal-label">Full Name</label>
-    <input class="modal-input" id="editNameInput" type="text" value="Jordan Silva">
-
-    <label class="modal-label">Country</label>
-    <input class="modal-input" id="editCountryInput" type="text" value="Brazil">
-
-    <label class="modal-label">Grade</label>
-    <input class="modal-input" id="editGradeInput" type="text" value="Grade 10">
-
-    <label class="modal-label">Bio</label>
-    <textarea class="modal-textarea" id="editBioInput">Aspiring engineer who loves helping others with math. Always down to swap physics tips for language practice 🌍</textarea>
-
-    <button class="btn" id="saveProfileBtn"><i class="fa-solid fa-check"></i> Save Changes</button>
+    <button type="button" id="logout-btn" class="logout-btn">Log out</button>
   </div>
-</div>
 
-<!-- ================= FLOATING BUDDY BUTTON ================= -->
-<div class="buddy-float" id="buddyFloat" onclick="alert('Buddy full chat panel will connect here once buddy.js is built.')">
-  <i class="fa-solid fa-robot"></i>
-</div>
-
-<!-- ================= BOTTOM NAVIGATION ================= -->
-<div class="bottom-nav">
-  <div class="nav-item"><i class="fa-solid fa-house"></i>Home</div>
-  <div class="nav-item"><i class="fa-solid fa-compass"></i>Explore</div>
-  <div class="nav-item"><i class="fa-solid fa-circle-question"></i>Ask</div>
-  <div class="nav-item"><i class="fa-solid fa-comments"></i>Chats</div>
-  <div class="nav-item active"><i class="fa-solid fa-user"></i>Profile</div>
-</div>
-
-<script src="profile.js"></script>
+  <script src="confirm-modal.js"></script>
+  <script src="profile.js"></script>
 </body>
 </html>

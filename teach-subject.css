@@ -1,0 +1,244 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 780px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 40%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 28px 28px 36px;
+}
+
+/* ---------- Top row: back button + progress bar ---------- */
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.progress-track {
+  flex: 1;
+  height: 8px;
+  background: #e2e7f5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  width: 33%;
+  height: 100%;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  border-radius: 999px;
+}
+
+/* ---------- Heading area ---------- */
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+  margin-bottom: 6px;
+}
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 8px;
+}
+.subtitle {
+  font-size: 14px;
+  color: #8892b3;
+  line-height: 1.5;
+  margin-bottom: 26px;
+}
+
+/* ---------- Form fields ---------- */
+.field {
+  margin-bottom: 18px;
+}
+.field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 8px;
+}
+
+.select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.select-icon {
+  width: 20px;
+  height: 20px;
+  color: #3f6fe0;
+  position: absolute;
+  left: 16px;
+  pointer-events: none;
+}
+.select-wrap input {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 14px;
+  background: white;
+  font-family: inherit;
+  font-size: 15px;
+  color: #1b2340;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.select-wrap input::placeholder {
+  color: #a7b0cc;
+}
+.select-wrap input:focus {
+  border-color: #3f6fe0;
+}
+
+/* ---------- Chip sections (Recent searches / Recommended) ---------- */
+.chip-section {
+  margin-bottom: 22px;
+}
+.chip-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: #56618a;
+  margin-bottom: 10px;
+}
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  border: 1.5px solid #dfe6f7;
+  background: white;
+  color: #3d476b;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.chip:hover {
+  border-color: #3f6fe0;
+  transform: translateY(-1px);
+}
+.chip-recommended {
+  background: #eaf8f0;
+  border-color: #cdeedb;
+  color: #21894f;
+}
+.chip-recommended:hover {
+  border-color: #34c77b;
+}
+.chip.chip-selected {
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  border-color: transparent;
+  color: white;
+}
+
+/* ---------- Error message ---------- */
+.form-error {
+  color: #e0453f;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+/* ---------- Quick quiz card ----------
+   Deliberately styled as a plain white list-row (icon + text + arrow),
+   NOT the bold gradient pill used for "Find study partner" - this button
+   leads to another step (a quiz), not straight into matching, so it
+   should read as "next", not "go/submit". It's still a real
+   type="submit" button underneath, just dressed differently. */
+.quiz-card {
+  width: 100%;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 16px;
+  background: white;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.quiz-card:hover {
+  border-color: #3f6fe0;
+  transform: translateY(-2px);
+}
+.quiz-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.quiz-icon svg {
+  width: 22px;
+  height: 22px;
+}
+.quiz-text {
+  flex: 1;
+}
+.quiz-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 2px;
+}
+.quiz-subtitle {
+  font-size: 12px;
+  color: #8892b3;
+  line-height: 1.4;
+}
+.quiz-arrow {
+  width: 20px;
+  height: 20px;
+  color: #a7b0cc;
+  flex-shrink: 0;
+}

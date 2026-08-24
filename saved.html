@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saved - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="saved.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <!-- href="home.html" is a fallback for the rare case there's no
+           browser history to go back to (e.g. this page was opened
+           directly) - saved.js overrides the click to use real history
+           navigation, since this page is reachable from BOTH the
+           sidebar (comes from Home) and Profile's quick-links. -->
+      <a href="home.html" class="back-btn" id="back-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Saved</p>
+    </div>
+
+    <h1 class="title">Saved summaries &amp; mind maps</h1>
+    <p class="subtitle">Every AI summary you've saved after a session, all in one place.</p>
+
+    <!-- saved.js fills this in from localStorage -->
+    <div class="saved-list" id="saved-list"></div>
+
+    <!-- Shown instead of the list when there's nothing saved yet -->
+    <div class="empty-state" id="empty-state" hidden>
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"></path></svg>
+      </div>
+      <p class="empty-title">Nothing saved yet</p>
+      <p class="empty-desc">After a session, tap "Save this summary" on the AI summary screen to keep it here.</p>
+    </div>
+  </div>
+
+  <script src="saved.js"></script>
+</body>
+</html>

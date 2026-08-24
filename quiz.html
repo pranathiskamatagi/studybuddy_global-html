@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="quiz.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="teach-subject.html" class="back-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+
+    <p class="kicker">Quiz</p>
+
+    <!-- ============ QUIZ VIEW (shown while answering questions) ============ -->
+    <div id="quiz-view">
+      <div class="quiz-header">
+        <h1 class="title" id="quiz-topic-title">Topic Quiz</h1>
+        <span class="question-counter" id="question-counter">1/5</span>
+      </div>
+
+      <p class="question-text" id="question-text"></p>
+
+      <!-- choose-subject.js fills this with 4 option buttons per question -->
+      <div class="options-list" id="options-list"></div>
+
+      <p id="quiz-error" class="form-error" hidden></p>
+
+      <button type="button" id="save-next-btn" class="save-btn">Save &amp; Next</button>
+
+      <div class="quiz-nav">
+        <button type="button" id="back-q-btn" class="nav-text-btn">&larr; Back</button>
+        <button type="button" id="next-q-btn" class="nav-text-btn">Next &rarr;</button>
+      </div>
+
+      <button type="button" id="submit-btn" class="submit-btn">Submit</button>
+    </div>
+
+    <!-- ============ NO QUIZ AVAILABLE (topic isn't in our question bank) ============ -->
+    <div id="no-quiz-view" hidden>
+      <p class="no-quiz-text">We don't have quiz questions for this topic yet, but that's okay - you're all set to continue.</p>
+      <button type="button" id="skip-btn" class="save-btn">Continue</button>
+    </div>
+
+    <!-- ============ RESULT VIEW (shown after finishing/submitting) ============ -->
+    <div id="result-view" hidden>
+      <div class="result-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+      </div>
+      <h1 class="title result-title">Quiz complete!</h1>
+      <p class="result-score" id="result-score">You scored 0/5</p>
+      <p class="result-message" id="result-message"></p>
+      <button type="button" id="continue-btn" class="save-btn">Continue</button>
+    </div>
+
+  </div>
+
+  <script src="quiz.js"></script>
+</body>
+</html>

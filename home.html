@@ -1,153 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - StudyBuddy Global</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-<title>StudyBuddy Global</title>
-
-<link rel="stylesheet" href="style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="home.css" />
+  <link rel="stylesheet" href="confirm-modal.css" />
 </head>
-
 <body>
 
-<div class="home-container">
+  <div class="dashboard">
 
-<div class="header">
+    <!-- ============ SIDEBAR ============ -->
+    <!-- id="sidebar" lets our JS grab this whole group and listen for
+         clicks on ANY button inside it at once (event delegation).
+         Toggling the "expanded" class (via the button below) switches
+         between icon-only and icon+label - try both! -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="sidebar-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18M12 3c2.5 2.5 4 5.5 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.5-4-9s1.5-6.5 4-9z"></path>
+          </svg>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Expand sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v16M4 4h16v16H4z"></path></svg>
+        </button>
+      </div>
 
-<div>
-<h2>👋 Good Evening!</h2>
-<p>Welcome back to StudyBuddy Global</p>
-</div>
+      <!-- data-label stores the readable name for each button - our JS
+           already used it for tooltips; now the visible .nav-label span
+           shows that same text once the sidebar is expanded. -->
+      <button class="nav-item active" data-label="Home" title="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item" data-label="Learn" title="Learn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6C10 4.5 7 4 4 4v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2z"></path></svg>
+        <span class="nav-label">Learn</span>
+      </button>
+      <button class="nav-item" data-label="Teach" title="Teach">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path></svg>
+        <span class="nav-label">Teach</span>
+      </button>
+      <button class="nav-item" data-label="Connect" title="Connect">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="6" r="2.5"></circle><circle cx="18" cy="18" r="2.5"></circle><path d="M8.3 10.8l7.4-3.6M8.3 13.2l7.4 3.6"></path></svg>
+        <span class="nav-label">Connect</span>
+      </button>
+      <button class="nav-item" data-label="Achievements" title="Achievements">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"></circle><path d="M8.5 13.5L7 21l5-3 5 3-1.5-7.5"></path></svg>
+        <span class="nav-label">Achievements</span>
+      </button>
+      <button class="nav-item" data-label="Leaderboard" title="Leaderboard">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="4" y="12" width="4" height="9" rx="1"></rect><rect x="10" y="6" width="4" height="15" rx="1"></rect><rect x="16" y="14" width="4" height="7" rx="1"></rect></svg>
+        <span class="nav-label">Leaderboard</span>
+      </button>
+      <button class="nav-item" data-label="Saved" title="Saved">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"></path></svg>
+        <span class="nav-label">Saved</span>
+      </button>
+      <button class="nav-item" data-label="Settings" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><circle cx="9" cy="6" r="2"></circle><line x1="4" y1="12" x2="20" y2="12"></line><circle cx="15" cy="12" r="2"></circle><line x1="4" y1="18" x2="20" y2="18"></line><circle cx="9" cy="18" r="2"></circle></svg>
+        <span class="nav-label">Settings</span>
+      </button>
+      <button class="nav-item" data-label="Safety Center" title="Safety Center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V6l7-3z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        <span class="nav-label">Safety Center</span>
+      </button>
+      <button class="nav-item" data-label="Help & Support" title="Help & Support">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 1-1 1.9"></path><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"></circle></svg>
+        <span class="nav-label">Help &amp; Support</span>
+      </button>
 
-<div class="notification">🔔</div>
+      <!-- margin-top: auto (in the CSS) pushes just this div to the bottom
+           of the sidebar, while everything above stays grouped at the top. -->
+      <div class="sidebar-bottom">
+        <button class="nav-item" data-label="Log out" title="Log out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+          <span class="nav-label">Log out</span>
+        </button>
+        <button class="nav-item" data-label="Profile" title="Profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>
+          <span class="nav-label">Profile</span>
+        </button>
+      </div>
+    </nav>
 
-</div>
+    <!-- ============ MAIN CONTENT ============ -->
+    <div class="main">
 
-<div class="buddy-card">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="app-logo-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.5 4 5.5 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.5-4-9s1.5-6.5 4-9z"></path></svg>
+          </div>
+          <div>
+            <p class="app-name">StudyBuddy Global</p>
+            <p class="app-tagline">Learning has no borders.</p>
+          </div>
+        </div>
 
-<div class="buddy">🤖</div>
+        <p class="greeting">Hey, <strong>Pranathi</strong></p>
 
-<div>
+        <div class="topbar-right">
+          <button class="icon-btn" id="bell-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg>
+            <span class="notif-dot" id="notif-dot"></span>
+          </button>
+          <button class="avatar-btn" aria-label="Profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>
+          </button>
+        </div>
+      </header>
 
-<h3>Buddy says...</h3>
+      <!-- ============ STAT CARDS ============ -->
+      <section class="stats-row">
+        <div class="stat-card">
+          <div class="icon-badge badge-blue">
+            <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"></path></svg>
+          </div>
+          <div>
+            <p class="stat-label">Points</p>
+            <p class="stat-value">2,450</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="icon-badge badge-green">
+            <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M6 3h12l4 6-10 12L2 9z"></path></svg>
+          </div>
+          <div>
+            <p class="stat-label">Diamonds</p>
+            <p class="stat-value">18</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="icon-badge badge-teal">
+            <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4.5L6 21l1.5-7.5L2 9h7z"></path></svg>
+          </div>
+          <div>
+            <p class="stat-label">Rating</p>
+            <p class="stat-value">4.9</p>
+          </div>
+        </div>
+      </section>
 
-<p>What would you like to learn today?</p>
+      <!-- ============ QUOTE BANNER (rotates every 5s, see home.js) ============ -->
+      <section class="quote-banner">
+        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+        <!-- id="quote-content" is the piece JS fades out/in on each rotation -->
+        <div class="quote-content" id="quote-content">
+          <p class="quote-text" id="quote-text"></p>
+          <p class="quote-author" id="quote-author"></p>
+        </div>
+        <div class="quote-trend-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>
+        </div>
+        <!-- JS builds one dot per quote in here, so we don't hardcode a count -->
+        <div class="quote-dots" id="quote-dots"></div>
+      </section>
 
-</div>
+      <!-- ============ CTA CARDS ============ -->
+      <section class="cta-row">
+        <!-- data-cta now lives on the whole card, not just the button -
+             home.js listens for a click ANYWHERE inside the card. -->
+        <div class="cta-card" data-cta="learn" role="button" tabindex="0">
+          <div class="icon-badge badge-blue">
+            <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M12 6C10 4.5 7 4 4 4v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2z"></path></svg>
+          </div>
+          <h3>I wanna learn</h3>
+          <p>Find a buddy to teach you something new</p>
+          <span class="cta-link">Get started <span class="arrow">→</span></span>
+        </div>
+        <div class="cta-card" data-cta="teach" role="button" tabindex="0">
+          <div class="icon-badge badge-green">
+            <svg viewBox="0 0 24 24" fill="white" stroke="none"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4" stroke="white" stroke-width="2"></path></svg>
+          </div>
+          <h3>I wanna teach</h3>
+          <p>Share what you know with a learner</p>
+          <span class="cta-link">Get started <span class="arrow">→</span></span>
+        </div>
+        <div class="cta-card" data-cta="group" role="button" tabindex="0">
+          <div class="icon-badge badge-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"></circle><path d="M2 20c0-3.3 3.1-6 7-6s7 2.7 7 6"></path><circle cx="17" cy="8" r="2.5"></circle><path d="M15 14.5c2.6.3 4.5 2.2 5 5.5"></path></svg>
+          </div>
+          <h3>Create a group chat</h3>
+          <p>Study together with multiple people at once</p>
+          <span class="cta-link">Get started <span class="arrow">→</span></span>
+        </div>
+      </section>
 
-</div>
+      <!-- ============ ACTIVE STUDY SESSIONS ============ -->
+      <section class="section-block">
+        <div class="section-header">
+          <h2>Active study sessions <span class="live-badge">Live</span></h2>
+          <a href="connect.html" class="see-all">See all</a>
+        </div>
+        <div class="sessions-row" id="sessions-row">
+          <div class="session-card">
+            <div class="avatar-stack">
+              <span class="avatar-sm avatar-blue">M</span>
+              <span class="avatar-sm avatar-green">T</span>
+              <span class="avatar-sm avatar-count">+6</span>
+            </div>
+            <h4>World History</h4>
+            <p class="session-sub">Class 10 · Intermediate</p>
+            <button type="button" class="join-btn">Join</button>
+          </div>
+          <div class="session-card">
+            <div class="avatar-stack">
+              <span class="avatar-sm avatar-pink">K</span>
+              <span class="avatar-sm avatar-blue">S</span>
+              <span class="avatar-sm avatar-count">+2</span>
+            </div>
+            <h4>Python Basics</h4>
+            <p class="session-sub">Beginner · Coding</p>
+            <button type="button" class="join-btn">Join</button>
+          </div>
+          <div class="session-card">
+            <div class="avatar-stack">
+              <span class="avatar-sm avatar-orange">R</span>
+              <span class="avatar-sm avatar-green">A</span>
+              <span class="avatar-sm avatar-count">+4</span>
+            </div>
+            <h4>Organic Chemistry</h4>
+            <p class="session-sub">Class 12 · Advanced</p>
+            <button type="button" class="join-btn">Join</button>
+          </div>
+        </div>
+      </section>
 
-<!-- ===== XP / LEVEL CARD ===== -->
-<div class="xp-card">
+      <!-- ============ COMMUNITY REQUESTS ============ -->
+      <section class="section-block">
+        <div class="section-header">
+          <h2>Community requests</h2>
+          <a href="connect.html" class="see-all">See all</a>
+        </div>
+        <div class="requests-list" id="requests-list">
+          <div class="request-row">
+            <span class="avatar-sm avatar-pink avatar-lg">R</span>
+            <div class="request-info">
+              <p class="request-name">Riya Sharma <span class="request-country">🇮🇳 India</span></p>
+              <p class="request-desc">Needs help with <strong>Calculus</strong></p>
+            </div>
+            <button type="button" class="request-btn">Help her</button>
+          </div>
+          <div class="request-row">
+            <span class="avatar-sm avatar-blue avatar-lg">A</span>
+            <div class="request-info">
+              <p class="request-name">Arjun Mehta <span class="request-country">🇪🇸 Spain</span></p>
+              <p class="request-desc">Wants to teach <strong>Spanish</strong></p>
+            </div>
+            <button type="button" class="request-btn">Learn from</button>
+          </div>
+        </div>
+      </section>
 
-  <div class="xp-ring-wrap">
-    <svg class="xp-ring" viewBox="0 0 120 120">
-      <circle class="ring-track" cx="60" cy="60" r="52"></circle>
-      <circle class="ring-fill" id="xpRingFill" cx="60" cy="60" r="52"></circle>
-    </svg>
-    <div class="xp-ring-center">
-      <span id="xpLevel">7</span>
-      <small>Level</small>
     </div>
   </div>
 
-  <div class="xp-info">
-    <h4>Keep it up! 🚀</h4>
-    <p><span id="xpCurrent">0</span> / <span id="xpTarget">500</span> XP to next level</p>
-    <div class="streak-pill">🔥 <span id="streakCount">0</span> day streak</div>
-  </div>
-
-</div>
-
-<!-- ===== BADGES CARD ===== -->
-<div class="badges-card">
-  <div class="badges-header">
-    <h4>🏅 Your Badges</h4>
-  </div>
-  <div class="badges-row">
-    <div class="badge earned">🏅<span>Mentor</span></div>
-    <div class="badge earned">🔥<span>On Fire</span></div>
-    <div class="badge earned">💬<span>Helper</span></div>
-    <div class="badge locked">🔒<span>Scholar</span></div>
-    <div class="badge locked">🔒<span>Legend</span></div>
-  </div>
-</div>
-
-<input
-class="search-bar"
-type="text"
-placeholder="🔍 Ask any question..."
->
-
-<h3 class="section-title">📚 Popular Subjects</h3>
-
-<div class="subjects">
-
-<div class="subject">📐<br>Math</div>
-
-<div class="subject">🧪<br>Science</div>
-
-<div class="subject">💻<br>Coding</div>
-
-<div class="subject">📖<br>English</div>
-
-<div class="subject">🌍<br>Geography</div>
-
-<div class="subject">⚛️<br>Physics</div>
-
-</div>
-
-<div class="online-card">
-
-<h3>🌍 Students Online</h3>
-
-<p>12,458 learners online now</p>
-
-</div>
-
-<div class="trending">
-
-<h3>🔥 Trending Questions</h3>
-
-<ul>
-
-<li>How does photosynthesis work?</li>
-
-<li>Explain quadratic equations.</li>
-
-<li>Why is the sky blue?</li>
-
-</ul>
-
-</div>
-
-<button class="ask-btn">
-
-➕ Ask a Question
-
-</button>
-
-<div class="bottom-nav">
-
-<div>🏠<br>Home</div>
-
-<div>🔍<br>Explore</div>
-
-<div>💬<br>Chats</div>
-
-<div>👤<br>Profile</div>
-
-</div>
-
-</div>
-
-<script src="home.js"></script>
+  <script src="confirm-modal.js"></script>
+  <script src="home.js"></script>
 </body>
-
 </html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="settings.css" />
+  <link rel="stylesheet" href="confirm-modal.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="home.html" class="back-btn" id="back-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Settings</p>
+    </div>
+
+    <p class="section-heading">Preferences</p>
+    <div class="settings-group">
+      <label class="toggle-row">
+        <span>Push notifications</span>
+        <input type="checkbox" id="toggle-notifications" checked />
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </label>
+      <label class="toggle-row">
+        <span>Sound effects</span>
+        <input type="checkbox" id="toggle-sound" checked />
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </label>
+      <label class="toggle-row">
+        <span>Dark mode</span>
+        <input type="checkbox" id="toggle-dark" />
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </label>
+    </div>
+
+    <p class="section-heading">Account</p>
+    <div class="settings-group">
+      <button type="button" class="link-row" data-action="Changing your password">
+        <span>Change password</span>
+        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </button>
+      <button type="button" class="link-row" data-action="Managing blocked users">
+        <span>Blocked users</span>
+        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </button>
+    </div>
+
+    <button type="button" id="logout-btn" class="logout-btn">Log out</button>
+  </div>
+
+  <script src="confirm-modal.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

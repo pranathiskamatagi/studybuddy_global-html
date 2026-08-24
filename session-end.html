@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Complete - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="session-end.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <p class="kicker">Session end</p>
+
+    <div class="success-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+    </div>
+
+    <h1 class="title">Hurray <span aria-hidden="true">🎉</span> you've done it!</h1>
+    <!-- session-end.js fills this in from the URL: minutes, topic, partner -->
+    <p class="session-summary" id="session-summary">—</p>
+
+    <button type="button" id="ai-summary-btn" class="ai-card">
+      <div class="ai-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path><circle cx="12" cy="12" r="4"></circle></svg>
+      </div>
+      <div class="ai-text">
+        <p class="ai-title">Want AI summaries and mind maps?</p>
+        <p class="ai-desc">Get a smart recap of this session</p>
+      </div>
+      <svg class="ai-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+    </button>
+
+    <!-- Comes FIRST - a full-size button leading to the dedicated
+         Ratings screen, with the points hint tucked underneath it. -->
+    <div class="rate-section">
+      <button type="button" id="rate-toggle-btn" class="rate-toggle-btn">Rate your partner &amp; give them a badge</button>
+      <p class="rate-hint">Earn 10 points by rating your partner</p>
+    </div>
+
+    <!-- Comes SECOND, as a full-width but visually secondary button -->
+    <button type="button" id="home-btn" class="home-btn">Back to Home</button>
+  </div>
+
+  <script src="session-end.js"></script>
+</body>
+</html>

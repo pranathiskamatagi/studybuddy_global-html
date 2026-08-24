@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teaching Tips - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="teaching-tips.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="quiz.html" class="back-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+
+    <p class="kicker">I wanna teach</p>
+    <h1 class="title">How to explain effectively</h1>
+    <p class="subtitle" id="tips-subtitle">A few quick techniques to help your session go smoothly.</p>
+
+    <div class="tip-list">
+      <div class="tip-card">
+        <div class="tip-badge">1</div>
+        <div class="tip-text">
+          <p class="tip-title">Start with their level <span aria-hidden="true">🧩</span></p>
+          <p class="tip-desc">Ask "What do you already know about this?" Don't assume they know the basics.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-badge">2</div>
+        <div class="tip-text">
+          <p class="tip-title">Explain simply <span aria-hidden="true">💡</span></p>
+          <p class="tip-desc">Use easy words and break the topic into small steps. Avoid complicated terms unless you explain them.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-badge">3</div>
+        <div class="tip-text">
+          <p class="tip-title">Show an example <span aria-hidden="true">✏️</span></p>
+          <p class="tip-desc">Give a simple example or connect the concept to real life.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-badge">4</div>
+        <div class="tip-text">
+          <p class="tip-title">Let them try <span aria-hidden="true">🎯</span></p>
+          <p class="tip-desc">Ask them a question or give a small problem. Don't give the answer immediately.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- The closing takeaway - styled differently from the numbered tips
+         above so it reads as a memorable final thought, not just tip #5. -->
+    <div class="remember-card">
+      <p class="remember-label"><span aria-hidden="true">💬</span> Remember</p>
+      <p class="remember-quote">"A great teacher doesn't just give answers. They help someone understand."</p>
+    </div>
+
+    <button type="button" id="find-student-btn" class="find-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+      Find a study partner
+    </button>
+  </div>
+
+  <script src="teaching-tips.js"></script>
+</body>
+</html>

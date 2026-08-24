@@ -1,0 +1,664 @@
+/* ---------- Global resets ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Same defensive fix as the other pages - see signup.css for why. */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  background: #eef2fb;
+  font-family: 'Poppins', sans-serif;
+  color: #1b2340;
+}
+
+/* ---------- Overall dashboard layout ----------
+   flex row: a fixed-width sidebar next to a flexible main content area.
+   This is the standard shape of almost every dashboard app you'll see. */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+  width: 88px;   /* collapsed width */
+  background: #ffffff;
+  border-right: 1px solid #e7ecf7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  gap: 6px;
+  flex-shrink: 0; /* stops the sidebar from ever getting squeezed narrower */
+  transition: width 0.25s ease; /* animates smoothly whenever width changes */
+
+  /* .dashboard is a flex row, and flex children STRETCH to match each
+     other's height by default. Without this, the sidebar would stretch
+     to match .main's height - harmless on desktop where .main stays
+     short, but on a narrow screen .main's cards stack into one long
+     column and the sidebar would stretch to thousands of pixels tall
+     along with it. align-self overrides that just for this element,
+     and position: sticky keeps it visible while the page scrolls,
+     instead of scrolling away with the rest of the content. */
+  align-self: flex-start;
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+/* When JS adds this class (see home.js), the sidebar grows wider and every
+   .nav-label inside it becomes visible - see the rules below. */
+.sidebar.expanded {
+  width: 220px;
+  align-items: stretch;
+  padding: 20px 12px;
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 4px;
+  margin-bottom: 18px;
+}
+.sidebar-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+.sidebar-logo svg {
+  width: 22px;
+  height: 22px;
+}
+.sidebar-toggle {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f1f4fc;
+  border-radius: 8px;
+  color: #56618a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.sidebar-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+/* Hide the toggle button's own icon area gracefully when collapsed - the
+   sidebar is narrow, so we just center the logo and drop the button to
+   below it instead of squeezing them onto one row. */
+.sidebar:not(.expanded) .sidebar-top {
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Each sidebar button. Icon-only buttons should ALWAYS keep an
+   accessible label - we use title="" (shows as a tooltip) and the
+   svg icon has no text of its own, so screen readers rely on title
+   AND (once expanded) the visible .nav-label text. */
+.nav-item {
+  width: 52px;
+  height: 44px;
+  border: none;
+  background: none;
+  border-radius: 12px;
+  color: #8892b3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-item svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.nav-item:hover {
+  background: #f1f4fc;
+  color: #3f6fe0;
+}
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(63,111,224,0.15), rgba(52,199,123,0.15));
+  color: #3f6fe0;
+}
+
+/* The text label next to each icon. It's always in the HTML, but stays
+   invisible and zero-width until the sidebar is expanded - that's what
+   makes the icon-only -> icon+label switch feel smooth instead of jumpy. */
+.nav-label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity 0.15s ease, width 0.25s ease, margin 0.25s ease;
+}
+.sidebar.expanded .nav-item {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0 14px;
+}
+.sidebar.expanded .nav-label {
+  opacity: 1;
+  /* A fixed pixel target instead of "auto" - CSS transitions can't
+     smoothly animate to/from "auto", so we pick a width generous
+     enough to fit every label (the longest is "Help & Support"). */
+  width: 150px;
+  margin-left: 12px;
+}
+
+/* margin-top: auto pushes this block all the way to the bottom of the
+   sidebar's flex column, while the nav items above stay grouped at the top. */
+.sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main {
+  flex: 1;           /* grow to fill all remaining horizontal space */
+  padding: 28px 40px 60px;
+  max-width: 1100px;
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.app-logo-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.app-logo-badge svg {
+  width: 20px;
+  height: 20px;
+}
+.app-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+.app-tagline {
+  font-size: 12px;
+  color: #8892b3;
+}
+.greeting {
+  font-size: 16px;
+  color: #56618a;
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.icon-btn, .avatar-btn {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #e7ecf7;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #56618a;
+  cursor: pointer;
+}
+.icon-btn svg, .avatar-btn svg {
+  width: 20px;
+  height: 20px;
+}
+.notif-dot {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34c77b;
+  border: 2px solid white;
+}
+
+/* ---------- Reusable colored icon badge (used in stat + CTA cards) ---------- */
+.icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.icon-badge svg {
+  width: 22px;
+  height: 22px;
+}
+.badge-blue  { background: linear-gradient(135deg, #4f7de0, #3f6fe0); }
+.badge-green { background: linear-gradient(135deg, #34c77b, #21a866); }
+.badge-teal  { background: linear-gradient(135deg, #2fb6a3, #3f6fe0); }
+.badge-purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+
+/* ---------- Stat cards ---------- */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 equal-width columns */
+  gap: 18px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 8px 24px rgba(30, 41, 90, 0.06);
+}
+.stat-label {
+  font-size: 13px;
+  color: #8892b3;
+  margin-bottom: 2px;
+}
+.stat-value {
+  font-size: 22px;
+  font-weight: 800;
+}
+.stat-sub {
+  font-size: 11px;
+  color: #a7b0cc;
+  margin-top: 2px;
+}
+
+/* ---------- Quote banner ---------- */
+.quote-banner {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, #e4ecfb, #e5f7ee);
+  border-radius: 18px;
+  padding: 24px 90px 34px 60px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  min-height: 96px;
+}
+.quote-mark {
+  position: absolute;
+  left: 20px;
+  top: 8px;
+  font-size: 48px;
+  font-weight: 800;
+  color: rgba(63, 111, 224, 0.25);
+  line-height: 1;
+}
+
+/* This is the "flashcard" that swaps every 5 seconds (see home.js).
+   .fade-out is toggled on/off by JS right as the text underneath changes,
+   so the swap reads as a smooth fade instead of an abrupt jump. */
+.quote-content {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.quote-content.fade-out {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.quote-text {
+  font-size: 14px;
+  font-style: italic;
+  color: #3d476b;
+  line-height: 1.6;
+}
+.quote-author {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  color: #56618a;
+}
+
+/* Small dot row along the bottom showing which quote is active, and
+   letting you click one to jump straight to it - same idea as the
+   pagination dots on the welcome screen. */
+.quote-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 60px;
+  display: flex;
+  gap: 6px;
+}
+.quote-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(63, 111, 224, 0.25);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+.quote-dot.active {
+  width: 18px;
+  border-radius: 999px;
+  background: #3f6fe0;
+}
+.quote-trend-icon {
+  position: absolute;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: white;
+  color: #34c77b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(30, 41, 90, 0.1);
+}
+.quote-trend-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---------- CTA cards (I wanna learn / I wanna teach / group chat) ---------- */
+.cta-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+.cta-card {
+  position: relative;
+  overflow: hidden;   /* keeps the gradient top-bar's corners rounded to match the card */
+  background: white;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(30, 41, 90, 0.06);
+  cursor: pointer; /* the whole card is clickable now, not just the link inside it */
+
+  /* Runs once, automatically, whenever the page loads - "both" keeps the
+     card at its "from" state before the animation starts (no flash of
+     the final look) and holds the "to" state once it's done. */
+  opacity: 0;
+  animation: cta-arrive 1.4s ease-out both;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+/* Makes the cards arrive one after another instead of all at once -
+   a tiny delay goes a long way toward feeling designed, not accidental. */
+.cta-row .cta-card:nth-child(2) {
+  animation-delay: 0.35s;
+}
+.cta-row .cta-card:nth-child(3) {
+  animation-delay: 0.55s;
+}
+/* Lifts the whole card on hover, on top of the existing arrow-nudge on
+   the "Get started" link, so the card itself feels clickable. */
+.cta-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 34px rgba(30, 41, 90, 0.14);
+}
+/* :focus-visible only shows an outline for KEYBOARD focus (Tab key),
+   not mouse clicks - so clicking doesn't leave an ugly ring behind,
+   but tabbing through the page still shows people where they are. */
+.cta-card:focus-visible {
+  outline: 3px solid #3f6fe0;
+  outline-offset: 3px;
+}
+
+@keyframes cta-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(48px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ::before creates an invisible box we can style, without adding an extra
+   HTML element - here it becomes the thin gradient bar along the top edge. */
+.cta-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+}
+.cta-card .icon-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+}
+.cta-card .icon-badge svg {
+  width: 28px;
+  height: 28px;
+}
+.cta-card h3 {
+  margin: 16px 0 6px;
+  font-size: 19px;
+}
+.cta-card p {
+  font-size: 13px;
+  color: #8892b3;
+  margin-bottom: 16px;
+}
+.cta-link {
+  background: none;
+  border: none;
+  color: #3f6fe0;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- Section headers (Active sessions / Community requests) ---------- */
+.section-block {
+  margin-bottom: 28px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-header h2 {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.live-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #34c77b;
+  background: #e5f7ee;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.see-all {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3f6fe0;
+  text-decoration: none;
+}
+
+/* ---------- Active session cards ---------- */
+.sessions-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.session-card {
+  position: relative;
+  overflow: hidden;
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(30, 41, 90, 0.06);
+}
+.session-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+}
+.session-card h4 {
+  font-size: 15px;
+  margin: 14px 0 4px;
+}
+.session-sub {
+  font-size: 12px;
+  color: #8892b3;
+  margin-bottom: 16px;
+}
+
+/* Overlapping avatar circles: each one after the first gets pulled
+   left with a negative margin, and a white border keeps them visually
+   separated even while overlapping. */
+.avatar-stack {
+  display: flex;
+}
+.avatar-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  margin-left: -10px;
+}
+.avatar-stack .avatar-sm:first-child {
+  margin-left: 0;
+}
+.avatar-blue   { background: #3f6fe0; }
+.avatar-green  { background: #34c77b; }
+.avatar-pink   { background: #ec4899; }
+.avatar-orange { background: #f5a623; }
+.avatar-count  { background: #e2e7f5; color: #56618a; }
+.avatar-lg {
+  width: 44px;
+  height: 44px;
+  font-size: 16px;
+  margin-left: 0;
+}
+
+/* ---------- Join / action buttons (shared pill-button style) ---------- */
+.join-btn, .request-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  color: white;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.join-btn:hover, .request-btn:hover {
+  transform: translateY(-1px);
+}
+/* :disabled targets a button once JS sets button.disabled = true */
+.join-btn:disabled, .request-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
+
+/* ---------- Community request rows ---------- */
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.request-row {
+  background: white;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 8px 24px rgba(30, 41, 90, 0.06);
+}
+.request-info {
+  flex: 1;
+}
+.request-name {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+.request-country {
+  font-weight: 600;
+  font-size: 11px;
+  color: #8892b3;
+  margin-left: 4px;
+}
+.request-desc {
+  font-size: 13px;
+  color: #8892b3;
+}
+.request-btn {
+  width: auto;
+  padding: 10px 20px;
+}
+
+/* ---------- Small screens: stack the grids into single columns ---------- */
+@media (max-width: 780px) {
+  .stats-row, .cta-row, .sessions-row {
+    grid-template-columns: 1fr;
+  }
+}

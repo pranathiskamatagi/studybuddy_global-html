@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 560px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 55%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.kicker {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #34c77b;
+  margin-bottom: 24px;
+}
+
+/* ---------- Partner avatar ---------- */
+.partner-avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 34px;
+  font-weight: 800;
+  margin-bottom: 18px;
+  box-shadow: 0 12px 28px rgba(30, 41, 90, 0.15);
+}
+/* One of these gets added by match-found.js, matching the avatar
+   colors already used for people elsewhere in the app (home.html). */
+.avatar-blue   { background: linear-gradient(135deg, #4f7de0, #3f6fe0); }
+.avatar-green  { background: linear-gradient(135deg, #34c77b, #21a866); }
+.avatar-pink   { background: linear-gradient(135deg, #f472b6, #ec4899); }
+.avatar-orange { background: linear-gradient(135deg, #fbbf24, #f5a623); }
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 6px;
+}
+.partner-rating {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f5a623; /* gold, like a star rating */
+  margin-bottom: 18px;
+}
+
+.match-desc {
+  font-size: 14px;
+  color: #8892b3;
+  line-height: 1.6;
+  max-width: 280px;
+  margin-bottom: 18px;
+}
+
+/* ---------- Subject / Level tags ---------- */
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: #3f6fe0;
+  background: #eaf0fd;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+/* ---------- Buttons ---------- */
+.start-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  margin-bottom: 16px;
+}
+.start-btn:hover {
+  transform: translateY(-2px);
+}
+
+.other-link {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #56618a;
+  cursor: pointer;
+}
+.other-link:hover {
+  color: #3f6fe0;
+}

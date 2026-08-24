@@ -1,0 +1,187 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 700px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 40%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 28px 28px 36px;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1b2340;
+}
+.mark-all-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #3f6fe0;
+  cursor: pointer;
+}
+.mark-all-btn:hover {
+  text-decoration: underline;
+}
+.mark-all-btn:disabled {
+  color: #c7cee6;
+  cursor: default;
+  text-decoration: none;
+}
+
+/* ---------- Notification rows ---------- */
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.notif-row {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 14px;
+  padding: 14px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+.notif-row:hover {
+  border-color: #dbe2f5;
+}
+/* Unread rows get a light tint and a colored left edge, so the
+   difference from read ones is obvious without needing to read text. */
+.notif-row.unread {
+  background: #f5f8fe;
+  border-color: #d7e2fa;
+}
+.notif-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 17px;
+}
+.notif-body {
+  flex: 1;
+  min-width: 0;
+}
+.notif-message {
+  font-size: 13px;
+  color: #1b2340;
+  line-height: 1.5;
+}
+.notif-row.unread .notif-message {
+  font-weight: 700;
+}
+.notif-time {
+  font-size: 11px;
+  color: #a7b0cc;
+  margin-top: 4px;
+}
+/* Small dot marking an unread notification, top-right of the row. */
+.notif-dot-mark {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3f6fe0;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+/* ---------- Empty state ---------- */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+}
+.empty-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #eef1fb;
+  color: #a7b0cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.empty-icon svg {
+  width: 26px;
+  height: 26px;
+}
+.empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 6px;
+}
+.empty-desc {
+  font-size: 12.5px;
+  color: #8892b3;
+}

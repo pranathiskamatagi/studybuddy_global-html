@@ -1,0 +1,174 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 560px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 55%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.kicker {
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #1b2340;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #3f6fe0;
+  margin-bottom: 28px;
+}
+
+/* ---------- Topic box ---------- */
+.topic-box {
+  width: 100%;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 32px;
+  background: white;
+  text-align: left;
+}
+.topic-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.topic-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a7b0cc;
+}
+.topic-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1b2340;
+}
+/* The extra "Subject · Level" line, only shown when connecting.js has
+   that info to show (see the hidden attribute on it in the HTML). */
+.topic-meta {
+  font-size: 12px;
+  color: #8892b3;
+  margin-top: 6px;
+  text-align: right;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1b2340;
+}
+/* Reserves width so the animated "..." doesn't shift the heading around -
+   same trick used on the old version of this page. */
+#connect-dots {
+  display: inline-block;
+  width: 24px;
+  text-align: left;
+}
+
+/* ---------- Matching illustration ---------- */
+.matching-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 36px 0;
+}
+.match-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+.match-avatar svg {
+  width: 28px;
+  height: 28px;
+}
+.avatar-you {
+  background: linear-gradient(135deg, #3f6fe0, #2f56b8);
+}
+.avatar-globe {
+  background: linear-gradient(135deg, #34c77b, #21a866);
+}
+
+/* The dashed connecting line between the two avatars. A repeating
+   gradient draws the dashes without needing an actual <hr> or border. */
+.match-line {
+  position: relative;
+  width: 90px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, #c3cee9 0 6px, transparent 6px 12px);
+  flex-shrink: 0;
+}
+/* The little dot that travels back and forth along the line, forever -
+   this is what makes the illustration read as "searching" rather than
+   just a static picture. */
+.pulse-dot {
+  position: absolute;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3f6fe0;
+  box-shadow: 0 0 0 4px rgba(63, 111, 224, 0.15);
+  animation: travel 1.8s ease-in-out infinite;
+}
+@keyframes travel {
+  0%   { left: 0; }
+  50%  { left: calc(100% - 8px); }
+  100% { left: 0; }
+}
+
+.reassurance {
+  font-size: 13px;
+  color: #8892b3;
+  line-height: 1.6;
+  max-width: 280px;
+  margin-bottom: 32px;
+}
+
+/* ---------- Cancel button ----------
+   Deliberately NOT the blue-green gradient used for primary actions
+   elsewhere in the app - a plain outline reads as a secondary/neutral
+   action, which is what "Cancel" should feel like. */
+.cancel-btn {
+  padding: 12px 32px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #56618a;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.cancel-btn:hover {
+  border-color: #3f6fe0;
+  color: #3f6fe0;
+}

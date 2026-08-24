@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matching - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="connecting.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <p class="kicker">Matching</p>
+
+    <!-- connecting.js fills these in from the URL's query string - either
+         ?subject=...&topic=...&level=... (from Choose Subject) or a
+         simpler ?with=... (from the Home page's Join / Help her buttons). -->
+    <div class="topic-box">
+      <div class="topic-main">
+        <span class="topic-label">Topic</span>
+        <span class="topic-value" id="topic-value">—</span>
+      </div>
+      <!-- hidden by default; connecting.js reveals this only when it has
+           a subject and/or level to show alongside the topic. -->
+      <p class="topic-meta" id="topic-meta" hidden></p>
+    </div>
+
+    <h1 class="title">Finding your match<span id="connect-dots"></span></h1>
+
+    <!-- The illustration: a "You" avatar and a globe (since your match
+         could be anywhere in the world), linked by a dashed line with a
+         dot that keeps traveling back and forth - see the @keyframes
+         "travel" animation in connecting.css. -->
+    <div class="matching-visual" aria-hidden="true">
+      <div class="match-avatar avatar-you">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>
+      </div>
+      <div class="match-line">
+        <span class="pulse-dot"></span>
+      </div>
+      <div class="match-avatar avatar-globe">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.5 4 5.5 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.5-4-9s1.5-6.5 4-9z"></path></svg>
+      </div>
+    </div>
+
+    <p class="reassurance">Matching you by subject, difficulty, and availability - not randomly.</p>
+
+    <button type="button" class="cancel-btn" id="cancel-btn">Cancel</button>
+  </div>
+
+  <script src="connecting.js"></script>
+</body>
+</html>

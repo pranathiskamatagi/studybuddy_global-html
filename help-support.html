@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help & Support - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="help-support.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="home.html" class="back-btn" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Help &amp; Support</p>
+    </div>
+
+    <h1 class="title">Frequently asked questions</h1>
+
+    <!-- Each question toggles its own answer open/closed - see help-support.js -->
+    <div class="faq-list" id="faq-list">
+      <div class="faq-item">
+        <button type="button" class="faq-question">
+          <span>How does matching work?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <p class="faq-answer">We match you with a study partner based on the subject, topic, and level you choose - not randomly.</p>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-question">
+          <span>Is StudyBuddy Global free?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <p class="faq-answer">Yes! Learning and teaching sessions are completely free to join.</p>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-question">
+          <span>How do points and badges work?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <p class="faq-answer">You earn points and badges when your study partner rates you after a session - check your Profile to see your progress.</p>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-question">
+          <span>What if someone makes me uncomfortable?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <p class="faq-answer">Use the Report or Block option inside any chat session - see the Safety Center for more details.</p>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-question">
+          <span>Can I teach more than one subject?</span>
+          <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <p class="faq-answer">Yes - just take the quick quiz for each new subject you'd like to teach.</p>
+      </div>
+    </div>
+
+    <button type="button" id="contact-btn" class="contact-btn">Contact support</button>
+  </div>
+
+  <script src="help-support.js"></script>
+</body>
+</html>

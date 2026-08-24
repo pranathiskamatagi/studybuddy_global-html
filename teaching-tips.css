@@ -1,0 +1,181 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 780px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 40%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 28px 28px 36px;
+}
+
+/* ---------- Top row: back button + progress bar ---------- */
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.progress-track {
+  flex: 1;
+  height: 8px;
+  background: #e2e7f5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  width: 100%; /* the final step in the "I wanna teach" flow */
+  height: 100%;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  border-radius: 999px;
+}
+
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+  margin-bottom: 6px;
+}
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 8px;
+}
+.subtitle {
+  font-size: 14px;
+  color: #8892b3;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+/* ---------- Tip list ---------- */
+.tip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.tip-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(30, 41, 90, 0.05);
+}
+/* A numbered circle badge (1, 2, 3, 4) instead of an icon - matches the
+   step-by-step feel of the reference notes this list was written from. */
+.tip-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tip-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 3px;
+}
+.tip-desc {
+  font-size: 12.5px;
+  color: #8892b3;
+  line-height: 1.5;
+}
+
+/* ---------- "Remember" closing card ----------
+   Reuses the same soft-gradient quote-card look as the home screen's
+   quote banner, so it reads as one memorable thought, not another tip. */
+.remember-card {
+  background: linear-gradient(90deg, #e4ecfb, #e5f7ee);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.remember-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #3f6fe0;
+  margin-bottom: 8px;
+}
+.remember-quote {
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 600;
+  color: #3d476b;
+  line-height: 1.6;
+}
+
+/* ---------- Find a study partner button ---------- */
+.find-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.find-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.find-btn:hover {
+  transform: translateY(-2px);
+}

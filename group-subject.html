@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create a Group Chat - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Reuses choose-subject.css - the Subject/Topic/Level form looks
+       identical here, just with different copy and a different button. -->
+  <link rel="stylesheet" href="choose-subject.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="home.html" class="back-btn" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+
+    <p class="kicker">Create a group chat</p>
+    <h1 class="title">Choose subject &amp; topic</h1>
+    <p class="subtitle">Pick what your group will study together - anyone can join once it's created.</p>
+
+    <form id="group-form" novalidate>
+
+      <div class="field">
+        <label for="subject">Subject</label>
+        <div class="select-wrap">
+          <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6C10 4.5 7 4 4 4v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2z"></path></svg>
+          <input type="text" id="subject" list="subject-options" placeholder="Select or type a subject" autocomplete="off" />
+          <datalist id="subject-options"></datalist>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="topic">Topic</label>
+        <div class="select-wrap">
+          <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+          <input type="text" id="topic" list="topic-options" placeholder="Select or type a topic" autocomplete="off" />
+          <datalist id="topic-options"></datalist>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="level">Level</label>
+        <div class="select-wrap">
+          <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"></path></svg>
+          <input type="text" id="level" list="level-options" placeholder="Select or type a level" autocomplete="off" />
+          <datalist id="level-options">
+            <option value="Beginner"></option>
+            <option value="Intermediate"></option>
+            <option value="Advanced"></option>
+          </datalist>
+        </div>
+      </div>
+
+      <!-- ============ RECENT SEARCHES (clickable chips) ============ -->
+      <div class="chip-section">
+        <p class="chip-heading">Recent searches</p>
+        <div class="chip-row" id="recent-chips">
+          <button type="button" class="chip" data-subject="Chemistry" data-topic="Organic Chemistry">Organic Chemistry</button>
+          <button type="button" class="chip" data-subject="Computer Science" data-topic="Python Basics">Python Basics</button>
+          <button type="button" class="chip" data-subject="History" data-topic="World History">World History</button>
+          <button type="button" class="chip" data-subject="Mathematics" data-topic="Calculus">Calculus</button>
+          <button type="button" class="chip" data-subject="Languages" data-topic="Spanish">Spanish</button>
+        </div>
+      </div>
+
+      <!-- ============ RECOMMENDED (clickable chips) ============ -->
+      <div class="chip-section">
+        <p class="chip-heading">Recommended for you</p>
+        <div class="chip-row" id="recommended-chips">
+          <button type="button" class="chip chip-recommended" data-subject="Science" data-topic="Physics Fundamentals">Physics Fundamentals</button>
+          <button type="button" class="chip chip-recommended" data-subject="Computer Science" data-topic="Data Structures">Data Structures</button>
+          <button type="button" class="chip chip-recommended" data-subject="Mathematics" data-topic="Algebra II">Algebra II</button>
+          <button type="button" class="chip chip-recommended" data-subject="Languages" data-topic="French Basics">French Basics</button>
+          <button type="button" class="chip chip-recommended" data-subject="Science" data-topic="Biology 101">Biology 101</button>
+        </div>
+      </div>
+
+      <p id="form-error" class="form-error" hidden></p>
+
+      <button type="submit" class="find-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"></circle><path d="M2 20c0-3.3 3.1-6 7-6s7 2.7 7 6"></path><circle cx="17" cy="8" r="2.5"></circle><path d="M15 14.5c2.6.3 4.5 2.2 5 5.5"></path></svg>
+        Create group chat
+      </button>
+    </form>
+  </div>
+
+  <script src="group-subject.js"></script>
+</body>
+</html>

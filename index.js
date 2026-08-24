@@ -1,12 +1,10 @@
-// Check if this browser already has a saved login token
-const token = localStorage.getItem('studybuddy_token');
+document.addEventListener('DOMContentLoaded', () => {
 
-setTimeout(function () {
-  if (token) {
-    // Already logged in before — skip straight to Home
-    window.location.href = 'home.html';
-  } else {
-    // First time here, or logged out — send to Signup
+  // This is the very first screen in the whole app - "Let's Get Started"
+  // takes a new user into the signup flow. It had never had any
+  // JavaScript wired to it before now, so clicking it did nothing.
+  document.querySelector('.cta-button').addEventListener('click', () => {
     window.location.href = 'signup.html';
-  }
-}, 3000); // matches your 3-second loading bar animation
+  });
+
+});

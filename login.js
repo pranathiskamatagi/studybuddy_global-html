@@ -1,54 +1,65 @@
-document.getElementById('loginForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
 
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
+  const form = document.getElementById('login-form');
+  const passwordInput = document.getElementById('password');
+  const toggleBtn = document.getElementById('toggle-password');
+  const eyeOpenIcon = toggleBtn.querySelector('.eye-open');
+  const eyeClosedIcon = toggleBtn.querySelector('.eye-closed');
+  const errorMessage = document.getElementById('form-error');
+  const oauthButtons = document.querySelectorAll('.oauth-button');
 
-  if (!email || !password) {
-    alert('Please enter both email and password');
-    return;
-  }
+  // ---------------------------------------------------------------
+  // FEATURE 1: Show/Hide password (same pattern as signup.js)
+  // ---------------------------------------------------------------
+  toggleBtn.addEventListener('click', () => {
+    const isCurrentlyHidden = passwordInput.type === 'password';
+    passwordInput.type = isCurrentlyHidden ? 'text' : 'password';
+    eyeOpenIcon.hidden = isCurrentlyHidden;
+    eyeClosedIcon.hidden = !isCurrentlyHidden;
+    toggleBtn.setAttribute('aria-label', isCurrentlyHidden ? 'Hide password' : 'Show password');
+  });
 
-  const submitBtn = e.target.querySelector('button[type="submit"]');
-  const originalText = submitBtn.textContent;
-  submitBtn.textContent = 'Logging in...';
-  submitBtn.disabled = true;
+  // ---------------------------------------------------------------
+  // FEATURE 2: Validate and handle the login form
+  // ---------------------------------------------------------------
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    errorMessage.hidden = true;
 
-  try {
-    const response = await fetch('http://127.0.0.1:5000/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    });
+    const emailInput = document.getElementById('email');
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(data.error || 'Invalid email or password');
-      submitBtn.textContent = originalText;
-      submitBtn.disabled = false;
+    if (emailInput.value.trim() === '' || passwordInput.value.trim() === '') {
+      errorMessage.textContent = 'Please fill in both fields.';
+      errorMessage.hidden = false;
       return;
     }
 
-    // Save the token and user info so other pages know we're logged in
-    localStorage.setItem('studybuddy_token', data.access_token);
-    localStorage.setItem('studybuddy_user', JSON.stringify(data.user));
+    // Same as signup.js - no real backend to check credentials against
+    // yet, but the flow itself takes you into the app like it should.
+    window.location.href = 'home.html';
+  });
 
-    submitBtn.textContent = 'Welcome back! Redirecting...';
+  // ---------------------------------------------------------------
+  // FEATURE 2b: "Forgot password?" - not built yet
+  // ---------------------------------------------------------------
+  document.querySelector('.forgot-link').addEventListener('click', (event) => {
+    event.preventDefault(); // stops the href="#" from jumping the page to the top
+    alert("Password reset isn't built yet - coming in a future update!");
+  });
 
-    setTimeout(function () {
-      window.location.href = 'home.html';
-    }, 1000);
+  // ---------------------------------------------------------------
+  // FEATURE 3: Placeholder handlers for the Google/Apple buttons
+  // ---------------------------------------------------------------
+  // Both buttons need near-identical behavior right now, so instead of
+  // writing two separate functions, we loop over both buttons and attach
+  // the SAME function to each one. This is called "reusing a function."
+  oauthButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      // data-provider reads the custom data-provider="Google"/"Apple"
+      // attribute we set in the HTML, so one function can handle both.
+      const provider = button.dataset.provider;
+      alert(`${provider} sign-in isn't connected yet - we'll wire this up once we build the backend.`);
+    });
+  });
 
-  } catch (error) {
-    console.error('Login error:', error);
-    alert('Could not connect to the server. Make sure the backend is running.');
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = false;
-  }
 });

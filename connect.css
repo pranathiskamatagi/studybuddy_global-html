@@ -1,0 +1,56 @@
+/* home.css's body/dashboard rules are meant for the wide sidebar layout -
+   these overrides make this page use the same narrow "phone card" shape
+   as the rest of the app's non-dashboard screens instead. */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 780px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 40%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 28px 28px 36px;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+}
+
+/* Home's grid layouts assume a wide dashboard - stack everything into
+   a single column here since this card is much narrower. */
+.sessions-row {
+  grid-template-columns: 1fr !important;
+}

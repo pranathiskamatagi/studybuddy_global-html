@@ -1,0 +1,199 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 640px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 40%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 28px 28px 36px;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 6px;
+}
+.subtitle {
+  font-size: 13px;
+  color: #8892b3;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+/* ---------- Saved item cards ---------- */
+.saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.saved-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 14px;
+  padding: 14px;
+}
+.saved-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+.saved-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.avatar-blue   { background: linear-gradient(135deg, #4f7de0, #3f6fe0); }
+.avatar-green  { background: linear-gradient(135deg, #34c77b, #21a866); }
+.avatar-pink   { background: linear-gradient(135deg, #f472b6, #ec4899); }
+.avatar-orange { background: linear-gradient(135deg, #fbbf24, #f5a623); }
+
+.saved-info {
+  flex: 1;
+  min-width: 0; /* lets long topic names truncate instead of overflowing the card */
+}
+.saved-topic {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2340;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.saved-meta {
+  font-size: 11.5px;
+  color: #8892b3;
+  margin-top: 2px;
+}
+
+.saved-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.saved-open-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #eef1fb;
+  color: #3f6fe0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.saved-open-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.saved-delete-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: #c7cee6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.saved-delete-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.saved-delete-btn:hover {
+  color: #e0453f;
+}
+
+/* ---------- Empty state ---------- */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+}
+.empty-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #eef1fb;
+  color: #a7b0cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.empty-icon svg {
+  width: 26px;
+  height: 26px;
+}
+.empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 6px;
+}
+.empty-desc {
+  font-size: 12.5px;
+  color: #8892b3;
+  line-height: 1.6;
+  max-width: 280px;
+  margin: 0 auto;
+}

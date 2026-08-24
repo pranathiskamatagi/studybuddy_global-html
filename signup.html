@@ -1,64 +1,399 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account - StudyBuddy Global</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-<title>StudyBuddy Global - Sign Up</title>
-
-<link rel="stylesheet" href="style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="signup.css" />
 </head>
-
 <body>
 
-<div class="signup-container">
+  <div class="app-screen">
 
-<div class="signup-card">
+    <!-- Decorative globe circle in the top-right corner, like the mockup -->
+    <div class="globe-decor"></div>
 
-<div class="robot">🤖</div>
+    <!-- Circle avatar placeholder with a person icon inside -->
+    <div class="avatar-circle">
+      <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"></circle>
+        <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path>
+      </svg>
+    </div>
 
-<h1>Create Account</h1>
+    <h1 class="title">Create your <span class="accent">account</span></h1>
+    <p class="subtitle">Join thousands of students learning &amp; teaching together around the world.</p>
 
-<p class="subtitle">
-Join thousands of students learning together worldwide.
-</p>
+    <!--
+      The <form> element groups our inputs together and lets the browser
+      handle things like "submit on Enter key" automatically.
+      novalidate turns OFF the browser's built-in popup validation because
+      we're writing our own validation messages in JavaScript instead.
+    -->
+    <form id="signup-form" class="signup-form" novalidate>
 
-<form id="signupForm">
+      <div class="field">
+        <label for="fullname">Full name</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path>
+          </svg>
+          <input type="text" id="fullname" name="fullname" placeholder="Enter your name" required />
+        </div>
+      </div>
 
-<input type="text" id="fullName" placeholder="Full Name">
+      <div class="field">
+        <label for="email">Email Address</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+            <path d="M3 7l9 6 9-6"></path>
+          </svg>
+          <!-- type="email" gives free basic validation (must contain @, etc.) -->
+          <input type="email" id="email" name="email" placeholder="Enter your email" required />
+        </div>
+      </div>
 
-<input type="email" id="email" placeholder="Email Address">
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+            <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+          </svg>
+          <!-- type="password" hides what's typed. We flip this to "text" with JS to reveal it. -->
+          <input type="password" id="password" name="password" placeholder="Create a strong password" required minlength="8" />
 
-<input type="password" id="password" placeholder="Password">
+          <!-- This button toggles password visibility. type="button" is important -
+               without it, this button would try to SUBMIT the form instead! -->
+          <button type="button" id="toggle-password" class="icon-button" aria-label="Show password">
+            <svg class="input-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg class="input-icon eye-closed" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3l18 18"></path>
+              <path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-3.22 4.36M6.1 6.1A18.6 18.6 0 0 0 1 12s2.5 4.5 7 6.5"></path>
+              <path d="M10.6 10.6a3 3 0 0 0 4.24 4.24"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-<input type="password" id="confirmPassword" placeholder="Confirm Password">
+      <div class="field">
+        <label for="country">Country</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18M12 3c2.5 2.5 4 5.5 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.5-4-9s1.5-6.5 4-9z"></path>
+          </svg>
+          <!-- A real <select> makes sense here (unlike Subject/Topic) since
+               country is a genuinely fixed list, not something to free-type. -->
+          <select id="country" required>
+            <option value="" selected disabled>Select your country</option>
+            <option>Afghanistan</option>
+            <option>Albania</option>
+            <option>Algeria</option>
+            <option>Andorra</option>
+            <option>Angola</option>
+            <option>Antigua and Barbuda</option>
+            <option>Argentina</option>
+            <option>Armenia</option>
+            <option>Australia</option>
+            <option>Austria</option>
+            <option>Azerbaijan</option>
+            <option>Bahamas</option>
+            <option>Bahrain</option>
+            <option>Bangladesh</option>
+            <option>Barbados</option>
+            <option>Belarus</option>
+            <option>Belgium</option>
+            <option>Belize</option>
+            <option>Benin</option>
+            <option>Bhutan</option>
+            <option>Bolivia</option>
+            <option>Bosnia and Herzegovina</option>
+            <option>Botswana</option>
+            <option>Brazil</option>
+            <option>Brunei</option>
+            <option>Bulgaria</option>
+            <option>Burkina Faso</option>
+            <option>Burundi</option>
+            <option>Cabo Verde</option>
+            <option>Cambodia</option>
+            <option>Cameroon</option>
+            <option>Canada</option>
+            <option>Central African Republic</option>
+            <option>Chad</option>
+            <option>Chile</option>
+            <option>China</option>
+            <option>Colombia</option>
+            <option>Comoros</option>
+            <option>Congo</option>
+            <option>Costa Rica</option>
+            <option>Croatia</option>
+            <option>Cuba</option>
+            <option>Cyprus</option>
+            <option>Czechia</option>
+            <option>Denmark</option>
+            <option>Djibouti</option>
+            <option>Dominica</option>
+            <option>Dominican Republic</option>
+            <option>Ecuador</option>
+            <option>Egypt</option>
+            <option>El Salvador</option>
+            <option>Equatorial Guinea</option>
+            <option>Eritrea</option>
+            <option>Estonia</option>
+            <option>Eswatini</option>
+            <option>Ethiopia</option>
+            <option>Fiji</option>
+            <option>Finland</option>
+            <option>France</option>
+            <option>Gabon</option>
+            <option>Gambia</option>
+            <option>Georgia</option>
+            <option>Germany</option>
+            <option>Ghana</option>
+            <option>Greece</option>
+            <option>Grenada</option>
+            <option>Guatemala</option>
+            <option>Guinea</option>
+            <option>Guinea-Bissau</option>
+            <option>Guyana</option>
+            <option>Haiti</option>
+            <option>Honduras</option>
+            <option>Hungary</option>
+            <option>Iceland</option>
+            <option>India</option>
+            <option>Indonesia</option>
+            <option>Iran</option>
+            <option>Iraq</option>
+            <option>Ireland</option>
+            <option>Israel</option>
+            <option>Italy</option>
+            <option>Jamaica</option>
+            <option>Japan</option>
+            <option>Jordan</option>
+            <option>Kazakhstan</option>
+            <option>Kenya</option>
+            <option>Kiribati</option>
+            <option>Kuwait</option>
+            <option>Kyrgyzstan</option>
+            <option>Laos</option>
+            <option>Latvia</option>
+            <option>Lebanon</option>
+            <option>Lesotho</option>
+            <option>Liberia</option>
+            <option>Libya</option>
+            <option>Liechtenstein</option>
+            <option>Lithuania</option>
+            <option>Luxembourg</option>
+            <option>Madagascar</option>
+            <option>Malawi</option>
+            <option>Malaysia</option>
+            <option>Maldives</option>
+            <option>Mali</option>
+            <option>Malta</option>
+            <option>Marshall Islands</option>
+            <option>Mauritania</option>
+            <option>Mauritius</option>
+            <option>Mexico</option>
+            <option>Micronesia</option>
+            <option>Moldova</option>
+            <option>Monaco</option>
+            <option>Mongolia</option>
+            <option>Montenegro</option>
+            <option>Morocco</option>
+            <option>Mozambique</option>
+            <option>Myanmar</option>
+            <option>Namibia</option>
+            <option>Nauru</option>
+            <option>Nepal</option>
+            <option>Netherlands</option>
+            <option>New Zealand</option>
+            <option>Nicaragua</option>
+            <option>Niger</option>
+            <option>Nigeria</option>
+            <option>North Korea</option>
+            <option>North Macedonia</option>
+            <option>Norway</option>
+            <option>Oman</option>
+            <option>Pakistan</option>
+            <option>Palau</option>
+            <option>Palestine</option>
+            <option>Panama</option>
+            <option>Papua New Guinea</option>
+            <option>Paraguay</option>
+            <option>Peru</option>
+            <option>Philippines</option>
+            <option>Poland</option>
+            <option>Portugal</option>
+            <option>Qatar</option>
+            <option>Romania</option>
+            <option>Russia</option>
+            <option>Rwanda</option>
+            <option>Saint Kitts and Nevis</option>
+            <option>Saint Lucia</option>
+            <option>Saint Vincent and the Grenadines</option>
+            <option>Samoa</option>
+            <option>San Marino</option>
+            <option>Sao Tome and Principe</option>
+            <option>Saudi Arabia</option>
+            <option>Senegal</option>
+            <option>Serbia</option>
+            <option>Seychelles</option>
+            <option>Sierra Leone</option>
+            <option>Singapore</option>
+            <option>Slovakia</option>
+            <option>Slovenia</option>
+            <option>Solomon Islands</option>
+            <option>Somalia</option>
+            <option>South Africa</option>
+            <option>South Korea</option>
+            <option>South Sudan</option>
+            <option>Spain</option>
+            <option>Sri Lanka</option>
+            <option>Sudan</option>
+            <option>Suriname</option>
+            <option>Sweden</option>
+            <option>Switzerland</option>
+            <option>Syria</option>
+            <option>Taiwan</option>
+            <option>Tajikistan</option>
+            <option>Tanzania</option>
+            <option>Thailand</option>
+            <option>Timor-Leste</option>
+            <option>Togo</option>
+            <option>Tonga</option>
+            <option>Trinidad and Tobago</option>
+            <option>Tunisia</option>
+            <option>Turkey</option>
+            <option>Turkmenistan</option>
+            <option>Tuvalu</option>
+            <option>Uganda</option>
+            <option>Ukraine</option>
+            <option>United Arab Emirates</option>
+            <option>United Kingdom</option>
+            <option>United States</option>
+            <option>Uruguay</option>
+            <option>Uzbekistan</option>
+            <option>Vanuatu</option>
+            <option>Vatican City</option>
+            <option>Venezuela</option>
+            <option>Vietnam</option>
+            <option>Yemen</option>
+            <option>Zambia</option>
+            <option>Zimbabwe</option>
+          </select>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </div>
+      </div>
 
-<label class="terms">
-<input type="checkbox" id="terms">
-I agree to the Terms & Privacy Policy
-</label>
+      <div class="field">
+        <label for="grade">Grade</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3L2 8l10 5 10-5-10-5z"></path>
+            <path d="M6 10.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-5.5"></path>
+          </svg>
+          <select id="grade" required>
+            <option value="" selected disabled>Select your grade</option>
+            <option>Grade 1</option>
+            <option>Grade 2</option>
+            <option>Grade 3</option>
+            <option>Grade 4</option>
+            <option>Grade 5</option>
+            <option>Grade 6</option>
+            <option>Grade 7</option>
+            <option>Grade 8</option>
+            <option>Grade 9</option>
+            <option>Grade 10</option>
+            <option>Grade 11</option>
+            <option>Grade 12</option>
+          </select>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </div>
+      </div>
 
-<button type="submit">Create Account</button>
+      <label class="checkbox-row">
+        <input type="checkbox" id="agree-terms" required />
+        <span>I agree to the <a href="#" id="terms-link">Terms &amp; Conditions</a></span>
+      </label>
 
-</form>
+      <!-- This paragraph is hidden by default. JS shows it (removes the "hidden" attribute)
+           only when something goes wrong, to display an error message. -->
+      <p id="form-error" class="form-error" hidden></p>
 
-<p class="login-link">
-Already have an account?
-<a href="login.html">Login</a>
-</p>
+      <button type="submit" class="cta-button">
+        Create Account
+        <span class="arrow">→</span>
+      </button>
+    </form>
 
-</div>
+    <div class="divider-row">
+      <span class="line"></span>
+      <span>or</span>
+      <span class="line"></span>
+    </div>
 
-</div>
-<script src="signup.js"></script>
+    <p class="login-row">Already have an account? <a href="login.html">Login</a></p>
+  </div>
+
+  <!-- ============ TERMS & CONDITIONS MODAL ============
+       Hidden by default. Opening it as an overlay (instead of navigating
+       to a separate page) means nothing typed into the form above gets
+       lost when someone just wants to read this. -->
+  <div class="modal-overlay" id="terms-modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="terms-heading">
+      <div class="modal-header">
+        <h2 id="terms-heading">Terms &amp; Conditions</h2>
+        <button type="button" id="terms-close-btn" class="modal-close-btn" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-updated">Last updated: August 2026</p>
+
+        <h3>1. Be respectful</h3>
+        <p>StudyBuddy Global connects students from around the world to learn and teach together. Treat every study partner with the same respect you'd want in a classroom - no harassment, hate speech, or inappropriate content, ever.</p>
+
+        <h3>2. Keep it on the platform</h3>
+        <p>Chat, voice, and video sessions should stay inside StudyBuddy Global. Don't ask other users to move conversations to outside apps, and never share personal contact details, passwords, or financial information.</p>
+
+        <h3>3. Reporting and blocking</h3>
+        <p>If someone makes you uncomfortable, use the Report or Block option available in every chat session. Our safety team reviews every report - see the Safety Center for more details.</p>
+
+        <h3>4. Academic honesty</h3>
+        <p>StudyBuddy Global is here to help you understand concepts, not to complete graded assignments, quizzes, or exams for you. Use sessions to learn, not to cheat.</p>
+
+        <h3>5. Points, badges, and ratings</h3>
+        <p>Points, diamonds, and badges are for fun and recognition only - they have no cash value and can't be exchanged, transferred, or sold.</p>
+
+        <h3>6. Account suspension</h3>
+        <p>We may suspend or remove accounts that violate these terms, including repeated reports, abusive behavior, or attempts to bypass safety features.</p>
+
+        <h3>7. Changes to these terms</h3>
+        <p>We may update these terms occasionally. Continuing to use StudyBuddy Global after a change means you accept the updated terms.</p>
+
+        <h3>8. Contact us</h3>
+        <p>Questions about these terms? Reach out through the Help &amp; Support section any time.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="terms-accept-btn" class="modal-accept-btn">I've read and agree</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script goes at the very bottom of <body> so the browser has already
+       created all the HTML elements above before our JS tries to grab them. -->
+  <script src="signup.js"></script>
 </body>
-
 </html>
-<p style="font-size:12px;color:#64748B;margin:-10px 0 16px;text-align:left;">
-  🔒 Your email is private and never shown to other students.
-</p>

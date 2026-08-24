@@ -1,0 +1,243 @@
+/* ---------- Global resets ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Same [hidden]-on-svg fix as the signup page — see signup.css for why. */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ---------- The phone screen container ---------- */
+.app-screen {
+  position: relative;
+  overflow: hidden;
+  width: 400px;
+  min-height: 780px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 45%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 40px 28px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ---------- Decorative globe, top-right ---------- */
+.globe-decor {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #dcebff 0%, #a9c3f2 55%, transparent 75%);
+  transform: translate(25%, -25%);
+  pointer-events: none;
+}
+
+/* ---------- Logo placeholder ---------- */
+.logo-box {
+  width: 150px;
+  height: 130px;
+  border: 2px dashed #8aa0d6;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7e8bb3;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  z-index: 1;
+}
+
+/* ---------- Heading ---------- */
+.title {
+  font-size: 34px;
+  font-weight: 800;
+  color: #1b2340;
+  z-index: 1;
+}
+.accent {
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.subtitle {
+  font-size: 14px;
+  color: #8892b3;
+  margin: 8px 0 24px;
+  z-index: 1;
+}
+
+/* ---------- Form layout ---------- */
+.login-form {
+  width: 100%;
+  z-index: 1;
+}
+.field {
+  text-align: left;
+  margin-bottom: 18px;
+}
+.field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 8px;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-icon {
+  width: 20px;
+  height: 20px;
+  color: #3f6fe0;
+  position: absolute;
+  left: 16px;
+  pointer-events: none;
+}
+.input-wrap input {
+  width: 100%;
+  padding: 14px 16px 14px 46px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 15px;
+  color: #1b2340;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.input-wrap input::placeholder {
+  color: #a7b0cc;
+}
+.input-wrap input:focus {
+  border-color: #3f6fe0;
+}
+
+.icon-button {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #8892b3;
+}
+.icon-button .input-icon {
+  position: static;
+}
+
+/* ---------- Forgot password link ---------- */
+.forgot-link {
+  display: block;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3f6fe0;
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+
+/* ---------- Error message ---------- */
+.form-error {
+  color: #e0453f;
+  font-size: 13px;
+  font-weight: 600;
+  margin: -8px 0 16px;
+  text-align: left;
+}
+
+/* ---------- Call-to-action button ---------- */
+.cta-button {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.cta-button:hover {
+  transform: translateY(-2px);
+}
+
+/* ---------- "or" divider ---------- */
+.divider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 22px 0 18px;
+  color: #a7b0cc;
+  font-size: 13px;
+  z-index: 1;
+}
+.divider-row .line {
+  flex: 1;
+  height: 1px;
+  background: #e1e7f5;
+}
+
+/* ---------- OAuth (Google / Apple) buttons ---------- */
+.oauth-button {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 14px;
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1b2340;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  margin-bottom: 14px;
+  z-index: 1;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.oauth-button:hover {
+  border-color: #b9c6ea;
+  transform: translateY(-1px);
+}
+
+/* ---------- Sign-up link row ---------- */
+.signup-row {
+  font-size: 14px;
+  color: #56618a;
+  margin-top: 6px;
+  z-index: 1;
+}
+.signup-row a {
+  color: #3f6fe0;
+  font-weight: 700;
+  text-decoration: none;
+}

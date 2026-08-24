@@ -1,880 +1,177 @@
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+/* ---------- Global resets ----------
+   Browsers add their own default spacing to elements. We zero it out
+   so OUR spacing choices are the only ones that matter. */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* makes width/height calculations include padding+border, avoids surprise overflow */
+}
+
+body {
+  min-height: 100vh; /* vh = "viewport height" -> at least the full height of the browser window */
+  display: flex;
+  align-items: center;      /* centers our app-screen vertically */
+  justify-content: center;  /* centers our app-screen horizontally */
+  background: #e9eefb;      /* light gray-blue behind the "phone" */
+  font-family: 'Poppins', sans-serif; /* sans-serif = fallback if Poppins fails to load */
+}
+
+/* ---------- The phone screen container ---------- */
+.app-screen {
+  position: relative;   /* lets us position decorative dots absolutely INSIDE this box */
+  overflow: hidden;     /* clips anything (like the earth curve) that pokes outside the rounded corners */
+  width: 400px;
+  min-height: 780px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 55%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 40px 28px 48px;
+  display: flex;
+  flex-direction: column;   /* stacks children top-to-bottom */
+  align-items: center;      /* centers children horizontally */
+  text-align: center;
+}
+
+/* ---------- Decorative floating dots ---------- */
+.deco-dot {
+  position: absolute;   /* takes it out of normal flow, positioned relative to .app-screen */
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;   /* 50% border-radius on a square = a circle */
+}
+.dot-blue  { background: #4f7de0; }
+.dot-green { background: #34c77b; }
+
+/* ---------- Logo placeholder ---------- */
+.logo-box {
+  width: 160px;
+  height: 160px;
+  border: 2px dashed #8aa0d6;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7e8bb3;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+
+/* ---------- Globe + book illustration ---------- */
+.illustration {
+  position: relative;
+  width: 160px;
+  height: 140px;
+  margin-bottom: 24px;
+}
+.globe-emoji {
+  font-size: 90px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%); /* shifts it left by half its own width, so it's perfectly centered */
+}
+.book-emoji {
+  font-size: 56px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ---------- Heading ---------- */
+.title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #1b2340;
+}
+.accent {
+  color: #34c77b; /* the green "!" */
+}
+
+/* ---------- Small divider bars under the title ---------- */
+.divider {
+  display: flex;
+  gap: 6px;
+  margin: 14px 0 20px;
+}
+.seg {
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+}
+.seg-blue  { background: #4f7de0; }
+.seg-green { background: #34c77b; }
+.seg-gray  { background: #d8dfef; }
+
+/* ---------- Text ---------- */
+.tagline {
+  font-size: 18px;
+  font-weight: 600;
+  color: #56618a;
+  margin-bottom: 10px;
+}
+.subtitle {
+  font-size: 14px;
+  color: #8892b3;
+  line-height: 1.5;   /* line-height = space between lines of wrapped text, improves readability */
+  max-width: 280px;
+}
+
+/* ---------- Earth curve at the bottom ----------
+   A big circle, mostly pushed off-screen at the bottom, so only its
+   top edge (the "curve") peeks into view like a horizon line. */
+.earth-curve {
+  margin-top: auto;      /* pushes everything below it to the bottom of the flex column */
+  width: 140%;
+  height: 220px;
+  background: radial-gradient(circle at 50% 0%, #b9cdf5 0%, #cfe0fb 60%, #eef3fc 100%);
+  border-radius: 50%;
+  margin-bottom: -60px;  /* pulls the button up so it overlaps the curve, matching the design */
+}
+
+/* ---------- Call-to-action button ---------- */
+.cta-button {
+  z-index: 1;             /* keeps the button visually ABOVE the earth-curve behind it */
+  width: 100%;
+  max-width: 320px;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 999px;   /* a very large radius = fully rounded "pill" shape */
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;   /* use the same font as the rest of the page, not the browser's button default */
+  font-size: 17px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;        /* shows a hand cursor on hover, signaling "this is clickable" */
+  transition: transform 0.15s ease; /* smoothly animates the transform below instead of it snapping */
+}
+.cta-button:hover {
+  transform: translateY(-2px); /* lifts the button slightly on hover for a nice tactile feel */
+}
+.arrow {
+  font-size: 18px;
+}
+
+/* ---------- Pagination dots ---------- */
+.pagination-dots {
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d8dfef;
+}
+.dot.active {
+  width: 22px;             /* the active dot is stretched into a little pill shape */
+  border-radius: 999px;
+  background: #4f7de0;
 }
-
-body{
-font-family:'Poppins',sans-serif;
-}
-
-body{
-    margin:0;
-    padding:0;
-    font-family:'Poppins',sans-serif;
-    background:#F3F8FF;
-}
-.background{
-position:absolute;
-inset:0;
-}
-
-/* Floating Background */
-
-.background span{
-
-position:absolute;
-
-border-radius:50%;
-
-background:rgba(255,255,255,.12);
-
-animation:float 12s infinite ease-in-out;
-
-}
-
-.background span:nth-child(1){
-
-width:220px;
-height:220px;
-
-top:-60px;
-left:-50px;
-
-}
-
-.background span:nth-child(2){
-
-width:170px;
-height:170px;
-
-bottom:-40px;
-right:-40px;
-
-animation-delay:2s;
-
-}
-
-.background span:nth-child(3){
-
-width:120px;
-height:120px;
-
-top:70%;
-left:15%;
-
-animation-delay:4s;
-
-}
-
-.background span:nth-child(4){
-
-width:80px;
-height:80px;
-
-top:20%;
-right:15%;
-
-animation-delay:1s;
-
-}
-
-/* Card */
-
-.card{
-
-width:90%;
-max-width:390px;
-
-background:rgba(255,255,255,.18);
-
-backdrop-filter:blur(20px);
-
-padding:40px;
-
-border-radius:28px;
-
-text-align:center;
-
-box-shadow:0 20px 50px rgba(0,0,0,.15);
-
-animation:fade 1.2s ease;
-
-}
-
-/* Robot */
-
-.robot{
-
-font-size:85px;
-
-animation:bounce 2.5s infinite;
-
-}
-
-/* Title */
-
-h1{
-
-margin-top:10px;
-
-font-size:38px;
-
-color:white;
-
-}
-
-h1 span{
-
-color:#FACC15;
-
-}
-
-/* Tagline */
-
-.tagline{
-
-margin-top:18px;
-
-line-height:32px;
-
-color:white;
-
-font-size:18px;
-
-opacity:.9;
-
-}
-
-/* Loader */
-
-.loader{
-
-margin:35px auto;
-
-height:10px;
-
-background:rgba(255,255,255,.25);
-
-border-radius:20px;
-
-overflow:hidden;
-
-}
-
-.progress{
-
-height:100%;
-
-width:0;
-
-background:white;
-
-animation:load 3s linear forwards;
-
-}
-
-/* Loading Text */
-
-.loading{
-
-color:white;
-
-font-size:14px;
-
-opacity:.8;
-
-}
-
-/* Animations */
-
-@keyframes load{
-
-to{
-
-width:100%;
-
-}
-
-}
-
-@keyframes bounce{
-
-0%,100%{
-
-transform:translateY(0);
-
-}
-
-50%{
-
-transform:translateY(-12px);
-
-}
-
-}
-
-@keyframes float{
-
-0%,100%{
-
-transform:translateY(0);
-
-}
-
-50%{
-
-transform:translateY(-40px);
-
-}
-
-}
-
-@keyframes fade{
-
-from{
-
-opacity:0;
-
-transform:scale(.9);
-
-}
-
-to{
-
-opacity:1;
-
-transform:scale(1);
-
-}
-
-}
-/* ========================= */
-/* LOGIN SCREEN */
-/* ========================= */
-
-.login-container{
-
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-
-height:100vh;
-
-background:linear-gradient(135deg,#2563EB,#22C55E);
-
-padding:20px;
-
-}
-
-.welcome{
-
-text-align:center;
-color:white;
-margin-bottom:25px;
-
-}
-
-.robot{
-
-font-size:70px;
-animation:bounce 2s infinite;
-
-}
-
-.welcome h1{
-
-font-size:36px;
-margin-top:10px;
-
-}
-
-.welcome p{
-
-margin-top:10px;
-opacity:.9;
-
-}
-
-.login-card{
-
-width:100%;
-max-width:420px;
-
-background:white;
-
-border-radius:25px;
-
-padding:35px;
-
-box-shadow:0 15px 40px rgba(0,0,0,.15);
-
-animation:fade .8s ease;
-
-}
-
-.login-card h2{
-
-text-align:center;
-margin-bottom:25px;
-color:#2563EB;
-
-}
-
-.input-box{
-
-display:flex;
-align-items:center;
-
-background:#F3F7FF;
-
-border-radius:14px;
-
-padding:14px 16px;
-
-margin-bottom:18px;
-
-}
-
-.input-box i{
-
-color:#2563EB;
-margin-right:12px;
-
-}
-
-.input-box input{
-
-border:none;
-background:none;
-outline:none;
-width:100%;
-font-size:16px;
-
-}
-
-.forgot{
-
-text-align:right;
-margin-bottom:20px;
-
-}
-
-.forgot a{
-
-text-decoration:none;
-color:#2563EB;
-font-size:14px;
-
-}
-
-.login-btn{
-
-width:100%;
-
-padding:15px;
-
-border:none;
-
-border-radius:14px;
-
-background:linear-gradient(90deg,#2563EB,#22C55E);
-
-color:white;
-
-font-size:17px;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.login-btn:hover{
-
-transform:translateY(-2px);
-
-}
-
-.divider{
-
-text-align:center;
-
-margin:22px 0;
-
-color:#64748B;
-
-}
-
-.google-btn{
-
-width:100%;
-
-padding:15px;
-
-border-radius:14px;
-
-background:white;
-
-border:2px solid #2563EB;
-
-color:#2563EB;
-
-cursor:pointer;
-
-font-weight:600;
-
-}
-
-.signup{
-
-margin-top:22px;
-text-align:center;
-
-}
-
-.signup a{
-
-color:#22C55E;
-text-decoration:none;
-font-weight:600;
-
-}
-/* ======================= */
-/* SIGN UP SCREEN */
-/* ======================= */
-
-.signup-container{
-
-height:100vh;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-background:linear-gradient(135deg,#2563EB,#22C55E);
-
-padding:20px;
-
-}
-
-.signup-card{
-
-width:100%;
-max-width:430px;
-
-background:white;
-
-padding:35px;
-
-border-radius:25px;
-
-box-shadow:0 15px 45px rgba(0,0,0,.15);
-
-text-align:center;
-
-animation:fade .8s ease;
-
-}
-
-.signup-card .robot{
-
-font-size:70px;
-
-margin-bottom:15px;
-
-}
-
-.signup-card h1{
-
-color:#2563EB;
-
-margin-bottom:10px;
-
-}
-
-.subtitle{
-
-color:#666;
-
-margin-bottom:30px;
-
-}
-
-.signup-card input{
-
-width:100%;
-
-padding:15px;
-
-margin-bottom:16px;
-
-border-radius:12px;
-
-border:2px solid #E5E7EB;
-
-font-size:16px;
-
-outline:none;
-
-transition:.3s;
-
-}
-
-.signup-card input:focus{
-
-border-color:#2563EB;
-
-}
-
-.terms{
-
-display:flex;
-
-align-items:center;
-
-gap:10px;
-
-font-size:14px;
-
-margin:15px 0 25px;
-
-text-align:left;
-
-color:#555;
-
-}
-
-.signup-card button{
-
-width:100%;
-
-padding:15px;
-
-border:none;
-
-border-radius:12px;
-
-background:linear-gradient(90deg,#2563EB,#22C55E);
-
-color:white;
-
-font-size:17px;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.signup-card button:hover{
-
-transform:translateY(-2px);
-
-}
-
-.login-link{
-
-margin-top:25px;
-
-}
-
-.login-link a{
-
-text-decoration:none;
-
-color:#22C55E;
-
-font-weight:600;
-
-}
-/* =======================
-HOME SCREEN
-======================= */
-
-.home-container{
-
-padding:20px;
-
-background:#F3F8FF;
-
-min-height:100vh;
-
-padding-bottom:100px;
-
-}
-
-.header{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-margin-bottom:25px;
-
-}
-
-.header h2{
-
-color:#2563EB;
-
-}
-
-.header p{
-
-color:#666;
-
-}
-
-.notification{
-
-font-size:28px;
-
-cursor:pointer;
-
-}
-
-.buddy-card{
-
-display:flex;
-
-align-items:center;
-
-gap:15px;
-
-background:linear-gradient(135deg,#2563EB,#22C55E);
-
-padding:20px;
-
-border-radius:20px;
-
-color:white;
-
-margin-bottom:25px;
-
-}
-
-.buddy{
-
-font-size:60px;
-
-}
-
-.search-bar{
-
-width:100%;
-
-padding:16px;
-
-border:none;
-
-border-radius:15px;
-
-font-size:16px;
-
-margin-bottom:25px;
-
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-
-}
-
-.section-title{
-
-margin-bottom:15px;
-
-color:#2563EB;
-
-}
-
-.subjects{
-
-display:grid;
-
-grid-template-columns:repeat(3,1fr);
-
-gap:15px;
-
-margin-bottom:25px;
-
-}
-
-.subject{
-
-background:white;
-
-padding:20px;
-
-text-align:center;
-
-border-radius:18px;
-
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-
-font-size:20px;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.subject:hover{
-
-transform:translateY(-5px);
-
-}
-
-.online-card{
-
-background:white;
-
-padding:20px;
-
-border-radius:18px;
-
-margin-bottom:25px;
-
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-
-}
-
-.trending{
-
-background:white;
-
-padding:20px;
-
-border-radius:18px;
-
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-
-margin-bottom:25px;
-
-}
-
-.trending li{
-
-margin:10px 0;
-
-}
-
-.ask-btn{
-
-width:100%;
-
-padding:16px;
-
-border:none;
-
-border-radius:15px;
-
-background:linear-gradient(90deg,#2563EB,#22C55E);
-
-color:white;
-
-font-size:18px;
-
-cursor:pointer;
-
-margin-bottom:25px;
-
-}
-
-.bottom-nav{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:white;
-display:flex;
-justify-content:space-around;
-padding:15px 0;
-box-shadow:0 -5px 20px rgba(0,0,0,.08);
-font-size:14px;
-text-align:center;
-}
-
-/* ===== XP CARD ===== */
-.xp-card{
-display:flex;
-align-items:center;
-gap:15px;
-background:white;
-padding:20px;
-border-radius:18px;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-margin-bottom:25px;
-}
-
-.xp-ring-wrap{ position:relative; width:80px; height:80px; flex-shrink:0; }
-.xp-ring{ width:100%; height:100%; transform:rotate(-90deg); }
-.ring-track{ fill:none; stroke:#F3F8FF; stroke-width:10; }
-.ring-fill{
-fill:none;
-stroke:#2563EB;
-stroke-width:10;
-stroke-linecap:round;
-stroke-dasharray:327;
-stroke-dashoffset:327;
-transition:stroke-dashoffset 1.2s ease;
-}
-.xp-ring-center{
-position:absolute; inset:0;
-display:flex; flex-direction:column;
-align-items:center; justify-content:center;
-}
-.xp-ring-center span{ font-size:20px; font-weight:700; color:#1E293B; }
-.xp-ring-center small{ font-size:9px; color:#64748B; text-transform:uppercase; }
-
-.xp-info{ flex:1; }
-.xp-info h4{ font-size:15px; color:#1E293B; margin-bottom:4px; }
-.xp-info p{ font-size:12px; color:#64748B; margin-bottom:8px; }
-.xp-info p span{ font-weight:600; color:#2563EB; }
-
-.streak-pill{
-display:inline-block;
-background:#FEF3C7;
-color:#B45309;
-font-size:11px;
-font-weight:600;
-padding:5px 12px;
-border-radius:20px;
-}
-
-/* ===== BADGES CARD ===== */
-.badges-card{
-background:white;
-padding:20px;
-border-radius:18px;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-margin-bottom:25px;
-}
-
-.badges-header h4{ color:#1E293B; margin-bottom:14px; font-size:15px; }
-
-.badges-row{
-display:flex;
-gap:16px;
-overflow-x:auto;
-padding-bottom:4px;
-}
-
-.badge{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:6px;
-flex-shrink:0;
-font-size:26px;
-min-width:60px;
-text-align:center;
-}
-
-.badge span{ font-size:10px; color:#64748B; }
-.badge.locked{ opacity:.4; }

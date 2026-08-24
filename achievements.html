@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Achievements - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="achievements.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="home.html" class="back-btn" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Achievements</p>
+    </div>
+
+    <!-- achievements.js fills these two in based on how many are unlocked -->
+    <div class="overview-card">
+      <p class="overview-title" id="overview-title">—</p>
+      <div class="overview-track">
+        <div class="overview-fill" id="overview-fill"></div>
+      </div>
+    </div>
+
+    <!-- achievements.js builds one card per achievement in here -->
+    <div class="achievement-list" id="achievement-list"></div>
+
+  </div>
+
+  <script src="achievements.js"></script>
+</body>
+</html>

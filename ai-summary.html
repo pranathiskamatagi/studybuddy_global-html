@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Summary - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="ai-summary.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <p class="kicker">AI</p>
+    <div class="request-badge">Give me mind map and summary</div>
+
+    <!-- Shown briefly while ai-summary.js "generates" the content below -->
+    <div id="loading-view">
+      <div class="spinner" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path><circle cx="12" cy="12" r="4"></circle></svg>
+      </div>
+      <p class="loading-text">Generating your summary...</p>
+    </div>
+
+    <!-- Hidden until the "generation" finishes -->
+    <div id="result-view" hidden>
+      <h2 class="section-heading">Mind map</h2>
+      <div class="mindmap">
+        <div class="mindmap-central" id="mindmap-topic">Topic</div>
+        <div class="mindmap-trunk" aria-hidden="true"></div>
+        <div class="mindmap-branches" id="mindmap-branches">
+          <div class="branch-wrap"><div class="branch-node">Main definitions</div></div>
+          <div class="branch-wrap"><div class="branch-node">Real-world examples</div></div>
+          <div class="branch-wrap"><div class="branch-node">Common mistakes to avoid</div></div>
+        </div>
+      </div>
+
+      <h2 class="section-heading">Summary</h2>
+      <div class="summary-card">
+        <ul class="summary-list" id="summary-list"></ul>
+      </div>
+
+      <!-- Saves this topic to localStorage (see ai-summary.js) so it
+           shows up later on the Saved screen. -->
+      <button type="button" id="save-btn" class="save-summary-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"></path></svg>
+        <span id="save-btn-text">Save this summary</span>
+      </button>
+    </div>
+
+    <button type="button" id="back-btn" class="home-link-btn">Back to session end</button>
+  </div>
+
+  <script src="ai-summary.js"></script>
+</body>
+</html>

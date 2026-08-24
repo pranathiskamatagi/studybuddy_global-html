@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Match Found - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="match-found.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <p class="kicker">Match found!</p>
+
+    <!-- match-found.js fills in a randomly-picked partner's initial,
+         name, and rating here on page load. -->
+    <div class="partner-avatar" id="partner-avatar" aria-hidden="true"></div>
+    <h1 class="title" id="partner-name">—</h1>
+    <p class="partner-rating" id="partner-rating"></p>
+
+    <p class="match-desc" id="match-desc">You're all set to connect.</p>
+
+    <div class="tag-row">
+      <span class="tag" id="tag-subject"></span>
+      <span class="tag" id="tag-level"></span>
+      <span class="tag" id="tag-country"></span>
+    </div>
+
+    <button type="button" id="start-session-btn" class="start-btn">
+      Start Session
+      <span class="arrow">→</span>
+    </button>
+
+    <button type="button" id="find-other-btn" class="other-link">Find someone else</button>
+  </div>
+
+  <script src="match-found.js"></script>
+</body>
+</html>

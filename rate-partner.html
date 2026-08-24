@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ratings - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="rate-partner.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <!-- ============ RATING VIEW ============ -->
+    <div id="rating-view">
+      <p class="kicker">Ratings</p>
+      <h1 class="title">Rate your partner</h1>
+
+      <!-- rate-partner.js fills these in from the URL, passed along by
+           session-end.js: partner name, country, and the topic they helped with. -->
+      <div class="summary-box">
+        <p class="summary-line" id="summary-name-country">—</p>
+        <p class="summary-line summary-topic" id="summary-topic">—</p>
+      </div>
+
+      <div class="star-row" id="star-row">
+        <button type="button" class="star-btn" data-value="1" aria-label="1 star">★</button>
+        <button type="button" class="star-btn" data-value="2" aria-label="2 stars">★</button>
+        <button type="button" class="star-btn" data-value="3" aria-label="3 stars">★</button>
+        <button type="button" class="star-btn" data-value="4" aria-label="4 stars">★</button>
+        <button type="button" class="star-btn" data-value="5" aria-label="5 stars">★</button>
+      </div>
+
+      <div class="field">
+        <label for="comment">Comment</label>
+        <textarea id="comment" rows="3" placeholder="Type here"></textarea>
+      </div>
+
+      <p class="badge-label">Give your partner a badge</p>
+      <div class="badge-list" id="badge-list">
+        <button type="button" class="badge-option" data-badge="Great Explainer">🌟 Great Explainer</button>
+        <button type="button" class="badge-option" data-badge="Patient">🙌 Patient</button>
+        <button type="button" class="badge-option" data-badge="Well Prepared">📚 Well Prepared</button>
+      </div>
+
+      <!-- Clicking this reveals a text input so someone can type a badge
+           name that isn't one of the 3 presets above. -->
+      <button type="button" id="choose-own-btn" class="choose-own-btn">Choose my own</button>
+      <input type="text" id="custom-badge-input" class="custom-badge-input" placeholder="Type your own badge..." hidden />
+
+      <p id="rate-error" class="form-error" hidden></p>
+
+      <button type="button" id="submit-rating-btn" class="submit-btn">Submit rating</button>
+    </div>
+
+    <!-- ============ CONFIRMATION VIEW ============ -->
+    <div id="confirmation-view" hidden>
+      <div class="success-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+      </div>
+      <h1 class="title">Thanks for rating!</h1>
+      <p class="confirmation-detail" id="confirmation-detail">—</p>
+      <p class="points-earned">+10 points earned</p>
+      <button type="button" id="continue-btn" class="submit-btn">Back to Home</button>
+    </div>
+  </div>
+
+  <script src="rate-partner.js"></script>
+</body>
+</html>
