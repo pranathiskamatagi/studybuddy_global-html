@@ -10,40 +10,90 @@ document.addEventListener('DOMContentLoaded', () => {
   const color = params.get('color') || 'blue';
   const country = params.get('country') || '';
   const flag = params.get('flag') || '';
+  const sessionId = params.get('sessionId') || '';
 
-  if (!topic) {
+  // A real AI summary needs a real session (a real chat transcript to
+  // read) - reaching this page without one only happens from a stale
+  // link, so send them home instead of showing anything fake.
+  if (!topic || !sessionId) {
     window.location.href = 'home.html';
     return;
   }
 
-  // ---------------------------------------------------------------
-  // IMPORTANT: there's no AI backend yet (see the memory saved about
-  // this) - a real version would send the chat transcript to an AI API
-  // and get back a genuinely tailored mind map and summary. For now,
-  // we show realistic-looking PLACEHOLDER content after a short fake
-  // "generating" delay, so the screen itself is fully built and ready
-  // to wire up to a real API later.
-  // ---------------------------------------------------------------
-  document.getElementById('mindmap-topic').textContent = topic;
+  const loadingView = document.getElementById('loading-view');
+  const resultView = document.getElementById('result-view');
+  const unavailableView = document.getElementById('unavailable-view');
 
-  const summaryPoints = [
-    `You covered the core building blocks and terminology of ${topic}.`,
-    'Worked through real-world examples to reinforce the key ideas.',
-    'Talked through common mistakes and how to avoid them.',
-    'Wrapped up with a quick recap of the main takeaways.',
-  ];
+  function renderMindMap(centralTopic, branches, summaryPoints) {
+    document.getElementById('mindmap-topic').textContent = centralTopic;
 
-  const summaryListEl = document.getElementById('summary-list');
-  summaryPoints.forEach((point) => {
-    const li = document.createElement('li');
-    li.textContent = point;
-    summaryListEl.appendChild(li);
-  });
+    // Older cached summaries (generated before branches gained a real
+    // "detail" explanation) still have the old shape - a plain string,
+    // not {label, detail}. Normalize both shapes here so an already-
+    // cached summary still renders fine (just with no detail text)
+    // instead of breaking on branch.label being undefined.
+    const normalized = branches.map((b) => (typeof b === 'string' ? { label: b, detail: '' } : b));
 
-  setTimeout(() => {
-    document.getElementById('loading-view').hidden = true;
-    document.getElementById('result-view').hidden = false;
-  }, 1800);
+    // The tree diagram only has room for a short label per branch (the
+    // connecting lines are drawn assuming 3 short, roughly-equal-width
+    // boxes) - the REAL explanation for each one goes in the detail list
+    // below instead, which can be as long as it needs to be.
+    const branchesEl = document.getElementById('mindmap-branches');
+    branchesEl.innerHTML = '';
+    normalized.forEach((branch) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'branch-wrap';
+      const node = document.createElement('div');
+      node.className = 'branch-node';
+      node.textContent = branch.label;
+      wrap.appendChild(node);
+      branchesEl.appendChild(wrap);
+    });
+
+    const detailsEl = document.getElementById('branch-details');
+    detailsEl.innerHTML = '';
+    normalized.filter((branch) => branch.detail).forEach((branch) => {
+      const item = document.createElement('div');
+      item.className = 'branch-detail-item';
+      const label = document.createElement('p');
+      label.className = 'branch-detail-label';
+      label.textContent = branch.label;
+      const detail = document.createElement('p');
+      detail.className = 'branch-detail-text';
+      detail.textContent = branch.detail;
+      item.append(label, detail);
+      detailsEl.appendChild(item);
+    });
+
+    const summaryListEl = document.getElementById('summary-list');
+    summaryListEl.innerHTML = '';
+    summaryPoints.forEach((point) => {
+      const li = document.createElement('li');
+      li.textContent = point;
+      summaryListEl.appendChild(li);
+    });
+  }
+
+  // Ask the backend for a real Gemini-generated mind map/summary, based
+  // on what was actually said in this session's chat. Cached server-side,
+  // so revisiting this screen is instant and doesn't cost a second API call.
+  apiFetch(`/sessions/${sessionId}/summary`, { method: 'POST' })
+    .then((data) => {
+      loadingView.hidden = true;
+      if (!data.available) {
+        unavailableView.hidden = false;
+        return;
+      }
+      renderMindMap(data.centralTopic, data.branches, data.summaryPoints);
+      resultView.hidden = false;
+    })
+    .catch((error) => {
+      if (handleAuthError(error)) return;
+      loadingView.hidden = true;
+      unavailableView.hidden = false;
+      document.querySelector('.unavailable-text').textContent =
+        "Couldn't generate a summary right now: " + error.message;
+    });
 
   // ---------------------------------------------------------------
   // Save this summary + mind map so it shows up on the Saved screen.

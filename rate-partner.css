@@ -65,24 +65,25 @@ body {
 .star-row {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 22px;
+  padding: 18px 0;
 }
 .star-btn {
   background: none;
   border: none;
-  font-size: 34px;
+  font-size: 36px;
   line-height: 1;
-  color: #dfe6f7;
+  color: #e4e9f7;
   cursor: pointer;
   padding: 0;
-  transition: color 0.1s ease, transform 0.1s ease;
+  transition: color 0.15s ease, transform 0.15s ease;
 }
 .star-btn:hover {
   transform: scale(1.1);
 }
 .star-btn.filled {
-  color: #f5a623;
+  color: #ffb800;
 }
 
 /* ---------- Comment field ---------- */
@@ -147,7 +148,7 @@ body {
   border-color: #3f6fe0;
 }
 .badge-option.selected {
-  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  background: #3f6fe0;
   border-color: transparent;
   color: white;
 }
@@ -243,11 +244,11 @@ body {
   color: #56618a;
   line-height: 1.6;
   max-width: 280px;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 .points-earned {
-  font-size: 15px;
-  font-weight: 800;
-  color: #34c77b;
+  font-size: 16px;
+  font-weight: 700;
+  color: #3f6fe0;
   margin-bottom: 8px;
 }

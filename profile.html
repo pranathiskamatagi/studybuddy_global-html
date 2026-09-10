@@ -24,10 +24,10 @@
 
     <!-- ============ HEADER ============ -->
     <div class="profile-header">
-      <div class="profile-avatar avatar-blue" id="profile-avatar" aria-hidden="true">P</div>
-      <h1 class="profile-name" id="profile-name">Pranathi K</h1>
-      <p class="profile-meta" id="profile-meta">🇮🇳 India &middot; Grade 10 &middot; English</p>
-      <p class="profile-bio" id="profile-bio">Passionate about learning new things and helping others understand tricky topics.</p>
+      <div class="profile-avatar avatar-blue" id="profile-avatar" aria-hidden="true">•</div>
+      <h1 class="profile-name" id="profile-name">—</h1>
+      <p class="profile-meta" id="profile-meta">—</p>
+      <p class="profile-bio" id="profile-bio"></p>
     </div>
 
     <!-- ============ STATS (same card style as home.html) ============ -->
@@ -38,7 +38,7 @@
         </div>
         <div>
           <p class="stat-label">Badges</p>
-          <p class="stat-value">3</p>
+          <p class="stat-value" id="stat-badges">—</p>
         </div>
       </div>
       <div class="stat-card">
@@ -47,16 +47,16 @@
         </div>
         <div>
           <p class="stat-label">Rating</p>
-          <p class="stat-value">4.9</p>
+          <p class="stat-value" id="stat-rating">—</p>
         </div>
       </div>
       <div class="stat-card">
-        <div class="icon-badge badge-green">
-          <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"></path></svg>
+        <div class="icon-badge badge-gold">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="9" fill="white" stroke="none"></circle><text x="12" y="16.5" font-size="12" font-weight="800" text-anchor="middle" fill="#d18e00">$</text></svg>
         </div>
         <div>
-          <p class="stat-label">Points</p>
-          <p class="stat-value">2,450</p>
+          <p class="stat-label">Coins</p>
+          <p class="stat-value" id="stat-points">—</p>
         </div>
       </div>
     </div>
@@ -64,31 +64,20 @@
     <!-- ============ TOPICS LEARNT ============ -->
     <section class="profile-section">
       <p class="section-heading">Topics learnt</p>
-      <div class="chip-row">
-        <span class="chip">Organic Chemistry</span>
-        <span class="chip">World History</span>
-        <span class="chip">Calculus</span>
-        <span class="chip">Spanish</span>
-      </div>
+      <!-- profile.js fills this with real chips, or an empty-state note -->
+      <div class="chip-row" id="topics-learnt-row"></div>
     </section>
 
     <!-- ============ TOPICS TAUGHT ============ -->
     <section class="profile-section">
       <p class="section-heading">Topics taught</p>
-      <div class="chip-row">
-        <span class="chip chip-teach">Python Basics</span>
-        <span class="chip chip-teach">Public Speaking</span>
-      </div>
+      <div class="chip-row" id="topics-taught-row"></div>
     </section>
 
     <!-- ============ BADGES EARNED ============ -->
     <section class="profile-section">
       <p class="section-heading">Badges earned</p>
-      <div class="chip-row">
-        <span class="chip chip-badge">🌟 Great Explainer</span>
-        <span class="chip chip-badge">🙌 Patient</span>
-        <span class="chip chip-badge">📚 Well Prepared</span>
-      </div>
+      <div class="chip-row" id="badges-row"></div>
     </section>
 
     <!-- ============ QUICK LINKS ============ -->
@@ -127,6 +116,8 @@
   </div>
 
   <script src="confirm-modal.js"></script>
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
   <script src="profile.js"></script>
 </body>
 </html>

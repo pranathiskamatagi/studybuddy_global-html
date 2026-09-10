@@ -14,30 +14,45 @@
 
   <div class="app-screen">
 
-    <p class="kicker">Match found!</p>
+    <div id="found-view">
+      <div class="top-row">
+        <button type="button" id="back-btn" class="back-btn" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+        </button>
+      </div>
 
-    <!-- match-found.js fills in a randomly-picked partner's initial,
-         name, and rating here on page load. -->
-    <div class="partner-avatar" id="partner-avatar" aria-hidden="true"></div>
-    <h1 class="title" id="partner-name">—</h1>
-    <p class="partner-rating" id="partner-rating"></p>
+      <p class="kicker">Match found!</p>
 
-    <p class="match-desc" id="match-desc">You're all set to connect.</p>
+      <!-- match-found.js fills in a real matched person's initial,
+           name, and rating here on page load. -->
+      <div class="partner-avatar" id="partner-avatar" aria-hidden="true"></div>
+      <h1 class="title" id="partner-name">—</h1>
+      <p class="partner-rating" id="partner-rating"></p>
 
-    <div class="tag-row">
-      <span class="tag" id="tag-subject"></span>
-      <span class="tag" id="tag-level"></span>
-      <span class="tag" id="tag-country"></span>
+      <p class="match-desc" id="match-desc">You're all set to connect.</p>
+
+      <div class="tag-row">
+        <span class="tag" id="tag-subject"></span>
+        <span class="tag" id="tag-country"></span>
+      </div>
+
+      <!-- match-found.js fills this in from the backend's real scoring
+           reason (matching.py) when there is one - hidden otherwise,
+           never a made-up explanation. -->
+      <p class="match-reason" id="match-reason" hidden></p>
+
+      <button type="button" id="start-session-btn" class="start-btn">
+        Start Session
+        <span class="arrow">→</span>
+      </button>
+
+      <button type="button" id="find-other-btn" class="other-link">Find someone else</button>
     </div>
-
-    <button type="button" id="start-session-btn" class="start-btn">
-      Start Session
-      <span class="arrow">→</span>
-    </button>
-
-    <button type="button" id="find-other-btn" class="other-link">Find someone else</button>
   </div>
 
-  <script src="match-found.js"></script>
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
+  <script src="sound.js"></script>
+  <script src="match-found.js?v=3"></script>
 </body>
 </html>

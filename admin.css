@@ -1,0 +1,150 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eefb;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-screen {
+  width: 400px;
+  min-height: 460px;
+  background: linear-gradient(180deg, #eef3fc 0%, #ffffff 40%);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.18);
+  padding: 28px 28px 36px;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #3f6fe0;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 6px;
+}
+.subtitle {
+  font-size: 12.5px;
+  color: #8892b3;
+  margin-bottom: 22px;
+}
+
+.admin-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.admin-stat {
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 14px;
+  padding: 12px 14px;
+  text-align: center;
+}
+.admin-stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1b2340;
+}
+.admin-stat-label {
+  font-size: 11px;
+  color: #8892b3;
+  margin-top: 2px;
+}
+.pending-count {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: white;
+  background: #e0453f;
+  padding: 1px 7px;
+  border-radius: 999px;
+  margin-left: 4px;
+}
+
+.settings-group {
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.link-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f1f4fc;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1b2340;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+}
+.link-row:last-child {
+  border-bottom: none;
+}
+.link-arrow {
+  width: 16px;
+  height: 16px;
+  color: #a7b0cc;
+}
+
+/* ---------- Small reusable "Admin" badge, used across chat/leaderboard/profile ---------- */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #7a3d00;
+  background: linear-gradient(90deg, #ffe4ac, #ffd166);
+  padding: 2px 8px;
+  border-radius: 999px;
+  vertical-align: middle;
+}

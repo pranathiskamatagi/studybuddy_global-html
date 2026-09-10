@@ -30,6 +30,42 @@ body {
   text-align: center;
 }
 
+/* #found-view wraps the content so it gets the SAME flex-centering
+   .app-screen would have given its children directly, or things like the
+   avatar circle (a block-level box) lose their centering and drift to
+   the left. */
+#found-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* ---------- Top row: back button ---------- */
+.top-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 12px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  box-shadow: 0 6px 16px rgba(30, 41, 90, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b2340;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.back-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 .kicker {
   font-size: 13px;
   font-weight: 700;
@@ -96,6 +132,19 @@ body {
   background: #eaf0fd;
   padding: 6px 14px;
   border-radius: 999px;
+}
+
+/* ---------- "Why you matched" ---------- */
+.match-reason {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #21a866;
+  background: #eafaf1;
+  padding: 10px 16px;
+  border-radius: 12px;
+  max-width: 280px;
+  line-height: 1.5;
+  margin-bottom: 24px;
 }
 
 /* ---------- Buttons ---------- */

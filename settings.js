@@ -14,9 +14,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------------------------------------------------------------
-  // Placeholder account links
+  // Sound effects - a REAL preference now (see sound.js), not just a
+  // visual switch. Loads whatever was saved last, and saves again every
+  // time it's flipped.
   // ---------------------------------------------------------------
-  document.querySelectorAll('.link-row').forEach((row) => {
+  const soundToggle = document.getElementById('toggle-sound');
+  soundToggle.checked = soundEnabled();
+  soundToggle.addEventListener('change', (event) => {
+    setSoundEnabled(event.target.checked);
+    if (event.target.checked) playPointsSound(); // a quick sample so it's obvious it's on
+  });
+
+  // ---------------------------------------------------------------
+  // Placeholder account links - "Change password" and "Blocked users"
+  // are real pages now, so they're excluded here and left to just
+  // navigate normally via their own href.
+  // ---------------------------------------------------------------
+  document.querySelectorAll('.link-row:not(#change-password-link):not(#blocked-users-link)').forEach((row) => {
     row.addEventListener('click', () => {
       alert(`${row.dataset.action} isn't built yet.`);
     });

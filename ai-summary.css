@@ -84,6 +84,15 @@ body {
   color: #8892b3;
 }
 
+/* ---------- Unavailable state (not enough real chat yet) ---------- */
+.unavailable-text {
+  font-size: 13.5px;
+  color: #56618a;
+  line-height: 1.7;
+  text-align: center;
+  padding: 40px 8px;
+}
+
 /* ---------- Section headings ---------- */
 .section-heading {
   font-size: 15px;
@@ -158,6 +167,35 @@ body {
   font-weight: 600;
   color: #1b2340;
   text-align: center;
+}
+
+/* ---------- Branch details ---------- */
+/* The real substance behind each short branch label above - as long as
+   it needs to be, the page just scrolls (this is a plain vertical list,
+   not constrained by the tree diagram's connector-line math). */
+.branch-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.branch-detail-item {
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.branch-detail-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #3f6fe0;
+  margin: 0 0 4px;
+}
+.branch-detail-text {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #1b2340;
+  margin: 0;
 }
 
 /* ---------- Summary ---------- */

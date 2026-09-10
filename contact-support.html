@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Support - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="contact-support.css" />
+  <link rel="stylesheet" href="points-popup.css?v=4" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="help-support.html" class="back-btn" id="back-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Help &amp; Support</p>
+    </div>
+
+    <div id="form-view">
+      <h1 class="title">Contact support</h1>
+      <p class="subtitle">Tell us what's going on and we'll take a look.</p>
+
+      <form id="support-form" novalidate>
+        <div class="field">
+          <label for="message">What do you need help with?</label>
+          <textarea id="message" rows="6" placeholder="Describe the issue..." required></textarea>
+        </div>
+
+        <p id="form-error" class="form-error" hidden></p>
+
+        <button type="submit" class="save-btn">Send message</button>
+      </form>
+    </div>
+
+    <div id="sent-view" hidden>
+      <div class="success-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+      </div>
+      <h1 class="title center">Message sent</h1>
+      <p class="subtitle center">Thanks for reaching out - we'll get back to you as soon as we can.</p>
+      <button type="button" id="done-btn" class="save-btn">Done</button>
+    </div>
+
+  </div>
+
+  <script src="api.js?v=5"></script>
+  <script src="sound.js"></script>
+  <script src="points-popup.js"></script>
+  <script src="contact-support.js"></script>
+</body>
+</html>

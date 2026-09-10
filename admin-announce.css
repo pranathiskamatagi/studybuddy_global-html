@@ -1,0 +1,55 @@
+.field {
+  margin-bottom: 18px;
+}
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 8px;
+}
+.field textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #1b2340;
+  outline: none;
+  resize: none;
+  transition: border-color 0.15s ease;
+}
+.field textarea:focus {
+  border-color: #3f6fe0;
+}
+
+.form-error {
+  color: #e0453f;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.save-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.save-btn:hover {
+  transform: translateY(-2px);
+}
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}

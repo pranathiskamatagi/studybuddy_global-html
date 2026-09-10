@@ -1,0 +1,70 @@
+.app-screen {
+  min-height: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.report-row {
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.report-row.open {
+  border-color: #f7c9c6;
+  background: #fdeceb;
+}
+.report-row.resolved {
+  opacity: 0.6;
+}
+.report-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.report-names {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1b2340;
+}
+.report-time {
+  font-size: 11px;
+  color: #a7b0cc;
+  margin-top: 4px;
+}
+.resolve-btn {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #1fb87e;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.resolve-btn:hover {
+  border-color: #1fb87e;
+  background: #eafff5;
+}
+.view-chat-link {
+  font-size: 12px;
+  font-weight: 700;
+  color: #3f6fe0;
+  text-decoration: none;
+}
+
+.empty-note {
+  text-align: center;
+  color: #a7b0cc;
+  font-size: 13px;
+  margin-top: 40px;
+}

@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  if (!requireLogin()) return;
+
   // ---------------------------------------------------------------
   // The subject -> topics relationship, in one place.
   // ---------------------------------------------------------------
@@ -17,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const subjectInput = document.getElementById('subject');
   const topicInput = document.getElementById('topic');
-  const levelInput = document.getElementById('level');
   const subjectOptions = document.getElementById('subject-options');
   const topicOptions = document.getElementById('topic-options');
   const form = document.getElementById('choose-form');
@@ -103,6 +104,29 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('recommended-chips').addEventListener('click', handleChipClick);
 
   // ---------------------------------------------------------------
+  // FEATURE 2b: "Recent searches" - this user's REAL past learn
+  // searches, not a hardcoded example row. Stays hidden entirely if
+  // they've never searched for anything yet, rather than show fake
+  // suggestions that were never actually theirs.
+  // ---------------------------------------------------------------
+  apiFetch('/help-requests/recent?mode=learn')
+    .then((data) => {
+      if (!data.recent.length) return; // stays hidden - nothing real yet
+      const recentChipsEl = document.getElementById('recent-chips');
+      data.recent.forEach((r) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip';
+        chip.dataset.subject = r.subject || '';
+        chip.dataset.topic = r.topic;
+        chip.textContent = r.topic;
+        recentChipsEl.appendChild(chip);
+      });
+      document.getElementById('recent-section').hidden = false;
+    })
+    .catch(() => {}); // stays hidden rather than show a broken-looking section
+
+  // ---------------------------------------------------------------
   // FEATURE 3: Validate and continue to the matching screen
   // ---------------------------------------------------------------
   form.addEventListener('submit', (event) => {
@@ -111,21 +135,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // .trim() strips leading/trailing spaces, so someone typing just
     // spaces can't sneak past this check as "not empty".
-    if (!subjectInput.value.trim() || !topicInput.value.trim() || !levelInput.value.trim()) {
-      errorMessage.textContent = 'Please fill in a subject, topic, and level to continue.';
+    if (!subjectInput.value.trim() || !topicInput.value.trim()) {
+      errorMessage.textContent = 'Please fill in a subject and topic to continue.';
       errorMessage.hidden = false;
       return;
     }
 
-    // Reuse the SAME connecting.html screen we built for the Home page's
-    // Join / Help her buttons - but this time we pass THREE separate
-    // pieces of info (subject, topic, level) instead of just one.
-    const params = new URLSearchParams({
-      subject: subjectInput.value.trim(),
-      topic: topicInput.value.trim(),
-      level: levelInput.value.trim(),
-    });
-    window.location.href = 'connecting.html?' + params.toString();
+    // Also post a real community request (shows up as a "Help me" card
+    // on OTHER people's Home/Connect). Its real id gets carried through
+    // to connecting.html (see requestId below) so clicking Cancel there
+    // can withdraw it again, instead of it sitting there looking active
+    // after the person's already given up on it.
+    apiFetch('/help-requests', {
+      method: 'POST',
+      body: JSON.stringify({
+        mode: 'learn',
+        subject: subjectInput.value.trim(),
+        topic: topicInput.value.trim(),
+      }),
+    })
+      .then((data) => {
+        const params = new URLSearchParams({
+          subject: subjectInput.value.trim(),
+          topic: topicInput.value.trim(),
+          mode: 'learn',
+          requestId: data.request.id,
+        });
+        window.location.href = 'connecting.html?' + params.toString();
+      })
+      .catch((error) => {
+        console.warn('Could not post a community request:', error.message);
+        // Posting the request failing shouldn't block the actual search -
+        // just continue without a requestId to cancel later.
+        const params = new URLSearchParams({
+          subject: subjectInput.value.trim(),
+          topic: topicInput.value.trim(),
+          mode: 'learn',
+        });
+        window.location.href = 'connecting.html?' + params.toString();
+      });
   });
 
 });

@@ -45,6 +45,9 @@ body {
   align-items: center;
   gap: 10px;
 }
+.chat-partner.clickable {
+  cursor: pointer;
+}
 .partner-avatar-sm {
   width: 40px;
   height: 40px;
@@ -164,12 +167,70 @@ body {
   flex-direction: column;
   gap: 10px;
 }
+.typing-indicator {
+  padding: 0 20px 8px;
+  font-size: 12px;
+  font-style: italic;
+  color: #8892b3;
+}
 .msg {
+  position: relative; /* anchors .msg-delete-btn to THIS bubble, not the page */
   max-width: 75%;
   padding: 11px 15px;
   border-radius: 16px;
   font-size: 14px;
   line-height: 1.45;
+  /* Without this, one long unbroken "word" (no spaces to wrap at)
+     stretches the bubble past max-width instead of wrapping, which
+     forces the whole chat into an unwanted horizontal scrollbar. */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+/* Only shown for messages YOU sent (see session.js) - tucked into the
+   corner and only visible on hover, so it doesn't clutter every bubble
+   all the time. */
+.msg-delete-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: #8892b3;
+  box-shadow: 0 2px 6px rgba(30, 41, 90, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.msg-delete-btn svg {
+  width: 12px;
+  height: 12px;
+}
+.msg:hover .msg-delete-btn {
+  opacity: 1;
+}
+.msg-delete-btn:hover {
+  color: #e5484d;
+}
+/* The "This message was deleted" placeholder a deleted bubble becomes -
+   distinct (italic, muted) from a real message, same idea as WhatsApp's
+   own deleted-message styling. */
+.msg-deleted-text {
+  font-style: italic;
+  opacity: 0.7;
+}
+.msg p {
+  /* Plain text with real newlines in it (e.g. someone pasting a
+     multi-paragraph AI answer) collapses them by default - a message
+     with real line breaks should still LOOK like it has line breaks,
+     not read as one dense run-on paragraph. pre-wrap keeps normal
+     wrapping too, unlike plain "pre". */
+  white-space: pre-wrap;
 }
 .msg-received {
   align-self: flex-start;
@@ -182,6 +243,46 @@ body {
   background: linear-gradient(90deg, #3f6fe0, #34c77b);
   color: white;
   border-bottom-right-radius: 4px;
+}
+/* WhatsApp-style tick marks - a plain "✓" once sent, brightened to
+   "✓✓" once the partner's real read state (see sockets.py's
+   'read_receipt') has caught up to this exact message. */
+.msg-tick {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: -1px;
+}
+/* Needs to be UNMISTAKABLY different from the unread color above, not
+   just a slightly different light shade - the message bubble itself is
+   already a blue-green gradient, so a pale blue tick barely stood out
+   against it. A warm gold reads clearly as "different" against both
+   ends of that gradient. */
+.msg-tick.tick-read {
+  color: #ffd54f;
+  font-weight: 700;
+}
+.msg-image {
+  padding: 6px; /* a thinner frame around the photo than a text bubble */
+}
+.msg-image img {
+  display: block;
+  max-width: 100%;
+  max-height: 320px;
+  border-radius: 11px;
+  object-fit: cover;
+}
+
+/* A small centered line - "X left"/distraction nudges, distinct from a
+   real chat bubble since nobody actually said this, the app did. */
+.system-notice {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8892b3;
+  margin: 10px 0;
 }
 
 /* ---------- Typing indicator ---------- */
@@ -218,7 +319,10 @@ body {
 .chat-input-row {
   flex-shrink: 0;
   display: flex;
-  align-items: center;
+  /* flex-end, not center - once the textarea grows past one line, the
+     icon/send buttons should stay pinned to the bottom, not float in
+     the vertical middle of a now-taller row. */
+  align-items: flex-end;
   gap: 8px;
   padding: 14px 16px;
   border-top: 1px solid #eef1fb;
@@ -243,18 +347,24 @@ body {
 .input-icon-btn:hover {
   color: #3f6fe0;
 }
-.chat-input-row input {
+.chat-input-row textarea {
   flex: 1;
   border: none;
   background: #f5f7fc;
-  border-radius: 999px;
-  padding: 12px 16px;
+  /* A single line still looks like a pill; session.js caps growth at
+     MAX_INPUT_HEIGHT so it never gets so tall this radius looks odd. */
+  border-radius: 20px;
+  padding: 10px 16px;
   font-family: inherit;
   font-size: 14px;
+  line-height: 1.4;
   color: #1b2340;
   outline: none;
+  resize: none; /* the auto-grow in session.js replaces the manual drag-handle */
+  max-height: 120px;
+  overflow-y: auto;
 }
-.chat-input-row input::placeholder {
+.chat-input-row textarea::placeholder {
   color: #a7b0cc;
 }
 .send-btn {

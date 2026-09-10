@@ -48,8 +48,81 @@ body {
 .group-avatar-stack {
   display: flex;
   flex-shrink: 0;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* ---------- Members overlay ---------- */
+.members-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 305;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(27, 35, 64, 0.35);
+}
+.members-card {
+  width: 320px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+}
+.members-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.members-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1b2340;
+}
+.members-close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #f1f4fc;
+  color: #56618a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.members-close-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.member-list-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.member-row:hover {
+  background: #f5f8fe;
+}
+.member-row-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1b2340;
 }
 .group-avatar-stack .mini-avatar {
+  position: relative;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -61,9 +134,42 @@ body {
   font-size: 12px;
   font-weight: 700;
   margin-left: -10px;
+  /* No overflow:hidden here - the presence dot below needs to sit
+     outside the circle without getting clipped. The photo is clipped by
+     giving the <img> itself the same border-radius instead. */
+}
+.group-avatar-stack .mini-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+/* A real "online right now" signal (see app/sockets.py's presence
+   tracking) - same idea as home.css/leaderboard.css's version. */
+.presence-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #34c77b;
+  border: 2px solid white;
+}
+.group-avatar-stack .mini-avatar .presence-dot {
+  width: 9px;
+  height: 9px;
 }
 .group-avatar-stack .mini-avatar:first-child {
   margin-left: 0;
+}
+/* The "+N" badge for members past MAX_VISIBLE_AVATARS - a neutral color
+   (not one of the per-person avatar-* gradients) so it visually reads as
+   "more people," not as one specific person. */
+.mini-avatar-overflow {
+  background: #8892b3;
+  font-size: 11px;
+  cursor: default;
 }
 .avatar-blue   { background: linear-gradient(135deg, #4f7de0, #3f6fe0); }
 .avatar-green  { background: linear-gradient(135deg, #34c77b, #21a866); }
@@ -174,12 +280,67 @@ body {
   flex-direction: column;
   gap: 10px;
 }
+.typing-indicator {
+  padding: 0 20px 8px;
+  font-size: 12px;
+  font-style: italic;
+  color: #8892b3;
+}
 .msg {
+  position: relative; /* anchors .msg-delete-btn to THIS bubble, not the page */
   max-width: 75%;
   padding: 11px 15px;
   border-radius: 16px;
   font-size: 14px;
   line-height: 1.45;
+  /* Without this, one long unbroken "word" (no spaces to wrap at)
+     stretches the bubble past max-width instead of wrapping, which
+     forces the whole chat into an unwanted horizontal scrollbar. */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+/* Only shown for messages YOU sent (see group-chat.js) - tucked into the
+   corner and only visible on hover. */
+.msg-delete-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: #8892b3;
+  box-shadow: 0 2px 6px rgba(30, 41, 90, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.msg-delete-btn svg {
+  width: 12px;
+  height: 12px;
+}
+.msg:hover .msg-delete-btn {
+  opacity: 1;
+}
+.msg-delete-btn:hover {
+  color: #e5484d;
+}
+/* The "This message was deleted" placeholder a deleted bubble becomes. */
+.msg-deleted-text {
+  font-style: italic;
+  opacity: 0.7;
+}
+.msg p {
+  /* Plain text with real newlines in it (e.g. someone pasting a
+     multi-paragraph AI answer) collapses them by default - a message
+     with real line breaks should still LOOK like it has line breaks,
+     not read as one dense run-on paragraph. pre-wrap keeps normal
+     wrapping too, unlike plain "pre". */
+  white-space: pre-wrap;
 }
 .msg-received {
   align-self: flex-start;
@@ -195,11 +356,51 @@ body {
   color: #3f6fe0;
   margin-bottom: 3px;
 }
+
+/* A small centered line for "X left the group" - distinct from a real
+   chat bubble since nobody actually said this, the system announced it. */
+.system-notice {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8892b3;
+  margin: 10px 0;
+}
 .msg-sent {
   align-self: flex-end;
   background: linear-gradient(90deg, #3f6fe0, #34c77b);
   color: white;
   border-bottom-right-radius: 4px;
+}
+.msg-image {
+  padding: 6px; /* a thinner frame around the photo than a text bubble */
+}
+.msg-image img {
+  display: block;
+  max-width: 100%;
+  max-height: 320px;
+  border-radius: 11px;
+  object-fit: cover;
+}
+/* WhatsApp-style tick marks - "✓" once sent, "✓✓" (highlighted) only
+   once EVERY other current member has read this far (see group-chat.js's
+   isReadByEveryone). */
+.msg-tick {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: -1px;
+}
+/* Needs to be UNMISTAKABLY different from the unread color above, not
+   just a slightly different light shade - the message bubble itself is
+   already a blue-green gradient, so a pale blue tick barely stood out
+   against it. A warm gold reads clearly as "different" against both
+   ends of that gradient. */
+.msg-tick.tick-read {
+  color: #ffd54f;
+  font-weight: 700;
 }
 
 /* ---------- Typing indicator ---------- */
@@ -234,7 +435,10 @@ body {
 .chat-input-row {
   flex-shrink: 0;
   display: flex;
-  align-items: center;
+  /* flex-end, not center - once the textarea grows past one line, the
+     icon/send buttons should stay pinned to the bottom, not float in
+     the vertical middle of a now-taller row. */
+  align-items: flex-end;
   gap: 8px;
   padding: 14px 16px;
   border-top: 1px solid #eef1fb;
@@ -259,18 +463,24 @@ body {
 .input-icon-btn:hover {
   color: #3f6fe0;
 }
-.chat-input-row input {
+.chat-input-row textarea {
   flex: 1;
   border: none;
   background: #f5f7fc;
-  border-radius: 999px;
-  padding: 12px 16px;
+  /* A single line still looks like a pill; group-chat.js caps growth at
+     MAX_INPUT_HEIGHT so it never gets so tall this radius looks odd. */
+  border-radius: 20px;
+  padding: 10px 16px;
   font-family: inherit;
   font-size: 14px;
+  line-height: 1.4;
   color: #1b2340;
   outline: none;
+  resize: none; /* the auto-grow in group-chat.js replaces the manual drag-handle */
+  max-height: 120px;
+  overflow-y: auto;
 }
-.chat-input-row input::placeholder {
+.chat-input-row textarea::placeholder {
   color: #a7b0cc;
 }
 .send-btn {

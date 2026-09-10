@@ -95,8 +95,9 @@ body {
   padding: 16px;
   box-shadow: 0 8px 20px rgba(30, 41, 90, 0.05);
 }
-/* An unlocked achievement gets a solid gradient badge; a locked one
-   stays a flat gray so the difference is obvious at a glance. */
+/* Three states, each with its own look: locked (flat gray), claimable
+   (amber + a gentle pulse - the condition is met, come tap it), and
+   claimed (solid blue-green, same as the old "unlocked" look). */
 .achievement-icon {
   width: 44px;
   height: 44px;
@@ -110,12 +111,21 @@ body {
   width: 22px;
   height: 22px;
 }
-.achievement-card.unlocked .achievement-icon {
+.achievement-card.claimed .achievement-icon {
   background: linear-gradient(135deg, #3f6fe0, #34c77b);
 }
-.achievement-card:not(.unlocked) .achievement-icon {
+.achievement-card.claimable .achievement-icon {
+  background: linear-gradient(135deg, #f5a623, #ffcf5c);
+  color: white;
+  animation: achievement-pulse 1.6s ease-in-out infinite;
+}
+.achievement-card:not(.claimed):not(.claimable) .achievement-icon {
   background: #e2e7f5;
   color: #a7b0cc;
+}
+@keyframes achievement-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.35); }
+  50% { box-shadow: 0 0 0 7px rgba(245, 166, 35, 0); }
 }
 
 .achievement-body {
@@ -140,8 +150,11 @@ body {
   color: #8892b3;
   flex-shrink: 0;
 }
-.achievement-card.unlocked .achievement-fraction {
+.achievement-card.claimed .achievement-fraction {
   color: #34c77b;
+}
+.achievement-card.claimable .achievement-fraction {
+  color: #d98c0f;
 }
 .achievement-desc {
   font-size: 12px;
@@ -160,10 +173,11 @@ body {
   border-radius: 999px;
   transition: width 0.4s ease;
 }
-.achievement-card.unlocked .achievement-fill {
+.achievement-card.claimed .achievement-fill,
+.achievement-card.claimable .achievement-fill {
   background: linear-gradient(90deg, #3f6fe0, #34c77b);
 }
-.achievement-card:not(.unlocked) .achievement-fill {
+.achievement-card:not(.claimed):not(.claimable) .achievement-fill {
   background: #b9c6ea;
 }
 
@@ -178,4 +192,26 @@ body {
   padding: 4px 10px;
   border-radius: 999px;
   margin-top: 10px;
+}
+
+/* The claim button - only shown once the condition is actually met, same
+   amber as the pulsing icon so it reads as "the thing that's glowing". */
+.claim-btn {
+  display: block;
+  margin-top: 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(90deg, #f5a623, #ffcf5c);
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(245, 166, 35, 0.3);
+}
+.claim-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
 }

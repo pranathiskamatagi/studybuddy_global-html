@@ -47,31 +47,13 @@
         </div>
       </div>
 
-      <div class="field">
-        <!-- Same field as the "learn" flow, but the label makes clear
-             this is about what level YOU can teach at, not what you want. -->
-        <label for="level">Level you can teach</label>
-        <div class="select-wrap">
-          <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"></path></svg>
-          <input type="text" id="level" list="level-options" placeholder="Select or type a level" autocomplete="off" />
-          <datalist id="level-options">
-            <option value="Beginner"></option>
-            <option value="Intermediate"></option>
-            <option value="Advanced"></option>
-          </datalist>
-        </div>
-      </div>
-
       <!-- ============ RECENT SEARCHES (clickable chips) ============ -->
-      <div class="chip-section">
+      <!-- teach-subject.js fills this in with this user's REAL past
+           searches (from the backend) - hidden entirely until there's at
+           least one real one, never seeded with fake examples. -->
+      <div class="chip-section" id="recent-section" hidden>
         <p class="chip-heading">Recent searches</p>
-        <div class="chip-row" id="recent-chips">
-          <button type="button" class="chip" data-subject="Chemistry" data-topic="Organic Chemistry">Organic Chemistry</button>
-          <button type="button" class="chip" data-subject="Computer Science" data-topic="Web Development">Web Development</button>
-          <button type="button" class="chip" data-subject="History" data-topic="World History">World History</button>
-          <button type="button" class="chip" data-subject="Mathematics" data-topic="Calculus">Calculus</button>
-          <button type="button" class="chip" data-subject="Languages" data-topic="Spanish">Spanish</button>
-        </div>
+        <div class="chip-row" id="recent-chips"></div>
       </div>
 
       <!-- ============ RECOMMENDED (clickable chips) ============ -->
@@ -105,6 +87,8 @@
     </form>
   </div>
 
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
   <script src="teach-subject.js"></script>
 </body>
 </html>

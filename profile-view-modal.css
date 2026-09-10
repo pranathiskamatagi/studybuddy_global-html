@@ -1,0 +1,82 @@
+.profile-view-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 310;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(27, 35, 64, 0.35);
+}
+
+.profile-view-card {
+  position: relative;
+  width: 280px;
+  background: white;
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.25);
+}
+.profile-view-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #f1f4fc;
+  color: #56618a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.profile-view-close-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.profile-view-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  color: white;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+.profile-view-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 2px;
+}
+.profile-view-country {
+  font-size: 12.5px;
+  color: #8892b3;
+  margin-bottom: 12px;
+}
+.profile-view-bio {
+  font-size: 13px;
+  color: #3d476b;
+  line-height: 1.5;
+}
+
+/* Small reusable "Admin" badge - shown next to a name wherever it's
+   relevant (this popup, chat headers, the leaderboard). */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #7a3d00;
+  background: linear-gradient(90deg, #ffe4ac, #ffd166);
+  padding: 2px 8px;
+  border-radius: 999px;
+  vertical-align: middle;
+}

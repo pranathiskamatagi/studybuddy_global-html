@@ -1,0 +1,72 @@
+.app-screen {
+  min-height: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.rating-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rating-row {
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.rating-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.rating-names {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1b2340;
+}
+.rating-stars {
+  font-size: 12px;
+  color: #ffb800;
+}
+.rating-badge {
+  font-size: 12px;
+  color: #56618a;
+  margin-top: 2px;
+}
+.rating-comment {
+  font-size: 12.5px;
+  color: #3d476b;
+  font-style: italic;
+  margin-top: 4px;
+}
+.rating-time {
+  font-size: 11px;
+  color: #a7b0cc;
+  margin-top: 4px;
+}
+.remove-rating-btn {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #e0453f;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.remove-rating-btn:hover {
+  border-color: #e0453f;
+  background: #fdeceb;
+}
+
+.empty-note {
+  text-align: center;
+  color: #a7b0cc;
+  font-size: 13px;
+  margin-top: 40px;
+}

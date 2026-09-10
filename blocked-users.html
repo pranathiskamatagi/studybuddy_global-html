@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blocked Users - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="blocked-users.css" />
+  <link rel="stylesheet" href="confirm-modal.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="settings.html" class="back-btn" id="back-btn" aria-label="Back to settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Settings</p>
+    </div>
+
+    <h1 class="title">Blocked users</h1>
+    <p class="subtitle">They won't be able to message you, and you won't be matched with each other again.</p>
+
+    <!-- blocked-users.js builds one row per blocked user in here -->
+    <div class="block-list" id="block-list"></div>
+
+    <div class="empty-state" id="empty-state" hidden>
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M5 5l14 14"></path></svg>
+      </div>
+      <p class="empty-title" id="empty-title">Nobody's blocked</p>
+      <p class="empty-desc" id="empty-desc">Anyone you block will show up here.</p>
+    </div>
+
+  </div>
+
+  <script src="api.js?v=5"></script>
+  <script src="confirm-modal.js"></script>
+  <script src="blocked-users.js"></script>
+</body>
+</html>

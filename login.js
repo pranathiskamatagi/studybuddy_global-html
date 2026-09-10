@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------------------------------------------------------------
   // FEATURE 2: Validate and handle the login form
   // ---------------------------------------------------------------
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     errorMessage.hidden = true;
 
@@ -34,18 +34,32 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Same as signup.js - no real backend to check credentials against
-    // yet, but the flow itself takes you into the app like it should.
-    window.location.href = 'home.html';
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+
+    try {
+      const data = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: emailInput.value.trim(),
+          password: passwordInput.value,
+        }),
+      });
+
+      saveSession(data.token, data.user);
+      window.location.href = 'home.html';
+    } catch (error) {
+      errorMessage.textContent = error.message;
+      errorMessage.hidden = false;
+      submitBtn.disabled = false;
+    }
   });
 
   // ---------------------------------------------------------------
-  // FEATURE 2b: "Forgot password?" - not built yet
+  // FEATURE 2b: "Forgot password?" - real page now (forgot-password.html)
   // ---------------------------------------------------------------
-  document.querySelector('.forgot-link').addEventListener('click', (event) => {
-    event.preventDefault(); // stops the href="#" from jumping the page to the top
-    alert("Password reset isn't built yet - coming in a future update!");
-  });
+  // No click handler needed - see login.html, its href now points there
+  // directly instead of "#".
 
   // ---------------------------------------------------------------
   // FEATURE 3: Placeholder handlers for the Google/Apple buttons

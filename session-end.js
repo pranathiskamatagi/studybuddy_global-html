@@ -12,11 +12,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const country = params.get('country') || '';
   const flag = params.get('flag') || '';
   const minutes = params.get('minutes') || '0';
+  const sessionId = params.get('sessionId') || '';
+  const partnerId = params.get('partnerId') || '';
+  const pointsEarned = params.get('pointsEarned') || '';
+  const diamondEarned = params.get('diamondEarned') === '1';
 
   const summaryParts = [`${minutes} min`];
   if (topic) summaryParts.push(topic);
   document.getElementById('session-summary').textContent =
     summaryParts.join(' · ') + ` with ${partnerName}`;
+
+  if (pointsEarned) {
+    showPointsPopup(`+${pointsEarned} coins`, {
+      sub: diamondEarned ? 'Session complete! +1 💎 diamond too!' : 'Session complete!',
+    });
+  }
 
   // ---------------------------------------------------------------
   // "Want AI summaries" - shows a demo mind map + summary screen.
@@ -27,7 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Pass along EVERYTHING this page itself received, so ai-summary.js
     // can reconstruct this exact same session-end screen when the user
     // clicks its "Back" button - not just send them all the way to Home.
-    const aiParams = new URLSearchParams({ partner: partnerName, color: partnerColor, topic, country, flag, minutes });
+    // sessionId is what lets ai-summary.js call the real backend (a real
+    // session has real chat messages to actually summarize) instead of
+    // falling back to the placeholder template.
+    const aiParams = new URLSearchParams({ partner: partnerName, color: partnerColor, topic, country, flag, minutes, sessionId });
     window.location.href = 'ai-summary.html?' + aiParams.toString();
   });
 
@@ -42,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // "Rate your partner & give them a badge" - goes to its own screen
   // ---------------------------------------------------------------
   document.getElementById('rate-toggle-btn').addEventListener('click', () => {
-    const rateParams = new URLSearchParams({ partner: partnerName, color: partnerColor, topic, country, flag });
+    const rateParams = new URLSearchParams({ partner: partnerName, color: partnerColor, topic, country, flag, sessionId, partnerId });
     window.location.href = 'rate-partner.html?' + rateParams.toString();
   });
 

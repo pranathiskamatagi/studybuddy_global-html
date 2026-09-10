@@ -16,6 +16,11 @@
 
     <p class="kicker">Matching</p>
 
+    <!-- Only shown when arriving here because a real partner left mid-
+         session (session.js redirects here with ?left=<name>) - hidden
+         the rest of the time. -->
+    <p class="left-notice" id="left-notice" hidden></p>
+
     <!-- connecting.js fills these in from the URL's query string - either
          ?subject=...&topic=...&level=... (from Choose Subject) or a
          simpler ?with=... (from the Home page's Join / Help her buttons). -->
@@ -29,7 +34,7 @@
       <p class="topic-meta" id="topic-meta" hidden></p>
     </div>
 
-    <h1 class="title">Finding your match<span id="connect-dots"></span></h1>
+    <h1 class="title"><span id="connect-heading-text">Finding your match</span><span id="connect-dots"></span></h1>
 
     <!-- The illustration: a "You" avatar and a globe (since your match
          could be anywhere in the world), linked by a dashed line with a
@@ -47,11 +52,13 @@
       </div>
     </div>
 
-    <p class="reassurance">Matching you by subject, difficulty, and availability - not randomly.</p>
+    <p class="reassurance" id="connect-reassurance">Real people, real matches - we never fake this part.</p>
 
     <button type="button" class="cancel-btn" id="cancel-btn">Cancel</button>
   </div>
 
-  <script src="connecting.js"></script>
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
+  <script src="connecting.js?v=7"></script>
 </body>
 </html>

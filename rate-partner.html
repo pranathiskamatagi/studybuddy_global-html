@@ -8,7 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="rate-partner.css" />
+  <link rel="stylesheet" href="rate-partner.css?v=3" />
+  <link rel="stylesheet" href="points-popup.css?v=4" />
 </head>
 <body>
 
@@ -56,6 +57,33 @@
       <button type="button" id="submit-rating-btn" class="submit-btn">Submit rating</button>
     </div>
 
+    <!-- ============ LOW RATING FOLLOW-UP ============ -->
+    <!-- Only shown when the rating just submitted was 3 stars or under -
+         rate-partner.js decides that, this whole view is skippable. -->
+    <div id="low-rating-view" hidden>
+      <p class="kicker">Ratings</p>
+      <h1 class="title">What went wrong?</h1>
+      <p class="summary-line">This helps us understand what happened - totally optional.</p>
+
+      <div class="badge-list" id="feedback-reasons-list">
+        <button type="button" class="badge-option feedback-reason" data-reason="Partner was unprepared">Partner was unprepared</button>
+        <button type="button" class="badge-option feedback-reason" data-reason="Explanations weren't clear">Explanations weren't clear</button>
+        <button type="button" class="badge-option feedback-reason" data-reason="Partner seemed distracted">Partner seemed distracted</button>
+        <button type="button" class="badge-option feedback-reason" data-reason="Session felt rushed">Session felt rushed</button>
+        <button type="button" class="badge-option feedback-reason" data-reason="Technical issues (connection/audio)">Technical issues (connection/audio)</button>
+        <button type="button" class="badge-option feedback-reason" data-reason="Partner was disrespectful">Partner was disrespectful</button>
+        <button type="button" class="badge-option feedback-reason" data-reason="Other">Other</button>
+      </div>
+
+      <div class="field">
+        <label for="feedback-detail">Anything else? (optional)</label>
+        <textarea id="feedback-detail" rows="3" placeholder="Type here"></textarea>
+      </div>
+
+      <button type="button" id="submit-feedback-btn" class="submit-btn">Submit feedback</button>
+      <button type="button" id="skip-feedback-btn" class="choose-own-btn">Skip</button>
+    </div>
+
     <!-- ============ CONFIRMATION VIEW ============ -->
     <div id="confirmation-view" hidden>
       <div class="success-icon" aria-hidden="true">
@@ -63,11 +91,15 @@
       </div>
       <h1 class="title">Thanks for rating!</h1>
       <p class="confirmation-detail" id="confirmation-detail">—</p>
-      <p class="points-earned">+10 points earned</p>
-      <button type="button" id="continue-btn" class="submit-btn">Back to Home</button>
+      <p class="points-earned">+10 coins earned</p>
+      <button type="button" id="continue-btn" class="submit-btn">Continue</button>
     </div>
   </div>
 
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
+  <script src="sound.js"></script>
+  <script src="points-popup.js"></script>
   <script src="rate-partner.js"></script>
 </body>
 </html>

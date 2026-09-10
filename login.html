@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="login.css" />
+  <link rel="stylesheet" href="login.css?v=2" />
 </head>
 <body>
 
@@ -17,7 +17,9 @@
     <!-- Decorative globe circle, same trick as the signup page -->
     <div class="globe-decor"></div>
 
-    <div class="logo-box">LOGO</div>
+    <div class="logo-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.5 4 5.5 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.5-4-9s1.5-6.5 4-9z"></path></svg>
+    </div>
 
     <h1 class="title">Welcome <span class="accent">Back!</span></h1>
     <p class="subtitle">Log in to keep your streak going</p>
@@ -58,7 +60,7 @@
         </div>
       </div>
 
-      <a href="#" class="forgot-link">Forgot password?</a>
+      <a href="forgot-password.html" class="forgot-link">Forgot password?</a>
 
       <p id="form-error" class="form-error" hidden></p>
 
@@ -94,6 +96,7 @@
     <p class="signup-row">Don't have an account? <a href="signup.html">Sign up</a></p>
   </div>
 
+  <script src="api.js?v=5"></script>
   <script src="login.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  const STORAGE_KEY = 'studybuddy_profile';
+  if (!requireLogin()) return;
 
   const countries = [
     'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria',
@@ -26,10 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     'Venezuela','Vietnam','Yemen','Zambia','Zimbabwe',
   ];
   const grades = Array.from({ length: 12 }, (_, i) => `Grade ${i + 1}`); // builds ['Grade 1', ..., 'Grade 12']
-  const languages = [
-    'English','Spanish','French','German','Hindi','Mandarin Chinese','Arabic','Portuguese','Russian','Japanese',
-    'Korean','Italian','Bengali','Punjabi','Urdu','Vietnamese','Turkish','Swahili','Tamil','Telugu',
-  ];
 
   function fillSelect(select, values) {
     values.forEach((value) => {
@@ -42,32 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const countrySelect = document.getElementById('country');
   const gradeSelect = document.getElementById('grade');
-  const languageSelect = document.getElementById('language');
   fillSelect(countrySelect, countries);
   fillSelect(gradeSelect, grades);
-  fillSelect(languageSelect, languages);
 
   // ---------------------------------------------------------------
-  // Load whatever was saved before (if anything), otherwise fall back
-  // to the same defaults profile.js originally showed.
-  // ---------------------------------------------------------------
-  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-  const current = saved || {
-    fullname: 'Pranathi K',
-    country: 'India',
-    grade: 'Grade 10',
-    language: 'English',
-    bio: "Passionate about learning new things and helping others understand tricky topics.",
-  };
-
-  document.getElementById('fullname').value = current.fullname;
-  countrySelect.value = current.country;
-  gradeSelect.value = current.grade;
-  languageSelect.value = current.language;
-  document.getElementById('bio').value = current.bio;
-
-  // ---------------------------------------------------------------
-  // Live character counter for the bio field
+  // Live character counter for the bio field - set up BEFORE the code
+  // below that fills the form, since filling the form calls
+  // updateCharCount() immediately (to reflect whatever bio just got
+  // loaded in), and calling it before charCountEl exists would throw.
   // ---------------------------------------------------------------
   const bioInput = document.getElementById('bio');
   const charCountEl = document.getElementById('char-count');
@@ -79,22 +57,119 @@ document.addEventListener('DOMContentLoaded', () => {
   bioInput.addEventListener('input', updateCharCount);
 
   // ---------------------------------------------------------------
+  // Load the real profile from the backend (falling back to whatever's
+  // cached from login, so the form isn't empty while the request is
+  // still in flight).
+  // ---------------------------------------------------------------
+  const avatarPreview = document.getElementById('avatar-preview');
+  let currentPhoto = null; // the data URL we'll actually save, once changed
+
+  function renderAvatar(user) {
+    avatarPreview.innerHTML = '';
+    if (currentPhoto || user.photo) {
+      const img = document.createElement('img');
+      img.src = currentPhoto || user.photo;
+      img.alt = '';
+      avatarPreview.appendChild(img);
+    } else {
+      avatarPreview.textContent = (user.fullname || 'P').charAt(0).toUpperCase();
+    }
+  }
+
+  function fillForm(user) {
+    document.getElementById('fullname').value = user.fullname || '';
+    countrySelect.value = user.country || '';
+    gradeSelect.value = user.grade || '';
+    languageSelect.value = user.language || '';
+    bioInput.value = user.bio || '';
+    updateCharCount();
+    renderAvatar(user);
+  }
+
+  const cachedUser = getStoredUser();
+  if (cachedUser) fillForm(cachedUser);
+
+  apiFetch('/profile').then((data) => fillForm(data.user));
+
+  // ---------------------------------------------------------------
+  // Photo picker - resized/compressed entirely in the browser (a canvas,
+  // not a server call) before it's ever sent anywhere, so even a huge
+  // phone photo turns into a small upload.
+  // ---------------------------------------------------------------
+  let photoChanged = false;
+
+  document.getElementById('avatar-btn').addEventListener('click', () => {
+    document.getElementById('photo-input').click();
+  });
+
+  document.getElementById('photo-input').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        // Shrink to at most 200x200 (keeping the aspect ratio) - plenty
+        // for a small circular avatar, and keeps the saved data tiny.
+        const MAX_SIZE = 200;
+        let { width, height } = img;
+        if (width > height) {
+          if (width > MAX_SIZE) { height = Math.round((height * MAX_SIZE) / width); width = MAX_SIZE; }
+        } else if (height > MAX_SIZE) {
+          width = Math.round((width * MAX_SIZE) / height);
+          height = MAX_SIZE;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+
+        currentPhoto = canvas.toDataURL('image/jpeg', 0.85);
+        photoChanged = true;
+        renderAvatar({ fullname: document.getElementById('fullname').value, photo: null });
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ---------------------------------------------------------------
   // Save
   // ---------------------------------------------------------------
-  document.getElementById('edit-form').addEventListener('submit', (event) => {
+  document.getElementById('edit-form').addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const updatedProfile = {
-      fullname: document.getElementById('fullname').value.trim() || current.fullname,
-      country: countrySelect.value,
-      grade: gradeSelect.value,
-      language: languageSelect.value,
-      bio: bioInput.value.trim(),
-    };
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile));
-    alert('Profile updated!');
-    window.location.href = 'profile.html';
+    try {
+      const body = {
+        fullname: document.getElementById('fullname').value.trim(),
+        country: countrySelect.value,
+        grade: gradeSelect.value,
+        language: languageSelect.value,
+        bio: bioInput.value.trim(),
+      };
+      // Only included when the person actually picked a new photo this
+      // visit - otherwise the backend leaves the existing one untouched.
+      if (photoChanged) body.photo = currentPhoto;
+
+      const data = await apiFetch('/profile', {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      });
+
+      // Keep the cached copy (used by home.js/profile.js for an instant
+      // render before their own fresh fetch completes) in sync too.
+      localStorage.setItem('studybuddy_user', JSON.stringify(data.user));
+      alert('Profile updated!');
+      window.location.href = 'profile.html';
+    } catch (error) {
+      alert(error.message);
+      if (submitBtn) submitBtn.disabled = false;
+    }
   });
 
 });

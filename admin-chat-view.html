@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conversation - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="admin-chat-view.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="chat-header">
+      <a href="admin-sessions.html" class="back-btn" aria-label="Back to conversations">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">🛡 Admin · read only</p>
+    </div>
+
+    <!-- admin-chat-view.js fills this with the real message history, then
+         keeps it live via a silent socket join (see sockets.py's
+         'admin_watch' - never visible to the people actually chatting). -->
+    <div class="chat-messages" id="chat-messages"></div>
+
+  </div>
+
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
+  <script src="admin-chat-view.js"></script>
+</body>
+</html>

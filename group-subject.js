@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  if (!requireLogin()) return;
+
   // Same subject -> topics lookup table as choose-subject.js / teach-subject.js.
   const subjectTopics = {
     'Mathematics': ['Calculus', 'Algebra II'],
@@ -12,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const subjectInput = document.getElementById('subject');
   const topicInput = document.getElementById('topic');
-  const levelInput = document.getElementById('level');
   const subjectOptions = document.getElementById('subject-options');
   const topicOptions = document.getElementById('topic-options');
   const form = document.getElementById('group-form');
@@ -74,22 +75,44 @@ document.addEventListener('DOMContentLoaded', () => {
   // Validate, then go STRAIGHT into the group chat - no matching step,
   // since creating a group doesn't need to search for a single partner.
   // ---------------------------------------------------------------
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     errorMessage.hidden = true;
 
-    if (!subjectInput.value.trim() || !topicInput.value.trim() || !levelInput.value.trim()) {
-      errorMessage.textContent = 'Please fill in a subject, topic, and level to continue.';
+    const subject = subjectInput.value.trim();
+    const topic = topicInput.value.trim();
+
+    if (!subject || !topic) {
+      errorMessage.textContent = 'Please fill in a subject and topic to continue.';
       errorMessage.hidden = false;
       return;
     }
 
-    const params = new URLSearchParams({
-      subject: subjectInput.value.trim(),
-      topic: topicInput.value.trim(),
-      level: levelInput.value.trim(),
-    });
-    window.location.href = 'group-chat.html?' + params.toString();
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      // Finds a real, currently-open group on this same subject+topic to
+      // join, or creates a new one if none exists yet - so two people
+      // picking the same thing land in the SAME group, not two separate
+      // private ones.
+      const data = await apiFetch('/sessions/join-or-create-group', {
+        method: 'POST',
+        body: JSON.stringify({ subject, topic }),
+      });
+
+      const params = new URLSearchParams({ sessionId: data.session.id, subject, topic });
+      // A brand-new group has just you in it - wait for at least one
+      // real other person instead of dropping straight into an empty
+      // chat that looks abandoned. Joining an EXISTING group (someone's
+      // already there) skips straight to the chat as before.
+      window.location.href = (data.created ? 'group-waiting.html?' : 'group-chat.html?') + params.toString();
+    } catch (error) {
+      if (handleAuthError(error)) return;
+      errorMessage.textContent = error.message;
+      errorMessage.hidden = false;
+      if (submitBtn) submitBtn.disabled = false;
+    }
   });
 
 });

@@ -43,20 +43,21 @@
 
     <p class="section-heading">Account</p>
     <div class="settings-group">
-      <button type="button" class="link-row" data-action="Changing your password">
+      <a href="change-password.html" class="link-row" id="change-password-link">
         <span>Change password</span>
         <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
-      </button>
-      <button type="button" class="link-row" data-action="Managing blocked users">
+      </a>
+      <a href="blocked-users.html" class="link-row" id="blocked-users-link">
         <span>Blocked users</span>
         <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
-      </button>
+      </a>
     </div>
 
     <button type="button" id="logout-btn" class="logout-btn">Log out</button>
   </div>
 
   <script src="confirm-modal.js"></script>
+  <script src="sound.js"></script>
   <script src="settings.js"></script>
 </body>
 </html>

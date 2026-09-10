@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Partner Simulator - StudyBuddy Global</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e9eefb;
+      font-family: system-ui, sans-serif;
+      padding: 20px;
+    }
+    .card {
+      width: 420px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(30, 41, 90, 0.15);
+      padding: 28px;
+    }
+    h1 { font-size: 18px; margin-bottom: 4px; }
+    .subtitle { font-size: 12.5px; color: #667; margin-bottom: 20px; }
+    label { display: block; font-size: 12.5px; font-weight: 700; margin: 12px 0 4px; }
+    input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #d7ddf0;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    button {
+      margin-top: 16px;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #3f6fe0, #2fbf83);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.danger { background: #e0503f; }
+    #status { font-size: 12.5px; margin-top: 10px; font-weight: 700; }
+    #chat-section { display: none; margin-top: 18px; border-top: 1px solid #eef1fa; padding-top: 16px; }
+    #log {
+      height: 160px;
+      overflow-y: auto;
+      background: #f7f9ff;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12.5px;
+      margin-top: 10px;
+    }
+    #log p { margin-bottom: 6px; }
+    .send-row { display: flex; gap: 8px; margin-top: 10px; }
+    .send-row input { flex: 1; }
+    .send-row button { width: auto; margin-top: 0; padding: 9px 16px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Test Partner Simulator</h1>
+    <p class="subtitle">
+      A dev-only tool - lets you act as the OTHER real person in a chat, without needing a second browser window.
+      Find the Session # at the top of session.html once you're matched with a real account.
+    </p>
+
+    <label for="email">This account's email</label>
+    <input type="email" id="email" placeholder="e.g. test1@example.com" />
+
+    <label for="password">Password</label>
+    <input type="password" id="password" />
+
+    <label for="session-id">Session #</label>
+    <input type="number" id="session-id" placeholder="e.g. 126" />
+
+    <button type="button" id="connect-btn">Connect as this person</button>
+
+    <p id="status"></p>
+
+    <div id="chat-section">
+      <div class="send-row">
+        <input type="text" id="message-input" placeholder="Type a message..." />
+        <button type="button" id="send-btn">Send</button>
+      </div>
+      <div id="log"></div>
+      <button type="button" id="leave-btn" class="danger">Simulate leaving (disconnect)</button>
+    </div>
+  </div>
+
+  <script src="socket.io.min.js"></script>
+  <script src="test-partner.js"></script>
+</body>
+</html>

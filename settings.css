@@ -140,6 +140,7 @@ input[type="checkbox"]:checked + .toggle-switch::before {
   color: #1b2340;
   cursor: pointer;
   text-align: left;
+  text-decoration: none;
 }
 .link-row:last-child {
   border-bottom: none;

@@ -1,0 +1,54 @@
+.app-screen {
+  min-height: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.session-row {
+  display: block;
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 14px;
+  padding: 12px 14px;
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+.session-row:hover {
+  border-color: #dbe2f5;
+}
+.session-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.session-names {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1b2340;
+}
+.session-mode-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #3f6fe0;
+  background: #eef1fb;
+  padding: 2px 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.session-topic {
+  font-size: 12.5px;
+  color: #56618a;
+}
+.session-time {
+  font-size: 11px;
+  color: #a7b0cc;
+  margin-top: 4px;
+}

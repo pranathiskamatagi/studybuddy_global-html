@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support Messages - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="admin-support.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="home.html" class="back-btn" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Not linked in the app - direct URL only</p>
+    </div>
+
+    <h1 class="title">Support messages</h1>
+
+    <!-- admin-support.js builds one row per message in here -->
+    <div class="message-list" id="message-list"></div>
+
+    <div class="empty-state" id="empty-state" hidden>
+      <p class="empty-title">No messages yet</p>
+      <p class="empty-desc">Anything submitted through Contact Support will show up here.</p>
+    </div>
+
+  </div>
+
+  <script src="api.js?v=5"></script>
+  <script src="admin-support.js"></script>
+</body>
+</html>

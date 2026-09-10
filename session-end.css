@@ -122,12 +122,9 @@ body {
   flex-shrink: 0;
 }
 
-/* ---------- Primary action: Back to Home ----------
-   This is now the big, obvious choice - swapped to sit above the
-   smaller "Rate your partner" link below it. */
 /* ---------- Primary action: Rate your partner ----------
-   Comes FIRST now and stays a full, prominent button - the small
-   "Earn 10 points" hint sits underneath it, not the button itself. */
+   Comes FIRST and stays a full, prominent button - the small
+   "Earn 10 coins" hint sits underneath it, not the button itself. */
 .rate-section {
   width: 100%;
   margin-bottom: 16px;
@@ -156,7 +153,7 @@ body {
 }
 
 /* ---------- Secondary action: Home ----------
-   Comes SECOND now - still a full-width real button, just styled as
+   Comes SECOND - still a full-width real button, just styled as
    the quieter, secondary option (outline instead of filled gradient). */
 .home-btn {
   width: 100%;

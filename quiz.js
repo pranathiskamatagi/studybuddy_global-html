@@ -1,12 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // ---------------------------------------------------------------
-  // The question bank: 5 questions per topic.
+  // The question bank: a POOL of questions per topic, more than any one
+  // attempt shows.
   // ---------------------------------------------------------------
   // Each question is an object with the question text, 4 possible
   // answers, and "correct" - the INDEX (0-3) of the right one in the
   // options array. Keeping the answer as an index (not the text itself)
   // makes checking it later a simple, exact comparison.
+  // Each topic has MORE than 5 questions on purpose - QUESTIONS_PER_ATTEMPT
+  // below picks a random 5 of them (in a random order) every time someone
+  // starts this quiz, so retaking it (or a friend taking it later) doesn't
+  // just show the exact same 5 questions every single time. This is the
+  // FREE/INSTANT path - no AI call, no quota cost - unlike a topic outside
+  // this bank, which goes to quiz_generator.py's real Gemini generation
+  // instead (rotated the same way, just capped to a few AI calls per topic
+  // rather than a random pick from a big local pool - see that file).
   const quizBank = {
     'Calculus': [
       { q: 'What is the derivative of x²?', options: ['x', '2x', 'x²', '2'], correct: 1 },
@@ -14,6 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: 'What is the integral of a constant, like ∫5 dx?', options: ['5', '5x + C', 'x + C', '0'], correct: 1 },
       { q: 'What is the derivative of any constant?', options: ['0', '1', 'The constant itself', 'Undefined'], correct: 0 },
       { q: 'What is the limit of (sin x)/x as x approaches 0?', options: ['0', 'Infinity', '1', 'Undefined'], correct: 2 },
+      { q: 'What is the derivative of sin(x)?', options: ['cos(x)', '-cos(x)', '-sin(x)', 'tan(x)'], correct: 0 },
+      { q: 'What does the second derivative of a function tell you?', options: ['Its slope', 'Its concavity', 'Its maximum value', 'Its domain'], correct: 1 },
+      { q: 'What is the derivative of eˣ?', options: ['xeˣ⁻¹', 'eˣ', 'ln(x)', '1/x'], correct: 1 },
+      { q: 'The Fundamental Theorem of Calculus connects which two operations?', options: ['Addition and subtraction', 'Differentiation and integration', 'Multiplication and division', 'Limits and continuity'], correct: 1 },
     ],
     'Algebra II': [
       { q: 'What is the standard form of a quadratic equation?', options: ['ax + b = 0', 'ax² + bx + c = 0', 'a/x = b', 'ax³ + b = 0'], correct: 1 },
@@ -21,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: 'What is the formula for the discriminant?', options: ['b² - 4ac', 'b² + 4ac', '4ac - b²', '-b/2a'], correct: 0 },
       { q: 'What does a negative discriminant tell you?', options: ['Two real solutions', 'One real solution', 'No real solutions', 'Infinite solutions'], correct: 2 },
       { q: 'A logarithm is the inverse of which operation?', options: ['Addition', 'Multiplication', 'Exponentiation', 'Division'], correct: 2 },
+      { q: 'What is the vertex form of a quadratic equation?', options: ['y = ax² + bx + c', 'y = a(x - h)² + k', 'y = mx + b', 'y = a/x'], correct: 1 },
+      { q: 'What is log₁₀(100)?', options: ['1', '2', '10', '100'], correct: 1 },
+      { q: 'What is a function\'s domain?', options: ['All possible output values', 'All possible input values', 'Its highest point', 'Its slope'], correct: 1 },
+      { q: 'What shape does the graph of a quadratic function make?', options: ['A straight line', 'A circle', 'A parabola', 'A hyperbola'], correct: 2 },
     ],
     'Web Development': [
       { q: 'What does HTML stand for?', options: ['HyperText Markup Language', 'High-Level Text Machine Language', 'HyperText Management Log', 'Home Tool Markup Language'], correct: 0 },
@@ -28,6 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: 'Which language adds interactivity to a webpage?', options: ['HTML', 'CSS', 'JavaScript', 'XML'], correct: 2 },
       { q: 'Which HTML tag links an external CSS file?', options: ['<style>', '<script>', '<css>', '<link>'], correct: 3 },
       { q: "What does 'responsive design' mean?", options: ['The page loads fast', 'The layout adapts to different screen sizes', 'The site uses a database', 'The page has animations'], correct: 1 },
+      { q: 'What does API stand for?', options: ['Application Programming Interface', 'Automated Page Index', 'Applied Program Instruction', 'Application Process Integration'], correct: 0 },
+      { q: 'What does the DOM represent?', options: ['A database schema', 'The structure of a webpage as objects', 'A server configuration', 'A styling framework'], correct: 1 },
+      { q: 'Which HTTP method is typically used to submit new data?', options: ['GET', 'POST', 'DELETE', 'HEAD'], correct: 1 },
+      { q: "What's the purpose of a CSS class selector (e.g. .card)?", options: ['Select one element by its unique id', 'Select every element sharing that class', 'Select the whole page', 'Select only links'], correct: 1 },
     ],
     'Data Structures': [
       { q: 'Which data structure works on a First-In-First-Out (FIFO) basis?', options: ['Stack', 'Queue', 'Tree', 'Graph'], correct: 1 },
@@ -35,6 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: 'What is the typical time complexity of searching a balanced binary search tree?', options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)'], correct: 2 },
       { q: 'Which data structure stores data as key-value pairs?', options: ['Array', 'Hash map', 'Stack', 'Queue'], correct: 1 },
       { q: 'What connects the nodes in a linked list?', options: ['Indexes', 'Pointers/references', 'Keys', 'Weights'], correct: 1 },
+      { q: 'What is the time complexity of accessing an array element by index?', options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)'], correct: 0 },
+      { q: 'Which structure is used to implement recursion under the hood?', options: ['Queue', 'Stack', 'Hash map', 'Graph'], correct: 1 },
+      { q: 'What is a binary tree where every level is fully filled called?', options: ['A linked list', 'A complete/perfect tree', 'A hash table', 'A queue'], correct: 1 },
+      { q: 'What does a graph\'s "edge" represent?', options: ['A single data value', 'A connection between two nodes', 'The root node', 'An empty slot'], correct: 1 },
     ],
     'World History': [
       { q: 'In which year did World War II end?', options: ['1939', '1942', '1945', '1950'], correct: 2 },
@@ -42,6 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: 'The Renaissance began in which country?', options: ['France', 'Spain', 'Italy', 'England'], correct: 2 },
       { q: 'Who was the first President of the United States?', options: ['Thomas Jefferson', 'Abraham Lincoln', 'John Adams', 'George Washington'], correct: 3 },
       { q: 'Julius Caesar ruled which empire?', options: ['Ottoman Empire', 'Roman Empire', 'Persian Empire', 'Byzantine Empire'], correct: 1 },
+      { q: 'The Cold War was primarily between the US and which country?', options: ['China', 'Soviet Union', 'Germany', 'Japan'], correct: 1 },
+      { q: 'Which event is often cited as starting World War I?', options: ['The bombing of Pearl Harbor', 'The assassination of Archduke Franz Ferdinand', 'The fall of the Berlin Wall', 'The French Revolution'], correct: 1 },
+      { q: 'The Great Wall was built primarily to defend which country?', options: ['India', 'China', 'Japan', 'Mongolia'], correct: 1 },
+      { q: 'Who led India\'s independence movement through nonviolent resistance?', options: ['Nelson Mandela', 'Mahatma Gandhi', 'Winston Churchill', 'Jawaharlal Nehru'], correct: 1 },
     ],
     'Spanish': [
       { q: "How do you say 'hello' in Spanish?", options: ['Adiós', 'Hola', 'Gracias', 'Bien'], correct: 1 },
@@ -49,6 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: "How do you say 'goodbye' in Spanish?", options: ['Hola', 'Por favor', 'Adiós', 'Buenos días'], correct: 2 },
       { q: "What is the Spanish word for 'water'?", options: ['Agua', 'Pan', 'Leche', 'Fuego'], correct: 0 },
       { q: "How do you ask 'How are you?' in Spanish?", options: ['¿Cómo te llamas?', '¿Cómo estás?', '¿Dónde estás?', '¿Qué hora es?'], correct: 1 },
+      { q: "What does 'por favor' mean?", options: ['Thank you', 'You\'re welcome', 'Please', 'Excuse me'], correct: 2 },
+      { q: "What is the Spanish word for 'friend' (male)?", options: ['Amiga', 'Amigo', 'Hermano', 'Señor'], correct: 1 },
+      { q: "How do you say 'my name is...' in Spanish?", options: ['Me llamo...', 'Tengo...', 'Soy de...', 'Vivo en...'], correct: 0 },
+      { q: "What does 'buenos días' mean?", options: ['Good night', 'Good afternoon', 'Good morning', 'See you later'], correct: 2 },
     ],
     'Biology 101': [
       { q: 'What is the basic unit of life?', options: ['The organ', 'The cell', 'The tissue', 'The molecule'], correct: 1 },
@@ -56,6 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: 'Which molecule carries genetic information?', options: ['RNA only', 'DNA', 'Protein', 'ATP'], correct: 1 },
       { q: 'What process do plants use to make food from sunlight?', options: ['Respiration', 'Fermentation', 'Photosynthesis', 'Digestion'], correct: 2 },
       { q: 'What is the process by which a cell divides into two identical cells?', options: ['Meiosis', 'Mitosis', 'Osmosis', 'Diffusion'], correct: 1 },
+      { q: 'What is the function of red blood cells?', options: ['Fight infection', 'Carry oxygen', 'Clot blood', 'Digest food'], correct: 1 },
+      { q: 'Which organ system includes the heart and blood vessels?', options: ['Digestive system', 'Circulatory system', 'Nervous system', 'Respiratory system'], correct: 1 },
+      { q: 'What is the term for an organism\'s complete set of genetic material?', options: ['Genome', 'Enzyme', 'Chromosome pair', 'Protein chain'], correct: 0 },
+      { q: 'Which kingdom do bacteria belong to?', options: ['Animalia', 'Plantae', 'Fungi', 'Monera/Bacteria'], correct: 3 },
     ],
     'Organic Chemistry': [
       { q: 'What element forms the backbone of all organic compounds?', options: ['Oxygen', 'Carbon', 'Nitrogen', 'Hydrogen'], correct: 1 },
@@ -63,6 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: 'Which functional group is found in alcohols?', options: ['-COOH', '-OH', '-NH2', '-CHO'], correct: 1 },
       { q: 'What type of bond do carbon atoms typically form with each other?', options: ['Ionic', 'Metallic', 'Covalent', 'Hydrogen'], correct: 2 },
       { q: 'What term describes compounds made of only carbon and hydrogen?', options: ['Carbohydrates', 'Hydrocarbons', 'Alcohols', 'Esters'], correct: 1 },
+      { q: 'Which functional group is found in carboxylic acids?', options: ['-OH', '-COOH', '-NH2', '-CHO'], correct: 1 },
+      { q: 'What is an isomer?', options: ['A different element with similar properties', 'Compounds with the same formula but different structures', 'A type of chemical bond', 'A catalyst'], correct: 1 },
+      { q: 'What do we call a carbon-carbon double bond compound?', options: ['Alkane', 'Alkene', 'Alkyne', 'Alcohol'], correct: 1 },
+      { q: 'What is the process of breaking large hydrocarbons into smaller ones called?', options: ['Polymerization', 'Cracking', 'Distillation', 'Oxidation'], correct: 1 },
     ],
     'Creative Writing': [
       { q: 'What is the term for the main character in a story?', options: ['Antagonist', 'Narrator', 'Protagonist', 'Author'], correct: 2 },
@@ -70,6 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: 'What term describes the turning point of a story?', options: ['Exposition', 'Climax', 'Resolution', 'Prologue'], correct: 1 },
       { q: "What is a story told from the 'I' perspective called?", options: ['Third person', 'Second person', 'First person', 'Omniscient'], correct: 2 },
       { q: 'What term describes the mood or atmosphere of a piece of writing?', options: ['Plot', 'Setting', 'Tone', 'Theme'], correct: 2 },
+      { q: 'What is foreshadowing?', options: ['A hint about what will happen later', 'A flashback to the past', 'The story\'s final paragraph', 'A character\'s inner thoughts'], correct: 0 },
+      { q: 'What is the term for the character working against the protagonist?', options: ['Narrator', 'Antagonist', 'Sidekick', 'Foil'], correct: 1 },
+      { q: 'What does "dialogue" refer to in a story?', options: ['The setting description', 'Conversation between characters', 'The title', 'The author\'s notes'], correct: 1 },
+      { q: 'What is a metaphor?', options: ['A direct comparison without "like" or "as"', 'A sound effect in writing', 'A type of rhyme', 'A grammar rule'], correct: 0 },
     ],
     'Public Speaking': [
       { q: 'What is the fear of public speaking called?', options: ['Claustrophobia', 'Glossophobia', 'Acrophobia', 'Arachnophobia'], correct: 1 },
@@ -77,8 +122,30 @@ document.addEventListener('DOMContentLoaded', () => {
       { q: 'What technique commonly helps calm nerves before speaking?', options: ['Speaking faster', 'Deep breathing and practice', 'Avoiding eye contact', 'Memorizing word-for-word'], correct: 1 },
       { q: 'What is it called when a speaker uses gestures and movement?', options: ['Vocal variety', 'Body language', 'Pacing', 'Diction'], correct: 1 },
       { q: 'What is the main purpose of eye contact during a speech?', options: ['To read notes better', 'To engage and connect with the audience', 'To find the exit', 'To time the speech'], correct: 1 },
+      { q: 'What is "vocal variety"?', options: ['Speaking in different languages', 'Changing your pitch, pace, and tone for emphasis', 'Using big words', 'Speaking as loudly as possible'], correct: 1 },
+      { q: 'What should a strong opening line do?', options: ['List every topic you\'ll cover', 'Grab the audience\'s attention', 'Apologize for being nervous', 'Introduce yourself formally first'], correct: 1 },
+      { q: 'What is a rhetorical question used for?', options: ['To get a literal answer', 'To make the audience think, not to be answered aloud', 'To fill time', 'To end a speech'], correct: 1 },
+      { q: 'Why is it useful to know your audience before speaking?', options: ['So you can speak faster', 'So you can tailor your content and tone to them', 'It isn\'t actually useful', 'So you can avoid eye contact'], correct: 1 },
     ],
   };
+
+  // How many questions a single attempt actually shows - always fewer
+  // than each topic's full pool above, so which 5 (and in what order)
+  // genuinely varies between attempts instead of being the exact same
+  // quiz every single time.
+  const QUESTIONS_PER_ATTEMPT = 5;
+
+  // Fisher-Yates shuffle, then take the first N - picks a random subset
+  // AND a random order in one pass, rather than always showing the pool
+  // in the same fixed sequence.
+  function pickRandomQuestions(pool, count) {
+    const shuffled = pool.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, count);
+  }
 
   // ---------------------------------------------------------------
   // Read subject/topic/level from the URL - teach-subject.js sends
@@ -88,6 +155,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const subject = params.get('subject') || '';
   const topic = params.get('topic') || '';
   const level = params.get('level') || '';
+  const mode = params.get('mode') || 'teach';
+  // The real community request posted back on teach-subject.html - just
+  // carried through so it can be withdrawn if the person cancels the
+  // search later (see connecting.js).
+  const requestId = params.get('requestId') || '';
+  // Set only when this quiz was reached by clicking "Help" on someone
+  // ELSE's real community request (home.js) instead of teach-subject.js's
+  // own "I wanna teach" flow - lets connecting.html use its exact-known-
+  // partner shortcut instead of a generic search, and tells us which
+  // request to mark fulfilled once (and only if) the quiz is passed.
+  const withName = params.get('with') || '';
+  const partnerId = params.get('partnerId') || '';
+  const country = params.get('country') || '';
+  const fulfillRequestId = params.get('fulfillRequestId') || '';
 
   // Looks up a topic in quizBank without requiring a perfect match -
   // typing "algebra" or "Algebra" should still find "Algebra II", since
@@ -110,25 +191,66 @@ document.addEventListener('DOMContentLoaded', () => {
     return partialKey ? quizBank[partialKey] : null;
   }
 
-  const questions = findQuestions(topic);
-
   const quizView = document.getElementById('quiz-view');
   const noQuizView = document.getElementById('no-quiz-view');
+  const generatingView = document.getElementById('generating-quiz-view');
   const resultView = document.getElementById('result-view');
 
-  // If we don't have questions for this exact topic (e.g. it was
-  // free-typed on the previous screen), skip straight to a friendly
-  // message instead of showing broken/empty questions.
-  if (!questions) {
+  // Falls back to the local bank ONLY if this exact topic happens to be
+  // one of the ~10 built-in ones AND the real thing (below) couldn't be
+  // reached - never the first choice anymore.
+  function useLocalBankOrGiveUp() {
+    const localQuestions = findQuestions(topic);
+    if (localQuestions) {
+      startQuiz(pickRandomQuestions(localQuestions, QUESTIONS_PER_ATTEMPT));
+    } else {
+      showNoQuiz();
+    }
+  }
+
+  // Quiz questions come from Gemini now, not the local bank first - real
+  // AI-generated questions for whatever topic was actually picked, same
+  // as any topic outside the old local bank already got. Rotated among a
+  // few cached generations per topic on the backend (see
+  // quiz_generator.py's MAX_VARIANTS_PER_TOPIC) rather than calling the
+  // AI fresh on every single attempt forever - real variety, without
+  // unbounded cost against Gemini's limited free quota.
+  if (getToken()) {
+    generatingView.hidden = false;
+    apiFetch('/quiz/generate', {
+      method: 'POST',
+      body: JSON.stringify({ subject, topic, level }),
+    })
+      .then((data) => {
+        generatingView.hidden = true;
+        if (data.available && data.questions?.length) {
+          startQuiz(data.questions);
+        } else {
+          useLocalBankOrGiveUp();
+        }
+      })
+      .catch((error) => {
+        if (handleAuthError(error)) return;
+        generatingView.hidden = true;
+        // The AI call itself failed (quota exhausted, network hiccup,
+        // API key issue) - fall back to the local bank rather than
+        // leaving someone with no quiz at all, if we happen to have one
+        // for this exact topic.
+        useLocalBankOrGiveUp();
+      });
+  } else {
+    useLocalBankOrGiveUp();
+  }
+
+  function showNoQuiz() {
     quizView.hidden = true;
     noQuizView.hidden = false;
-
     document.getElementById('skip-btn').addEventListener('click', () => {
       goToConnecting();
     });
-    return; // nothing below this point applies, so stop here
   }
 
+  function startQuiz(questions) {
   document.getElementById('quiz-topic-title').textContent = topic + ' Quiz';
 
   // ---------------------------------------------------------------
@@ -242,12 +364,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isPerfect) {
       document.getElementById('result-message').textContent = "Perfect! You've mastered this topic.";
       continueBtn.textContent = 'Continue';
+
+      // Fire-and-forget: a perfect score unlocks the "Perfect Quiz"
+      // achievement server-side. Not blocking navigation on this - a
+      // missed achievement notification shouldn't stop someone continuing.
+      if (getToken()) {
+        apiFetch('/achievements/report-perfect-quiz', { method: 'POST' })
+          .catch((error) => console.warn('Could not report perfect quiz:', error.message));
+      }
+      // Only NOW - having actually proven they know the subject - claim
+      // the real learner's request. Fire-and-forget, same as elsewhere.
+      if (fulfillRequestId) {
+        apiFetch(`/help-requests/${fulfillRequestId}/fulfill`, { method: 'POST' })
+          .catch((error) => console.warn('Could not mark request fulfilled:', error.message));
+      }
       // Using .onclick (instead of addEventListener) means setting it
       // again always REPLACES the previous handler rather than stacking
       // a second one - handy here since finishQuiz() could technically
       // run more than once (e.g. if someone were able to submit twice).
       continueBtn.onclick = () => {
-        const params = new URLSearchParams({ subject, topic, level });
+        const params = new URLSearchParams({ subject, topic, level, mode, requestId, with: withName, partnerId, country });
         window.location.href = 'teaching-tips.html?' + params.toString();
       };
     } else {
@@ -260,13 +396,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   renderQuestion();
+  } // end startQuiz()
 
   // ---------------------------------------------------------------
   // Shared by both the "no quiz available" and result views: continue
   // on to the same matching screen the "learn" flow uses.
   // ---------------------------------------------------------------
   function goToConnecting() {
-    const connectParams = new URLSearchParams({ subject, topic, level });
+    // No quiz was available at all for this topic - still counts as
+    // "cleared" (nothing to fail), so the real request gets claimed here
+    // same as a passed quiz would.
+    if (fulfillRequestId) {
+      apiFetch(`/help-requests/${fulfillRequestId}/fulfill`, { method: 'POST' })
+        .catch((error) => console.warn('Could not mark request fulfilled:', error.message));
+    }
+    const connectParams = new URLSearchParams({ subject, topic, level, mode, requestId, with: withName, partnerId, country });
     window.location.href = 'connecting.html?' + connectParams.toString();
   }
 

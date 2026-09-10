@@ -25,117 +25,27 @@
     </div>
 
     <!-- ============ ALL ACTIVE STUDY SESSIONS ============ -->
-    <section class="section-block">
+    <!-- Whole section starts hidden - connect.js only reveals it once
+         there are real active groups to show. -->
+    <section class="section-block" id="sessions-section" hidden>
       <div class="section-header">
         <h2>Active study sessions <span class="live-badge">Live</span></h2>
       </div>
-      <div class="sessions-row" id="sessions-row">
-        <div class="session-card">
-          <div class="avatar-stack">
-            <span class="avatar-sm avatar-blue">M</span>
-            <span class="avatar-sm avatar-green">T</span>
-            <span class="avatar-sm avatar-count">+6</span>
-          </div>
-          <h4>World History</h4>
-          <p class="session-sub">Class 10 &middot; Intermediate</p>
-          <button type="button" class="join-btn">Join</button>
-        </div>
-        <div class="session-card">
-          <div class="avatar-stack">
-            <span class="avatar-sm avatar-pink">K</span>
-            <span class="avatar-sm avatar-blue">S</span>
-            <span class="avatar-sm avatar-count">+2</span>
-          </div>
-          <h4>Python Basics</h4>
-          <p class="session-sub">Beginner &middot; Coding</p>
-          <button type="button" class="join-btn">Join</button>
-        </div>
-        <div class="session-card">
-          <div class="avatar-stack">
-            <span class="avatar-sm avatar-orange">R</span>
-            <span class="avatar-sm avatar-green">A</span>
-            <span class="avatar-sm avatar-count">+4</span>
-          </div>
-          <h4>Organic Chemistry</h4>
-          <p class="session-sub">Class 12 &middot; Advanced</p>
-          <button type="button" class="join-btn">Join</button>
-        </div>
-        <div class="session-card">
-          <div class="avatar-stack">
-            <span class="avatar-sm avatar-blue">E</span>
-            <span class="avatar-sm avatar-pink">Z</span>
-            <span class="avatar-sm avatar-count">+3</span>
-          </div>
-          <h4>Biology 101</h4>
-          <p class="session-sub">Beginner &middot; Science</p>
-          <button type="button" class="join-btn">Join</button>
-        </div>
-        <div class="session-card">
-          <div class="avatar-stack">
-            <span class="avatar-sm avatar-green">L</span>
-            <span class="avatar-sm avatar-orange">N</span>
-            <span class="avatar-sm avatar-count">+1</span>
-          </div>
-          <h4>Public Speaking</h4>
-          <p class="session-sub">Intermediate &middot; Communication</p>
-          <button type="button" class="join-btn">Join</button>
-        </div>
-        <div class="session-card">
-          <div class="avatar-stack">
-            <span class="avatar-sm avatar-blue">M</span>
-            <span class="avatar-sm avatar-green">K</span>
-            <span class="avatar-sm avatar-count">+5</span>
-          </div>
-          <h4>Web Development</h4>
-          <p class="session-sub">Beginner &middot; Coding</p>
-          <button type="button" class="join-btn">Join</button>
-        </div>
-      </div>
+      <div class="sessions-row" id="sessions-row"></div>
     </section>
 
     <!-- ============ ALL COMMUNITY REQUESTS ============ -->
-    <section class="section-block">
+    <section class="section-block" id="requests-section" hidden>
       <div class="section-header">
         <h2>Community requests</h2>
       </div>
-      <div class="requests-list" id="requests-list">
-        <div class="request-row">
-          <span class="avatar-sm avatar-pink avatar-lg">R</span>
-          <div class="request-info">
-            <p class="request-name">Riya Sharma <span class="request-country">🇮🇳 India</span></p>
-            <p class="request-desc">Needs help with <strong>Calculus</strong></p>
-          </div>
-          <button type="button" class="request-btn">Help her</button>
-        </div>
-        <div class="request-row">
-          <span class="avatar-sm avatar-blue avatar-lg">A</span>
-          <div class="request-info">
-            <p class="request-name">Arjun Mehta <span class="request-country">🇪🇸 Spain</span></p>
-            <p class="request-desc">Wants to teach <strong>Spanish</strong></p>
-          </div>
-          <button type="button" class="request-btn">Learn from</button>
-        </div>
-        <div class="request-row">
-          <span class="avatar-sm avatar-pink avatar-lg">S</span>
-          <div class="request-info">
-            <p class="request-name">Sofia Martinez <span class="request-country">🇲🇽 Mexico</span></p>
-            <p class="request-desc">Needs help with <strong>Organic Chemistry</strong></p>
-          </div>
-          <button type="button" class="request-btn">Help her</button>
-        </div>
-        <div class="request-row">
-          <span class="avatar-sm avatar-orange avatar-lg">K</span>
-          <div class="request-info">
-            <p class="request-name">Kabir Singh <span class="request-country">🇨🇦 Canada</span></p>
-            <p class="request-desc">Wants to teach <strong>Data Structures</strong></p>
-          </div>
-          <button type="button" class="request-btn">Learn from</button>
-        </div>
-      </div>
+      <div class="requests-list" id="requests-list"></div>
     </section>
 
   </div>
 
-  <script src="connect.js"></script>
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
+  <script src="connect.js?v=3"></script>
 </body>
 </html>

@@ -10,6 +10,7 @@
 
   <link rel="stylesheet" href="home.css" />
   <link rel="stylesheet" href="confirm-modal.css" />
+  <link rel="stylesheet" href="points-popup.css?v=4" />
 </head>
 <body>
 
@@ -76,6 +77,12 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 1-1 1.9"></path><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"></circle></svg>
         <span class="nav-label">Help &amp; Support</span>
       </button>
+      <!-- home.js only un-hides this for the one real account with
+           isAdmin true - never shown to anyone else. -->
+      <button class="nav-item" data-label="Admin" title="Admin" id="admin-nav-item" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V6l7-3z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        <span class="nav-label">Admin</span>
+      </button>
 
       <!-- margin-top: auto (in the CSS) pushes just this div to the bottom
            of the sidebar, while everything above stays grouped at the top. -->
@@ -105,7 +112,7 @@
           </div>
         </div>
 
-        <p class="greeting">Hey, <strong>Pranathi</strong></p>
+        <p class="greeting">Hey, <strong id="greeting-name">there</strong></p>
 
         <div class="topbar-right">
           <button class="icon-btn" id="bell-btn" aria-label="Notifications">
@@ -118,34 +125,34 @@
         </div>
       </header>
 
-      <!-- ============ STAT CARDS ============ -->
-      <section class="stats-row">
-        <div class="stat-card">
-          <div class="icon-badge badge-blue">
-            <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"></path></svg>
-          </div>
-          <div>
-            <p class="stat-label">Points</p>
-            <p class="stat-value">2,450</p>
-          </div>
+      <!-- ============ HUD ROW ============ -->
+      <!-- A compact game-HUD strip (coins/gems/streak in one row, like a
+           mobile game's top bar) instead of 4 big boxy cards - same real
+           data, just styled to feel like part of a game, not a spreadsheet. -->
+      <section class="hud-row">
+        <div class="hud-chip hud-gold" role="group" aria-label="Coins">
+          <span class="hud-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="none"><circle cx="12" cy="12" r="10" fill="#ffd54f"></circle><circle cx="12" cy="12" r="7" fill="#f5a623"></circle><text x="12" y="16" font-size="11" font-weight="800" text-anchor="middle" fill="#7a4a00">$</text></svg>
+          </span>
+          <span class="hud-value" id="stat-points">—</span>
         </div>
-        <div class="stat-card">
-          <div class="icon-badge badge-green">
-            <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M6 3h12l4 6-10 12L2 9z"></path></svg>
-          </div>
-          <div>
-            <p class="stat-label">Diamonds</p>
-            <p class="stat-value">18</p>
-          </div>
+        <div class="hud-chip hud-diamond" role="group" aria-label="Diamonds">
+          <span class="hud-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 3h12l4 6-10 12L2 9z" fill="#5ac8fa" stroke="#2f80ed" stroke-width="1" stroke-linejoin="round"></path></svg>
+          </span>
+          <span class="hud-value" id="stat-diamonds">—</span>
         </div>
-        <div class="stat-card">
-          <div class="icon-badge badge-teal">
-            <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4.5L6 21l1.5-7.5L2 9h7z"></path></svg>
-          </div>
-          <div>
-            <p class="stat-label">Rating</p>
-            <p class="stat-value">4.9</p>
-          </div>
+        <div class="hud-chip hud-teal" role="group" aria-label="Rating">
+          <span class="hud-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#2fb6a3" stroke="none"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4.5L6 21l1.5-7.5L2 9h7z"></path></svg>
+          </span>
+          <span class="hud-value" id="stat-rating">—</span>
+        </div>
+        <div class="hud-chip hud-orange" role="group" aria-label="Day streak">
+          <span class="hud-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#fb923c" stroke="none"><path d="M12 2c-2 3-6 5-6 9a6 6 0 0 0 12 0c0-1.5-.5-2.5-1-3.5.3 1.5-.5 2.5-1.5 2.5-1.5 0-1-2-1-2S12 12 12 2z"></path></svg>
+          </span>
+          <span class="hud-value" id="stat-streak">—</span>
         </div>
       </section>
 
@@ -195,75 +202,36 @@
       </section>
 
       <!-- ============ ACTIVE STUDY SESSIONS ============ -->
-      <section class="section-block">
+      <!-- Whole section starts hidden - home.js only reveals it once there
+           are real active groups to show, instead of showing an empty
+           heading for nothing. -->
+      <section class="section-block" id="sessions-section" hidden>
         <div class="section-header">
           <h2>Active study sessions <span class="live-badge">Live</span></h2>
           <a href="connect.html" class="see-all">See all</a>
         </div>
-        <div class="sessions-row" id="sessions-row">
-          <div class="session-card">
-            <div class="avatar-stack">
-              <span class="avatar-sm avatar-blue">M</span>
-              <span class="avatar-sm avatar-green">T</span>
-              <span class="avatar-sm avatar-count">+6</span>
-            </div>
-            <h4>World History</h4>
-            <p class="session-sub">Class 10 · Intermediate</p>
-            <button type="button" class="join-btn">Join</button>
-          </div>
-          <div class="session-card">
-            <div class="avatar-stack">
-              <span class="avatar-sm avatar-pink">K</span>
-              <span class="avatar-sm avatar-blue">S</span>
-              <span class="avatar-sm avatar-count">+2</span>
-            </div>
-            <h4>Python Basics</h4>
-            <p class="session-sub">Beginner · Coding</p>
-            <button type="button" class="join-btn">Join</button>
-          </div>
-          <div class="session-card">
-            <div class="avatar-stack">
-              <span class="avatar-sm avatar-orange">R</span>
-              <span class="avatar-sm avatar-green">A</span>
-              <span class="avatar-sm avatar-count">+4</span>
-            </div>
-            <h4>Organic Chemistry</h4>
-            <p class="session-sub">Class 12 · Advanced</p>
-            <button type="button" class="join-btn">Join</button>
-          </div>
-        </div>
+        <div class="sessions-row" id="sessions-row"></div>
       </section>
 
       <!-- ============ COMMUNITY REQUESTS ============ -->
-      <section class="section-block">
+      <section class="section-block" id="requests-section" hidden>
         <div class="section-header">
           <h2>Community requests</h2>
           <a href="connect.html" class="see-all">See all</a>
         </div>
-        <div class="requests-list" id="requests-list">
-          <div class="request-row">
-            <span class="avatar-sm avatar-pink avatar-lg">R</span>
-            <div class="request-info">
-              <p class="request-name">Riya Sharma <span class="request-country">🇮🇳 India</span></p>
-              <p class="request-desc">Needs help with <strong>Calculus</strong></p>
-            </div>
-            <button type="button" class="request-btn">Help her</button>
-          </div>
-          <div class="request-row">
-            <span class="avatar-sm avatar-blue avatar-lg">A</span>
-            <div class="request-info">
-              <p class="request-name">Arjun Mehta <span class="request-country">🇪🇸 Spain</span></p>
-              <p class="request-desc">Wants to teach <strong>Spanish</strong></p>
-            </div>
-            <button type="button" class="request-btn">Learn from</button>
-          </div>
-        </div>
+        <!-- home.js fills this with real open requests, or an honest
+             empty-state message if there aren't any yet. -->
+        <div class="requests-list" id="requests-list"></div>
       </section>
 
     </div>
   </div>
 
   <script src="confirm-modal.js"></script>
-  <script src="home.js"></script>
+  <script src="sound.js"></script>
+  <script src="points-popup.js"></script>
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
+  <script src="home.js?v=6"></script>
 </body>
 </html>

@@ -68,6 +68,7 @@ body {
   width: 100px;
 }
 .podium-avatar {
+  position: relative;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -80,6 +81,18 @@ body {
   border: 3px solid white;
   box-shadow: 0 8px 18px rgba(30, 41, 90, 0.15);
   margin-bottom: 8px;
+}
+/* A real "online right now" signal (see app/sockets.py's presence
+   tracking), same as home.css's version. */
+.presence-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #34c77b;
+  border: 2px solid white;
 }
 /* The #1 column gets a bigger avatar and a crown - everything about it
    should read as "the winner" at a glance. */
@@ -151,6 +164,7 @@ body {
   flex-shrink: 0;
 }
 .rank-avatar {
+  position: relative;
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -162,6 +176,10 @@ body {
   font-weight: 700;
   flex-shrink: 0;
 }
+.rank-avatar .presence-dot {
+  width: 9px;
+  height: 9px;
+}
 .rank-name {
   flex: 1;
   font-size: 13px;
@@ -171,6 +189,18 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #7a3d00;
+  background: linear-gradient(90deg, #ffe4ac, #ffd166);
+  padding: 1px 7px;
+  border-radius: 999px;
+  vertical-align: middle;
 }
 .rank-stats {
   text-align: right;
@@ -195,4 +225,12 @@ body {
 }
 .rank-row.is-you .rank-name {
   color: #3f6fe0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8892b3;
+  font-size: 13px;
+  font-weight: 600;
 }

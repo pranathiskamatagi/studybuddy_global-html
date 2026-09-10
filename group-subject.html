@@ -49,19 +49,6 @@
         </div>
       </div>
 
-      <div class="field">
-        <label for="level">Level</label>
-        <div class="select-wrap">
-          <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"></path></svg>
-          <input type="text" id="level" list="level-options" placeholder="Select or type a level" autocomplete="off" />
-          <datalist id="level-options">
-            <option value="Beginner"></option>
-            <option value="Intermediate"></option>
-            <option value="Advanced"></option>
-          </datalist>
-        </div>
-      </div>
-
       <!-- ============ RECENT SEARCHES (clickable chips) ============ -->
       <div class="chip-section">
         <p class="chip-heading">Recent searches</p>
@@ -95,6 +82,8 @@
     </form>
   </div>
 
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
   <script src="group-subject.js"></script>
 </body>
 </html>

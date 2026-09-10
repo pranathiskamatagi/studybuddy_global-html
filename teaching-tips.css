@@ -127,6 +127,39 @@ body {
   color: #8892b3;
   line-height: 1.5;
 }
+/* A concrete example under each tip - visually distinct (italic, a
+   left accent bar) so it reads as "here's what this looks like in
+   practice," not just more of the description above it. */
+.tip-example {
+  font-size: 12px;
+  font-style: italic;
+  color: #3f6fe0;
+  line-height: 1.5;
+  margin-top: 6px;
+  padding-left: 10px;
+  border-left: 2px solid #dfe6f7;
+}
+
+/* ---------- Bonus points card ---------- */
+.bonus-card {
+  background: linear-gradient(90deg, #fff6e0, #ffeacb);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.bonus-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #b8860b;
+  margin-bottom: 6px;
+}
+.bonus-text {
+  font-size: 13px;
+  color: #6b5326;
+  line-height: 1.55;
+}
 
 /* ---------- "Remember" closing card ----------
    Reuses the same soft-gradient quote-card look as the home screen's

@@ -31,12 +31,14 @@
       <div class="mindmap">
         <div class="mindmap-central" id="mindmap-topic">Topic</div>
         <div class="mindmap-trunk" aria-hidden="true"></div>
-        <div class="mindmap-branches" id="mindmap-branches">
-          <div class="branch-wrap"><div class="branch-node">Main definitions</div></div>
-          <div class="branch-wrap"><div class="branch-node">Real-world examples</div></div>
-          <div class="branch-wrap"><div class="branch-node">Common mistakes to avoid</div></div>
-        </div>
+        <!-- ai-summary.js fills this with the real branches Gemini returned -->
+        <div class="mindmap-branches" id="mindmap-branches"></div>
       </div>
+
+      <!-- The tree above only has room for short labels - this is the
+           real substance behind each one, long as it needs to be
+           (scrolling is fine, see ai-summary.js's renderMindMap). -->
+      <div class="branch-details" id="branch-details"></div>
 
       <h2 class="section-heading">Summary</h2>
       <div class="summary-card">
@@ -51,9 +53,17 @@
       </button>
     </div>
 
+    <!-- Shown for a real session that didn't have enough real chat yet to
+         honestly summarize - instead of pretending there's a mind map. -->
+    <div id="unavailable-view" hidden>
+      <p class="unavailable-text">Not enough of a conversation yet to generate a real summary - chat a bit more first, then come back.</p>
+    </div>
+
     <button type="button" id="back-btn" class="home-link-btn">Back to session end</button>
   </div>
 
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
   <script src="ai-summary.js"></script>
 </body>
 </html>

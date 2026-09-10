@@ -1,0 +1,73 @@
+/* A simple "reward" popup - shows briefly in the middle of the screen
+   whenever something real is earned (session points, an achievement, a
+   rating bonus), then fades itself out. Doesn't need a click to dismiss -
+   it's a celebration, not a decision. */
+.points-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(27, 35, 64, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.points-popup-overlay.visible {
+  opacity: 1;
+}
+.points-popup-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px 36px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(30, 41, 90, 0.25);
+  transform: scale(0.85);
+  transition: transform 0.25s ease;
+}
+.points-popup-overlay.visible .points-popup-card {
+  transform: scale(1);
+}
+.points-popup-icon {
+  font-size: 40px;
+  margin-bottom: 6px;
+  animation: points-popup-bounce 0.5s ease;
+}
+@keyframes points-popup-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.points-popup-text {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.points-popup-sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8892b3;
+  margin-top: 4px;
+}
+
+/* ---------- Confetti burst (see points-popup.js's _burstConfetti) ---------- */
+.confetti-burst {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 301; /* above the popup overlay itself */
+}
+.confetti-piece {
+  position: fixed;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  animation: confetti-fly 0.9s ease-out forwards;
+}
+@keyframes confetti-fly {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--tx), calc(var(--ty) + 90px)) rotate(var(--rot)); opacity: 0; }
+}

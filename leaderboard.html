@@ -24,31 +24,34 @@
     <!-- ============ PODIUM (top 3) ============ -->
     <!-- DOM order is 2nd-1st-3rd, matching how real podiums are laid
          out visually (winner in the tall middle spot). -->
-    <div class="podium">
-      <div class="podium-col">
-        <div class="podium-avatar avatar-pink">S</div>
-        <p class="podium-name">Sofia M.</p>
+    <div class="podium" id="podium">
+      <div class="podium-col" id="podium-2" hidden>
+        <div class="podium-avatar" id="podium-2-avatar"></div>
+        <p class="podium-name" id="podium-2-name"></p>
         <div class="pedestal pedestal-2">2</div>
       </div>
-      <div class="podium-col rank-1">
+      <div class="podium-col rank-1" id="podium-1" hidden>
         <svg class="crown" viewBox="0 0 24 24" fill="#f5a623" stroke="none"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8z"></path></svg>
-        <div class="podium-avatar avatar-blue">A</div>
-        <p class="podium-name">Aditi R.</p>
-        <p class="podium-highest">Highest points</p>
+        <div class="podium-avatar" id="podium-1-avatar"></div>
+        <p class="podium-name" id="podium-1-name"></p>
+        <p class="podium-highest">Highest coins</p>
         <div class="pedestal pedestal-1">1</div>
       </div>
-      <div class="podium-col">
-        <div class="podium-avatar avatar-orange">K</div>
-        <p class="podium-name">Kabir S.</p>
+      <div class="podium-col" id="podium-3" hidden>
+        <div class="podium-avatar" id="podium-3-avatar"></div>
+        <p class="podium-name" id="podium-3-name"></p>
         <div class="pedestal pedestal-3">3</div>
       </div>
     </div>
 
     <!-- ============ RANKED LIST ============ -->
     <div class="rank-list" id="rank-list"></div>
+    <p class="empty-state" id="empty-state" hidden>No one's earned coins yet - be the first!</p>
 
   </div>
 
-  <script src="leaderboard.js"></script>
+  <script src="api.js?v=5"></script>
+  <script src="socket.io.min.js"></script>
+  <script src="leaderboard.js?v=2"></script>
 </body>
 </html>

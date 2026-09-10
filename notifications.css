@@ -85,6 +85,23 @@ body {
   cursor: default;
   text-decoration: none;
 }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.clear-all-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #e0453f;
+  cursor: pointer;
+}
+.clear-all-btn:hover {
+  text-decoration: underline;
+}
 
 /* ---------- Notification rows ---------- */
 .notif-list {
@@ -153,6 +170,28 @@ body {
   background: #3f6fe0;
   flex-shrink: 0;
   margin-top: 4px;
+}
+.notif-delete-btn {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: #c7cee6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: -6px -6px -6px 0; /* keeps the row's own padding visually even */
+}
+.notif-delete-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.notif-delete-btn:hover {
+  background: #fdeceb;
+  color: #e0453f;
 }
 
 /* ---------- Empty state ---------- */

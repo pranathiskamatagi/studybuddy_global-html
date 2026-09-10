@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------------------------------------------------------------
   // FEATURE 2: Validate and handle form submission
   // ---------------------------------------------------------------
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     // Forms reload the whole page by default when submitted.
     // preventDefault() stops that so we can handle things with JS instead.
     event.preventDefault();
@@ -66,10 +66,34 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Everything passed! There's no backend yet to actually create an
-    // account, so we can't persist this - but the FLOW itself is real:
-    // signing up takes you into the app, same as it would for real.
-    window.location.href = 'home.html';
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+
+    try {
+      // apiFetch (from api.js) sends this to the real Flask backend now -
+      // await pauses right here until the server responds, without
+      // freezing the rest of the page the way a truly synchronous
+      // wait would.
+      const data = await apiFetch('/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify({
+          fullname: document.getElementById('fullname').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          password: passwordInput.value,
+          country: countrySelect.value,
+          grade: gradeSelect.value,
+        }),
+      });
+
+      saveSession(data.token, data.user);
+      window.location.href = 'home.html';
+    } catch (error) {
+      // error.message is whatever the backend's {"error": "..."} said -
+      // e.g. "An account with that email already exists."
+      errorMessage.textContent = error.message;
+      errorMessage.hidden = false;
+      submitBtn.disabled = false;
+    }
   });
 
   // ---------------------------------------------------------------

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Conversations - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="admin-sessions.css" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="admin.html" class="back-btn" aria-label="Back to admin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">🛡 Admin</p>
+    </div>
+
+    <h1 class="title">Conversations</h1>
+    <p class="subtitle">Newest first, across everyone.</p>
+
+    <div class="session-list" id="session-list"></div>
+
+  </div>
+
+  <script src="api.js?v=5"></script>
+  <script src="admin-sessions.js"></script>
+</body>
+</html>

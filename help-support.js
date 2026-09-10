@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('contact-btn').addEventListener('click', () => {
-    alert("Contacting support isn't built yet - coming in a future update!");
+    window.location.href = 'contact-support.html';
   });
 
 });
