@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="home.css?v=5" />
+  <link rel="stylesheet" href="home.css?v=6" />
   <link rel="stylesheet" href="confirm-modal.css" />
   <link rel="stylesheet" href="dark-mode.css?v=8" />
   <link rel="stylesheet" href="full-width-layout.css?v=4" />
@@ -24,6 +24,7 @@
          clicks on ANY button inside it at once (event delegation).
          Toggling the "expanded" class (via the button below) switches
          between icon-only and icon+label - try both! -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
     <nav class="sidebar" id="sidebar">
       <div class="sidebar-top">
         <div class="sidebar-logo">
@@ -103,6 +104,9 @@
 
       <header class="topbar">
         <div class="topbar-left">
+        <button type="button" class="icon-btn menu-btn" id="menu-btn" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h16"></path></svg>
+          </button>
           <div class="app-logo-badge">
             <img src="logo-mark.png" alt="Learnora logo" />
           </div>
@@ -293,7 +297,7 @@
   <script src="socket.io.min.js"></script>
   <script src="push.js?v=2"></script>
   <script src="info-modal.js"></script>
-  <script src="home.js?v=22"></script>
+  <script src="home.js?v=23"></script>
   <script src="image-viewer.js?v=1"></script>
   <script src="logo-viewer.js?v=2"></script>
 </body>

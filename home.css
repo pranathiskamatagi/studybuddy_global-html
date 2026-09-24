@@ -831,3 +831,106 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ============================================================
+   PHONES: menu drawer + compact quote (like a chat app)
+   ============================================================ */
+.menu-btn {
+  display: none;
+}
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* The icon column is hidden until the menu button is tapped - it then
+     slides in as a drawer over the page instead of eating the width. */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    max-height: 100vh;
+    width: 270px;
+    align-items: stretch;
+    padding: 20px 12px;
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    z-index: 1000;
+    box-shadow: 0 0 40px rgba(20, 28, 60, 0.25);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .sidebar-backdrop.show {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 28, 60, 0.4);
+    z-index: 999;
+  }
+  .sidebar:not(.expanded) .sidebar-top,
+  .sidebar .sidebar-top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .sidebar .sidebar-logo {
+    width: 40px;
+    height: 40px;
+  }
+  .sidebar .nav-item {
+    width: 100%;
+    height: 44px;
+    justify-content: flex-start;
+    padding: 0 14px;
+  }
+  .sidebar .nav-item svg {
+    width: 20px;
+    height: 20px;
+  }
+  .sidebar .nav-label {
+    opacity: 1;
+    width: auto;
+    margin-left: 12px;
+  }
+  .sidebar-bottom {
+    align-items: stretch;
+  }
+  .menu-btn {
+    display: flex;
+  }
+  .main {
+    padding: 14px 14px 40px;
+  }
+
+  /* Quote: a slim strip, not a tall card. */
+  .quote-banner {
+    padding: 12px 14px 12px 34px;
+    min-height: 0;
+    margin-bottom: 14px;
+    border-radius: 14px;
+  }
+  .quote-mark {
+    left: 10px;
+    top: 4px;
+    font-size: 30px;
+  }
+  .quote-text {
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .quote-author {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+  .quote-trend-icon {
+    display: none;
+  }
+  .quote-dots {
+    display: none;
+  }
+}

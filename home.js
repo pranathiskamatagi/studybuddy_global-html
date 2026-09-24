@@ -660,7 +660,28 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------------------------------------------------------------
   const sidebarToggle = document.getElementById('sidebar-toggle');
 
+  // On phones the sidebar is a slide-in drawer (opened by the menu button
+  // in the top bar); on bigger screens it stays a collapsible icon column.
+  const phoneQuery = window.matchMedia('(max-width: 768px)');
+  const menuBtn = document.getElementById('menu-btn');
+  const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+  function setDrawer(open) {
+    sidebar.classList.toggle('open', open);
+    sidebarBackdrop.classList.toggle('show', open);
+  }
+
+  menuBtn.addEventListener('click', () => setDrawer(true));
+  sidebarBackdrop.addEventListener('click', () => setDrawer(false));
+  sidebar.addEventListener('click', (event) => {
+    if (phoneQuery.matches && event.target.closest('.nav-item')) setDrawer(false);
+  });
+
   sidebarToggle.addEventListener('click', () => {
+    if (phoneQuery.matches) {
+      setDrawer(false);
+      return;
+    }
     // classList.toggle() adds the class if it's missing, or removes it
     // if it's already there - perfect for an on/off switch like this.
     sidebar.classList.toggle('expanded');
