@@ -7,6 +7,6 @@ flask-socketio
 python-dotenv
 google-genai
 gunicorn
-eventlet
 pywebpush
 psycopg2-binary
+simple-websocket
