@@ -8,7 +8,7 @@
   --phone-zoom: 1;
 }
 html.phone-fallback {
-  --phone-zoom: 0.55;
+  --phone-zoom: 0.69;
 }
 @media (max-width: 768px) {
   html.phone-fallback .app-screen,
