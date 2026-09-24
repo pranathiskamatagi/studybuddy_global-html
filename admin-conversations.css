@@ -1,0 +1,53 @@
+.section-heading {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a7b0cc;
+  margin: 20px 0 8px;
+}
+.conv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.conv-row {
+  background: white;
+  border: 1.5px solid #e6ebf7;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.conv-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+}
+.conv-day .conv-row-top {
+  cursor: default;
+}
+.conv-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2340;
+}
+.conv-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: #3f6fe0;
+  background: #eef3fc;
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.conv-details {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #eef1f9;
+}
+.conv-detail {
+  font-size: 12.5px;
+  color: #6b7699;
+  padding: 3px 0;
+}

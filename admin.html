@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - StudyBuddy Global</title>
+  <title>Admin - Learnora</title>
+  <link rel="icon" type="image/png" href="icon-96.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="admin.css?v=4" />
+  <link rel="stylesheet" href="admin.css?v=5" />
   <link rel="stylesheet" href="dark-mode.css?v=8" />
   <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
@@ -31,10 +32,6 @@
         <p class="admin-stat-value" id="stat-total-users">—</p>
         <p class="admin-stat-label">Users</p>
       </a>
-      <a href="admin-sessions.html" class="admin-stat">
-        <p class="admin-stat-value" id="stat-total-sessions">—</p>
-        <p class="admin-stat-label">Conversations</p>
-      </a>
       <a href="admin-reports.html" class="admin-stat">
         <p class="admin-stat-value" id="stat-open-reports">—</p>
         <p class="admin-stat-label">Open reports</p>
@@ -50,8 +47,8 @@
         <span>🔴 Live now</span>
         <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
       </a>
-      <a href="admin-sessions.html" class="link-row">
-        <span>Browse conversations</span>
+      <a href="admin-conversations.html" class="link-row">
+        <span>Conversation summary</span>
         <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
       </a>
       <a href="admin-reports.html" class="link-row">
@@ -87,6 +84,6 @@
   <script src="dark-mode.js"></script>
 
   <script src="api.js?v=7"></script>
-  <script src="admin.js?v=2"></script>
+  <script src="admin.js?v=3"></script>
 </body>
 </html>

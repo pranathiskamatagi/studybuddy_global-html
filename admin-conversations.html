@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Browse Conversations - StudyBuddy Global</title>
+  <title>Conversation Summary - Learnora</title>
+  <link rel="icon" type="image/png" href="icon-96.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="admin.css?v=3" />
-  <link rel="stylesheet" href="admin-sessions.css?v=4" />
-  <link rel="stylesheet" href="confirm-modal.css" />
+  <link rel="stylesheet" href="admin.css?v=5" />
+  <link rel="stylesheet" href="admin-conversations.css?v=1" />
   <link rel="stylesheet" href="dark-mode.css?v=8" />
   <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
@@ -25,22 +25,21 @@
       <p class="kicker">🛡 Admin</p>
     </div>
 
-    <h1 class="title">Conversations</h1>
-    <p class="subtitle">Newest first, grouped by day.</p>
+    <h1 class="title">Conversation summary</h1>
+    <p class="subtitle" id="conv-total">Who talked with whom, and when. Messages are never shown here.</p>
 
-    <input type="text" id="session-search-input" class="session-search-input" placeholder="Search by subject or topic..." />
+    <p class="section-heading">By day</p>
+    <div class="conv-list" id="day-list"></div>
 
-    <!-- admin-sessions.js fills this with one chip per real subject that
-         actually has conversations - "All" jumps back to showing everyone. -->
-    <div class="subject-filter-row" id="subject-filter-row"></div>
+    <p class="section-heading">Who talked with whom</p>
+    <div class="conv-list" id="people-list"></div>
 
-    <div class="session-list" id="session-list"></div>
+    <p class="empty-note" id="empty-note" hidden>No conversations yet.</p>
 
   </div>
   <script src="dark-mode.js"></script>
 
   <script src="api.js?v=7"></script>
-  <script src="confirm-modal.js"></script>
-  <script src="admin-sessions.js?v=5"></script>
+  <script src="admin-conversations.js"></script>
 </body>
 </html>

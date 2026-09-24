@@ -316,18 +316,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   // sessions), so the caller can celebrate that too.
   async function awardSessionPoints(elapsedMinutes) {
     if (!sessionId) return false;
-    try {
-      const data = await apiFetch(`/sessions/${sessionId}/end`, {
-        method: 'POST',
-        body: JSON.stringify({ minutes: elapsedMinutes }),
-      });
-      return Boolean(data.diamondEarned);
-    } catch (error) {
-      if (handleAuthError(error)) throw error; // expired login - already redirecting
-      // A failed award shouldn't trap the user here either way.
-      console.warn('Could not award points for this session:', error.message);
-      return false;
+    // Retried a few times when the server can't be reached at all (a brief
+    // restart, a dropped connection) - giving up on the first failure left
+    // the session open on the server forever, so the other person's chat
+    // never found out it had ended.
+    const MAX_ATTEMPTS = 4;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        const data = await apiFetch(`/sessions/${sessionId}/end`, {
+          method: 'POST',
+          body: JSON.stringify({ minutes: elapsedMinutes }),
+        });
+        return Boolean(data.diamondEarned);
+      } catch (error) {
+        if (handleAuthError(error)) throw error; // expired login - already redirecting
+        const serverUnreachable = error.status === undefined;
+        if (serverUnreachable && attempt < MAX_ATTEMPTS) {
+          await new Promise((resolve) => setTimeout(resolve, 2500));
+          continue;
+        }
+        // A failed award shouldn't trap the user here either way.
+        console.warn('Could not award points for this session:', error.message);
+        return false;
+      }
     }
+    return false;
   }
 
   socket = io(SOCKET_BASE, { auth: { token: getToken() } });

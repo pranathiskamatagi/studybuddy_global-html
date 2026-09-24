@@ -7,6 +7,8 @@ from app.extensions import db
 from app.models import User, ScheduledSession, HelpRequest
 from app.notification_helpers import create_notification
 
+from app.scheduled_reminders import find_duplicate_scheduled
+
 scheduled_bp = Blueprint('scheduled', __name__, url_prefix='/api/scheduled')
 
 # How early someone's allowed to actually click Join before the exact
@@ -62,6 +64,9 @@ def propose_scheduled():
 
     if scheduled_for <= datetime.now(timezone.utc):
         return jsonify(error='Pick a real time in the future.'), 400
+
+    if find_duplicate_scheduled(my_id, int(invitee_id), scheduled_for):
+        return jsonify(error='You already have a session with them at that time.'), 409
 
     proposer = db.session.get(User, my_id)
     scheduled = ScheduledSession(

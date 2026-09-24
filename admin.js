@@ -16,12 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // the individual screens already fetch anyway.
   Promise.all([
     apiFetch('/admin/users'),
-    apiFetch('/admin/sessions'),
     apiFetch('/admin/reports'),
   ])
-    .then(([usersData, sessionsData, reportsData]) => {
+    .then(([usersData, reportsData]) => {
       document.getElementById('stat-total-users').textContent = usersData.users.length;
-      document.getElementById('stat-total-sessions').textContent = sessionsData.sessions.length;
       document.getElementById('stat-banned-users').textContent = usersData.users.filter((u) => u.isBanned).length;
 
       const peopleListEl = document.getElementById('people-list');

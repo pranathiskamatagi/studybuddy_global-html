@@ -203,3 +203,24 @@ def maybe_cancel_unmatched_group_requests(user):
 
     if changed:
         db.session.commit()
+
+
+def find_duplicate_scheduled(user_a_id, user_b_id, when):
+    """An already-pending/accepted session between these two people at this
+    exact time, if any - two identical appointments made everything after
+    (reminders, cancel checks) run twice, e.g. two "ready to join"
+    notifications for one session."""
+    when_naive = when.replace(tzinfo=None) if getattr(when, 'tzinfo', None) else when
+    candidates = (
+        ScheduledSession.query
+        .filter(ScheduledSession.status.in_(('pending', 'accepted')))
+        .filter(ScheduledSession.proposer_id.in_((user_a_id, user_b_id)))
+        .filter(ScheduledSession.invitee_id.in_((user_a_id, user_b_id)))
+        .all()
+    )
+    for candidate in candidates:
+        existing = candidate.scheduled_for
+        existing = existing.replace(tzinfo=None) if getattr(existing, 'tzinfo', None) else existing
+        if existing == when_naive:
+            return candidate
+    return None

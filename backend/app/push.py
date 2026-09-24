@@ -2,7 +2,7 @@
 # notification bell - see notification_helpers.py, which already creates
 # a Notification row and pushes it live over the socket while the app is
 # OPEN. This module is the other half: reaching someone even when
-# StudyBuddy isn't open at all, via the browser's own push service (the
+# Learnora isn't open at all, via the browser's own push service (the
 # same mechanism behind every "real app" notification on a phone).
 #
 # Needs the browser tab to have registered a Service Worker (push.js) and

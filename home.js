@@ -372,12 +372,50 @@ document.addEventListener('DOMContentLoaded', () => {
     return row;
   }
 
+  // Agreed but not time yet - just shows when and with whom, and links to
+  // the full Scheduled sessions page (Join appears once it's time).
+  function buildUpcomingScheduledRow(scheduled) {
+    const otherId = scheduled.proposerId === myId ? scheduled.inviteeId : scheduled.proposerId;
+    const otherName = scheduled.proposerId === myId ? scheduled.inviteeName : scheduled.proposerName;
+
+    const row = document.createElement('div');
+    row.className = 'request-row';
+    const avatar = document.createElement('span');
+    avatar.className = `avatar-sm avatar-${colorFor(otherId)} avatar-lg`;
+    avatar.textContent = otherName.charAt(0).toUpperCase();
+    const info = document.createElement('div');
+    info.className = 'request-info';
+    const nameP = document.createElement('p');
+    nameP.className = 'request-name';
+    nameP.textContent = `${scheduled.subject || scheduled.topic} with ${otherName}`;
+    const descP = document.createElement('p');
+    descP.className = 'request-desc';
+    descP.textContent = `Scheduled for ${formatWhen(scheduled.scheduledFor)}.`;
+    info.append(nameP, descP);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'request-btn';
+    btn.textContent = 'View';
+    btn.addEventListener('click', () => { window.location.href = 'scheduled-sessions.html'; });
+    row.append(avatar, info, btn);
+    return row;
+  }
+
   apiFetch('/scheduled')
     .then((data) => {
       const now = Date.now();
       const ready = data.scheduled.filter((s) =>
         s.status === 'accepted' && new Date(s.scheduledFor).getTime() - JOIN_EARLY_WINDOW_MS <= now
       );
+      const upcoming = data.scheduled.filter((s) =>
+        s.status === 'accepted' && new Date(s.scheduledFor).getTime() - JOIN_EARLY_WINDOW_MS > now
+      );
+      const upcomingList = document.getElementById('upcoming-scheduled-list');
+      upcoming
+        .sort((a, b) => new Date(a.scheduledFor) - new Date(b.scheduledFor))
+        .forEach((s) => upcomingList.appendChild(buildUpcomingScheduledRow(s)));
+      if (upcoming.length) document.getElementById('upcoming-scheduled-section').hidden = false;
+
       if (ready.length === 0) return; // stays hidden - nothing real to show
       ready.forEach((s) => readyScheduledList.appendChild(buildReadyScheduledRow(s)));
       readyScheduledSection.hidden = false;
@@ -589,7 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Log out needs a confirmation first, so it's handled separately
     // from the rest, which just navigate straight to their screen.
     if (clickedButton.dataset.label === 'Log out') {
-      showConfirmModal('Log out of StudyBuddy Global?', () => {
+      showConfirmModal('Log out of Learnora?', () => {
         clearSession();
         window.location.href = 'index.html';
       }, { confirmText: 'Log out', danger: true });
@@ -877,12 +915,75 @@ document.addEventListener('DOMContentLoaded', () => {
   // An ARRAY holds a list of values - here, one object per quote.
   // Each object groups a "text" and an "author" together under one name.
   const quotes = [
-    { text: 'Education is the most powerful weapon which you can use to change the world.', author: '— Nelson Mandela' },
-    { text: 'The beautiful thing about learning is that no one can take it away from you.', author: '— B.B. King' },
-    { text: 'Tell me and I forget, teach me and I may remember, involve me and I learn.', author: '— Benjamin Franklin' },
-    { text: 'The expert in anything was once a beginner.', author: '— Helen Hayes' },
-    { text: 'Each one, teach one.', author: '— African-American Proverb' },
+    { text: "Education is the most powerful weapon which you can use to change the world.", author: "— Nelson Mandela" },
+    { text: "The beautiful thing about learning is that no one can take it away from you.", author: "— B.B. King" },
+    { text: "The expert in anything was once a beginner.", author: "— Helen Hayes" },
+    { text: "Each one, teach one.", author: "— African-American Proverb" },
+    { text: "An investment in knowledge pays the best interest.", author: "— Benjamin Franklin" },
+    { text: "The more that you read, the more things you will know. The more that you learn, the more places you'll go.", author: "— Dr. Seuss" },
+    { text: "Live as if you were to die tomorrow. Learn as if you were to live forever.", author: "— Mahatma Gandhi" },
+    { text: "The mind is not a vessel to be filled, but a fire to be kindled.", author: "— Plutarch" },
+    { text: "Anyone who stops learning is old, whether at twenty or eighty.", author: "— Henry Ford" },
+    { text: "I have no special talent. I am only passionately curious.", author: "— Albert Einstein" },
+    { text: "Learning never exhausts the mind.", author: "— Leonardo da Vinci" },
+    { text: "It always seems impossible until it's done.", author: "— Nelson Mandela" },
+    { text: "Education is the passport to the future, for tomorrow belongs to those who prepare for it today.", author: "— Malcolm X" },
+    { text: "The function of education is to teach one to think intensively and to think critically.", author: "— Martin Luther King Jr." },
+    { text: "Education is the key to unlocking the world, a passport to freedom.", author: "— Oprah Winfrey" },
+    { text: "The teacher who is indeed wise does not bid you to enter the house of his wisdom, but rather leads you to the threshold of your own mind.", author: "— Kahlil Gibran" },
+    { text: "What we learn with pleasure we never forget.", author: "— Alfred Mercier" },
+    { text: "Learning is a treasure that will follow its owner everywhere.", author: "— Chinese Proverb" },
+    { text: "Give a man a fish and you feed him for a day; teach a man to fish and you feed him for a lifetime.", author: "— Proverb" },
+    { text: "Success is no accident. It is hard work, perseverance, learning, studying, sacrifice, and most of all, love of what you are doing.", author: "— Pelé" },
+    { text: "Change is the end result of all true learning.", author: "— Leo Buscaglia" },
+    { text: "The capacity to learn is a gift; the ability to learn is a skill; the willingness to learn is a choice.", author: "— Brian Herbert" },
+    { text: "Learn from yesterday, live for today, hope for tomorrow.", author: "— Albert Einstein" },
+    { text: "Develop a passion for learning. If you do, you will never cease to grow.", author: "— Anthony J. D'Angelo" },
+    { text: "Teaching is the greatest act of optimism.", author: "— Colleen Wilcox" },
+    { text: "Teachers open the door, but you must enter by yourself.", author: "— Chinese Proverb" },
+    { text: "He who learns but does not think is lost! He who thinks but does not learn is in great danger.", author: "— Confucius" },
+    { text: "By learning you will teach; by teaching you will learn.", author: "— Latin Proverb" },
+    { text: "Whoever teaches learns in the act of teaching, and whoever learns teaches in the act of learning.", author: "— Paulo Freire" },
+    { text: "The best way to learn is to teach.", author: "— Frank Oppenheimer" },
+    { text: "While we teach, we learn.", author: "— Seneca" },
+    { text: "Knowing is not enough; we must apply. Willing is not enough; we must do.", author: "— Johann Wolfgang von Goethe" },
+    { text: "You don't have to be great to start, but you have to start to be great.", author: "— Zig Ziglar" },
+    { text: "Education is what remains after one has forgotten what one has learned in school.", author: "— Albert Einstein" },
+    { text: "Study hard what interests you the most in the most undisciplined, irreverent and original manner possible.", author: "— Richard Feynman" },
+    { text: "Nothing in life is to be feared, it is only to be understood.", author: "— Marie Curie" },
+    { text: "Intellectual growth should commence at birth and cease only at death.", author: "— Albert Einstein" },
+    { text: "I am still learning.", author: "— Michelangelo" },
+    { text: "Genius is one percent inspiration and ninety-nine percent perspiration.", author: "— Thomas Edison" },
+    { text: "The only person who is educated is the one who has learned how to learn and change.", author: "— Carl Rogers" },
+    { text: "Curiosity is the wick in the candle of learning.", author: "— William Arthur Ward" },
+    { text: "Learning is not attained by chance, it must be sought for with ardor and attended to with diligence.", author: "— Abigail Adams" },
+    { text: "A journey of a thousand miles begins with a single step.", author: "— Lao Tzu" },
+    { text: "Without continual growth and progress, such words as improvement, achievement, and success have no meaning.", author: "— Benjamin Franklin" },
+    { text: "The future belongs to those who believe in the beauty of their dreams.", author: "— Eleanor Roosevelt" },
+    { text: "Don't watch the clock; do what it does. Keep going.", author: "— Sam Levenson" },
+    { text: "It does not matter how slowly you go as long as you do not stop.", author: "— Confucius" },
+    { text: "Success is the sum of small efforts, repeated day in and day out.", author: "— Robert Collier" },
+    { text: "There are no shortcuts to any place worth going.", author: "— Beverly Sills" },
+    { text: "Discipline is the bridge between goals and accomplishment.", author: "— Jim Rohn" },
+    { text: "The difference between ordinary and extraordinary is that little extra.", author: "— Jimmy Johnson" },
+    { text: "Believe you can and you're halfway there.", author: "— Theodore Roosevelt" },
+    { text: "Failure is simply the opportunity to begin again, this time more intelligently.", author: "— Henry Ford" },
+    { text: "Hard work beats talent when talent doesn't work hard.", author: "— Tim Notke" },
+    { text: "Our greatest weakness lies in giving up. The most certain way to succeed is always to try just one more time.", author: "— Thomas Edison" },
+    { text: "Don't let what you cannot do interfere with what you can do.", author: "— John Wooden" },
+    { text: "It's not that I'm so smart, it's just that I stay with problems longer.", author: "— Albert Einstein" },
+    { text: "Motivation is what gets you started. Habit is what keeps you going.", author: "— Jim Ryun" },
+    { text: "I've failed over and over and over again in my life. And that is why I succeed.", author: "— Michael Jordan" },
   ];
+
+  // Shown in a shuffled order that only repeats once every quote has been
+  // seen, starting somewhere different each visit - not the same few, in
+  // the same order, every time.
+  const quoteOrder = quotes.map((_, i) => i);
+  for (let i = quoteOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [quoteOrder[i], quoteOrder[j]] = [quoteOrder[j], quoteOrder[i]];
+  }
 
   const quoteContent = document.getElementById('quote-content');
   const quoteTextEl = document.getElementById('quote-text');
@@ -891,28 +992,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentQuoteIndex = 0;
 
-  // Build one dot button per quote in the array, instead of hand-writing
-  // them in the HTML. forEach runs this function once for every item -
-  // "index" tells us WHICH quote (0, 1, 2...) each dot represents.
-  quotes.forEach((quote, index) => {
-    const dot = document.createElement('button'); // creates a brand-new <button> in memory
-    dot.type = 'button';
-    dot.className = 'quote-dot';
-    dot.setAttribute('aria-label', `Show quote ${index + 1}`);
-    dot.addEventListener('click', () => showQuote(index));
-    quoteDots.appendChild(dot); // actually adds it to the page
-  });
-
   // Updates the visible text/author and which dot looks "active".
   function showQuote(index) {
     currentQuoteIndex = index;
-    quoteTextEl.textContent = `“${quotes[index].text}”`;
-    quoteAuthorEl.textContent = quotes[index].author;
-
-    // Loop over every dot and toggle "active" only on the matching one.
-    quoteDots.querySelectorAll('.quote-dot').forEach((dot, dotIndex) => {
-      dot.classList.toggle('active', dotIndex === index);
-    });
+    const quote = quotes[quoteOrder[index]];
+    quoteTextEl.textContent = `“${quote.text}”`;
+    quoteAuthorEl.textContent = quote.author;
   }
 
   // Fades the current quote out, swaps the text while it's invisible,
@@ -925,7 +1010,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 300ms matches the CSS transition duration on .quote-content, so
     // the text swap happens exactly while it's fully faded out.
     setTimeout(() => {
-      const nextIndex = (currentQuoteIndex + 1) % quotes.length; // wraps back to 0 after the last quote
+      const nextIndex = (currentQuoteIndex + 1) % quoteOrder.length; // wraps back to 0 after the last quote
       showQuote(nextIndex);
       quoteContent.classList.remove('fade-out');
     }, 300);

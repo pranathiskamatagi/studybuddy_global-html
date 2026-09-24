@@ -7,6 +7,8 @@ from app.extensions import db, socketio
 from app.models import HelpRequest, Block, ScheduledSession, User, StudySession, GroupMembership
 from app.notification_helpers import create_notification
 
+from app.scheduled_reminders import find_duplicate_scheduled
+
 requests_bp = Blueprint('requests', __name__, url_prefix='/api/help-requests')
 
 VALID_MODES = {'learn', 'teach'}
@@ -308,7 +310,13 @@ def fulfill_request(request_id):
     # session between the two of them, so it shows up in both people's
     # Scheduled Sessions ready to join once that time arrives, and the
     # original poster gets told a real person is now coming.
-    if help_request.scheduled_for:
+    if help_request.scheduled_for and find_duplicate_scheduled(
+        fulfiller_id, help_request.user_id, help_request.scheduled_for,
+    ):
+        # Same two people, same time - already scheduled, so don't make a
+        # second identical appointment (see find_duplicate_scheduled).
+        db.session.commit()
+    elif help_request.scheduled_for:
         fulfiller = db.session.get(User, fulfiller_id)
         scheduled = ScheduledSession(
             proposer_id=fulfiller_id,

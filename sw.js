@@ -1,13 +1,13 @@
 // The Service Worker - a script the browser keeps running in the
 // background, separate from any actual open tab, which is the ONLY
 // thing that lets a real notification appear on the phone/lock screen
-// even while StudyBuddy itself is fully closed. Must live at the SITE
+// even while Learnora itself is fully closed. Must live at the SITE
 // ROOT (not in a subfolder) - a service worker can only ever "see" push
 // events for pages at or below the folder it's registered from, and
-// StudyBuddy's pages are all at the root.
+// Learnora's pages are all at the root.
 
 self.addEventListener('push', (event) => {
-  let data = { title: 'StudyBuddy Global', body: 'You have a new notification.', url: '/home.html' };
+  let data = { title: 'Learnora', body: 'You have a new notification.', url: '/home.html' };
   try {
     if (event.data) data = { ...data, ...event.data.json() };
   } catch (error) {
@@ -18,7 +18,7 @@ self.addEventListener('push', (event) => {
 
   // Without a real icon, the OS/lock screen fell back to its own generic
   // notification glyph - plain, monochrome, and with nothing to show this
-  // actually came from StudyBuddy. icon-192.png is the same blue-green
+  // actually came from Learnora. icon-192.png is the same blue-green
   // globe logo used everywhere else in the app; badge is a smaller
   // monochrome version some OSes (mainly Android) show in the status bar
   // instead of the full icon - same file works fine for both.
@@ -33,7 +33,7 @@ self.addEventListener('push', (event) => {
 });
 
 // Clicking the notification itself (not just the browser chrome around
-// it) - focuses an already-open StudyBuddy tab if there is one, rather
+// it) - focuses an already-open Learnora tab if there is one, rather
 // than opening a duplicate, and only opens a fresh tab when none exists.
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();

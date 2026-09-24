@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 # One place that creates a notification AND pushes it live - every route
 # that needs to notify someone calls this instead of duplicating both
 # steps (save the row, emit it) everywhere a notification might happen.
@@ -45,12 +46,28 @@ _CATEGORY_TITLE = {
     'messages': 'New message',
     'matches': 'Match found',
     'scheduled': 'Scheduled session',
-    'rewards': 'StudyBuddy Global',
-    'announcements': 'StudyBuddy Global',
+    'rewards': 'Learnora',
+    'announcements': 'Learnora',
 }
 
 
+DUPLICATE_WINDOW = timedelta(minutes=5)
+
+
 def create_notification(user_id, type, message, session_id=None):
+    # The exact same notification, to the same person, within a few
+    # minutes is never useful - it just means something upstream ran
+    # twice (e.g. two identical bookings). Return the one already there
+    # instead of adding (and pushing) a second copy.
+    recent = (
+        Notification.query
+        .filter_by(user_id=user_id, type=type, message=message, session_id=session_id)
+        .filter(Notification.created_at >= datetime.utcnow() - DUPLICATE_WINDOW)
+        .first()
+    )
+    if recent:
+        return recent
+
     notification = Notification(user_id=user_id, type=type, message=message, session_id=session_id)
     db.session.add(notification)
     db.session.commit()
@@ -69,6 +86,6 @@ def create_notification(user_id, type, message, session_id=None):
     if user:
         category = _TYPE_TO_CATEGORY.get(type, 'announcements')
         url = f'/session.html?sessionId={session_id}' if session_id else '/notifications.html'
-        send_push_to_user(user, category, _CATEGORY_TITLE.get(category, 'StudyBuddy Global'), message, url=url)
+        send_push_to_user(user, category, _CATEGORY_TITLE.get(category, 'Learnora'), message, url=url)
 
     return notification

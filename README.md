@@ -1,8 +1,8 @@
-# StudyBuddy Global 🌍
+# Learnora 🌍
 
-**Connect. Learn. Grow. Together.**
+**Learn. Teach. Grow together.**
 
-StudyBuddy Global is a peer-to-peer learning platform that connects students from around the world to learn from — and teach — each other. Pick a subject you want to learn, get matched with a study partner, chat (or join a group session), and earn points, diamonds, and badges along the way.
+Learnora is a peer-to-peer learning platform that connects students from around the world to learn from — and teach — each other. Pick a subject you want to learn, get matched with a study partner, chat (or join a group session), and earn points, diamonds, and badges along the way.
 
 This repo is the **frontend**: a fully connected, static HTML/CSS/JavaScript app. No backend or database yet — that's the next phase.
 

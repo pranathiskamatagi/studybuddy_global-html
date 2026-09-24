@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sessionId = params.get('sessionId');
 
   if (!sessionId) {
-    window.location.href = 'admin-sessions.html';
+    window.location.href = 'admin.html';
     return;
   }
 

@@ -6,14 +6,15 @@
   <meta charset="UTF-8" />
   <!-- this line makes the page behave properly on phone screens instead of zooming out -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome - StudyBuddy Global</title>
+  <title>Welcome - Learnora</title>
+  <link rel="icon" type="image/png" href="icon-96.png" />
 
   <!-- Loading a nicer rounded font from Google Fonts (free, no download needed) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Playfair+Display:ital,wght@1,700;1,800&display=swap" rel="stylesheet" />
 
   <!-- This links our CSS file to this HTML file. Without this line, none of our styling would show up! -->
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=11" />
   <link rel="stylesheet" href="dark-mode.css?v=8" />
   <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
@@ -28,17 +29,12 @@
     <span class="deco-dot dot-blue" style="top:16%; left:88%;"></span>
     <span class="deco-dot dot-blue" style="top:22%; left:8%;"></span>
 
-    <div class="logo-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.5 4 5.5 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.5-4-9s1.5-6.5 4-9z"></path></svg>
+    <!-- The Learnora name, written out, with the small logo on its left. -->
+    <div class="brand-row">
+      <img class="brand-mark" src="logo-mark.png" alt="Learnora logo" />
+      <span class="brand-name">Learnora</span>
     </div>
 
-    <!-- The globe + book "illustration" -->
-    <div class="illustration">
-      <span class="globe-emoji" aria-hidden="true">🌍</span>
-      <span class="book-emoji" aria-hidden="true">📖</span>
-    </div>
-
-    <!-- Main heading. The <span> lets us color just the "!" differently -->
     <h1 class="title">Welcome<span class="accent">!</span></h1>
 
     <!-- Three little colored bars under the title, purely decorative -->
@@ -48,10 +44,35 @@
       <span class="seg seg-gray"></span>
     </div>
 
-    <p class="tagline">Connect. Learn. Grow. Together.</p>
+    <p class="tagline">Learn. Teach. Grow together.</p>
     <p class="subtitle">
       A global community of students learning and teaching together.
     </p>
+
+    <!-- Three quick reasons to join - fills the page and mirrors Home's three cards -->
+    <div class="feature-row">
+      <div class="feature-card">
+        <span class="feature-icon fi-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"></path><path d="M4 19V5"></path></svg>
+        </span>
+        <p class="feature-title">Learn</p>
+        <p class="feature-desc">Find a buddy to teach you something new</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon fi-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path></svg>
+        </span>
+        <p class="feature-title">Teach</p>
+        <p class="feature-desc">Share what you know and earn coins</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon fi-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 15.2c.6-.2 1.3-.2 2-.2 2.2 0 4 1.8 4 4"></path></svg>
+        </span>
+        <p class="feature-title">Grow together</p>
+        <p class="feature-desc">Study in groups and collect badges</p>
+      </div>
+    </div>
 
     <!-- This big rounded shape at the bottom mimics the "curved earth horizon" in the design -->
     <div class="earth-curve"></div>
@@ -73,5 +94,7 @@
   <script src="dark-mode.js"></script>
 
   <script src="index.js"></script>
+  <script src="image-viewer.js?v=1"></script>
+  <script src="logo-viewer.js?v=2"></script>
 </body>
 </html>

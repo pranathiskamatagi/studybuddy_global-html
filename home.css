@@ -74,16 +74,18 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  background: #fcfcf0;
+  border: 1px solid #e6e2c8;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   flex-shrink: 0;
 }
-.sidebar-logo svg {
-  width: 22px;
-  height: 22px;
+.sidebar-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .sidebar-toggle {
   width: 32px;
@@ -207,14 +209,17 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  background: #fcfcf0;
+  border: 1px solid #e6e2c8;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.app-logo-badge svg {
-  width: 20px;
-  height: 20px;
+.app-logo-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .app-name {
   font-weight: 700;
@@ -721,10 +726,7 @@ body {
     width: 32px;
     height: 32px;
   }
-  .sidebar .sidebar-logo svg {
-    width: 18px;
-    height: 18px;
-  }
+
   .sidebar .nav-item {
     width: 40px;
     height: 38px;

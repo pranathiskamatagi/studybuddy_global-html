@@ -94,8 +94,8 @@ def get_or_generate_quiz(subject, topic, level, count=DEFAULT_QUESTION_COUNT):
         contents=(
             f'Write a {count}-question multiple-choice quiz about "{topic}"'
             f'{f" ({subject})" if subject else ""}'
-            f'{f", at a {level} level" if level else ""}. '
-            'This needs to be genuinely EASY - favor simple CONCEPTUAL and DEFINITIONAL '
+            f'{f" (the person picked the label {level!r}, but that must NOT make it harder - see next sentence)" if level else ""}. '
+            'Whatever label was picked, this needs to be genuinely EASY - never medium or hard - favor simple CONCEPTUAL and DEFINITIONAL '
             'questions ("what does ___ mean", "which of these is an example of ___", '
             '"what is the term for ___") over anything requiring multi-step calculation, '
             'algebraic manipulation, or transforming an expression into another form. If a '

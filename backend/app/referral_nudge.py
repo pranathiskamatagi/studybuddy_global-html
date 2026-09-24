@@ -33,5 +33,5 @@ def maybe_send_referral_nudge(user):
     create_notification(
         user.id,
         'referral_nudge',
-        "Know someone who'd like StudyBuddy Global? Invite them from Profile and you'll both get bonus coins!",
+        "Know someone who'd like Learnora? Invite them from Profile and you'll both get bonus coins!",
     )

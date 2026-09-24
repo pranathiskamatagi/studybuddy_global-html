@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Log out
   // ---------------------------------------------------------------
   document.getElementById('logout-btn').addEventListener('click', () => {
-    showConfirmModal('Log out of StudyBuddy Global?', () => {
+    showConfirmModal('Log out of Learnora?', () => {
       clearSession();
       window.location.href = 'index.html';
     }, { confirmText: 'Log out', danger: true });
