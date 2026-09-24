@@ -29,3 +29,10 @@ class Config:
     VAPID_PRIVATE_KEY = os.environ.get('VAPID_PRIVATE_KEY')
     VAPID_PUBLIC_KEY = os.environ.get('VAPID_PUBLIC_KEY')
     VAPID_CONTACT_EMAIL = os.environ.get('VAPID_CONTACT_EMAIL')
+    # Outgoing email (reset codes, welcome email, new-device alerts). Any
+    # SMTP provider works - e.g. Gmail with an "app password", or Brevo.
+    SMTP_HOST = os.environ.get('SMTP_HOST')
+    SMTP_PORT = int(os.environ.get('SMTP_PORT') or 587)
+    SMTP_USER = os.environ.get('SMTP_USER')
+    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD')
+    SMTP_FROM = os.environ.get('SMTP_FROM') or os.environ.get('SMTP_USER')

@@ -462,6 +462,20 @@ class SupportMessage(db.Model):
         }
 
 
+class PasswordResetCode(db.Model):
+    # A one-time 6-digit code emailed to the account owner - proves they
+    # control the email address before a password can be changed. Only a
+    # hash of the code is stored, it expires quickly, and wrong guesses
+    # are counted (see routes/auth.py).
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    code_hash = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    attempts = db.Column(db.Integer, nullable=False, default=0)
+    used = db.Column(db.Boolean, nullable=False, default=False)
+
+
 class LoginDevice(db.Model):
     # Every browser/device this account has logged in from - lets a login
     # from somewhere NEW trigger a "was this you?" security notification

@@ -24,12 +24,61 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmInput = document.getElementById('confirm-password');
   const errorEl = document.getElementById('form-error');
   const submitBtn = form.querySelector('.save-btn');
+  const step2El = document.getElementById('step2');
+  const codeInput = document.getElementById('code');
+  const subtitleEl = document.getElementById('step-subtitle');
+  const resendLink = document.getElementById('resend-link');
+  let codeSent = false;
+
+  async function sendCode() {
+    await apiFetch('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email: emailInput.value.trim() }),
+    });
+    codeSent = true;
+    emailInput.readOnly = true;
+    step2El.hidden = false;
+    subtitleEl.textContent = 'If that email has an account, a 6-digit code is on its way. Enter it below with your new password.';
+    submitBtn.textContent = 'Reset password';
+    codeInput.focus();
+  }
+
+  resendLink.addEventListener('click', async (event) => {
+    event.preventDefault();
+    errorEl.hidden = true;
+    try {
+      await sendCode();
+      showPointsPopup('Code sent', { icon: '✉️', sub: 'Check your email.' });
+    } catch (error) {
+      errorEl.textContent = error.message;
+      errorEl.hidden = false;
+    }
+  });
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     errorEl.hidden = true;
 
-    if (!emailInput.value || !newInput.value || !confirmInput.value) {
+    if (!codeSent) {
+      if (!emailInput.value.trim()) {
+        errorEl.textContent = 'Please enter your email address.';
+        errorEl.hidden = false;
+        return;
+      }
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      try {
+        await sendCode();
+      } catch (error) {
+        errorEl.textContent = error.message;
+        errorEl.hidden = false;
+        submitBtn.textContent = 'Send code';
+      }
+      submitBtn.disabled = false;
+      return;
+    }
+
+    if (!emailInput.value || !codeInput.value.trim() || !newInput.value || !confirmInput.value) {
       errorEl.textContent = 'Please fill in all fields.';
       errorEl.hidden = false;
       return;
@@ -53,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         body: JSON.stringify({
           email: emailInput.value.trim(),
+          code: codeInput.value.trim(),
           new_password: newInput.value,
         }),
       });

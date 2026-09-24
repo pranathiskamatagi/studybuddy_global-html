@@ -1,9 +1,14 @@
-from flask import Blueprint, request, jsonify
+import os
+import secrets
+from datetime import datetime, timedelta
+
+from flask import Blueprint, request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 from app.extensions import db
-from app.models import User
+from app.models import User, PasswordResetCode
+from app.mailer import email_is_configured, send_email
 from app.gamification import REFERRAL_BONUS_COINS
 from app.notification_helpers import create_notification
 from app.security import record_login_device, login_locked, note_failed_login, clear_failed_logins
@@ -79,6 +84,13 @@ def signup():
             f"{fullname} joined using your invite - you both got +{REFERRAL_BONUS_COINS} coins!",
         )
 
+    send_email(
+        user.email,
+        'Welcome to Learnora',
+        f"Hi {fullname},\n\nWelcome to Learnora - Learn. Teach. Grow together.\n\n"
+        "Your account is ready. Log in any time to find a study buddy, teach what you know, "
+        "and earn coins and badges along the way.\n\nHappy learning!\nThe Learnora team",
+    )
     record_login_device(user, data)
     # str(user.id) - flask-jwt-extended requires the identity to be a string.
     token = create_access_token(identity=str(user.id))
@@ -114,35 +126,104 @@ def login():
     return jsonify(token=token, user=user.to_public_dict())
 
 
-@auth_bp.post('/reset-password')
-def reset_password():
-    # The simple version of "forgot password": no email is actually sent
-    # (this app has no email-sending set up yet) - just confirm the email
-    # belongs to a real account, then set the new password directly. Not
-    # something to rely on for real security (anyone who knows the email
-    # can reset it), but a genuine improvement over the old "not built
-    # yet" alert, for right now.
+RESET_CODE_LIFETIME = timedelta(minutes=10)
+RESET_MAX_ATTEMPTS = 5
+RESET_MAX_REQUESTS_PER_HOUR = 3
+
+
+@auth_bp.post('/forgot-password')
+def forgot_password():
+    # Step 1: email a one-time code to the address on the account. The
+    # answer is identical whether or not the email is registered, so this
+    # can't be used to find out who has an account.
     data = request.get_json(silent=True) or {}
     email = (data.get('email') or '').strip().lower()
+    if not email:
+        return jsonify(error='Please enter your email address.'), 400
+
+    if not email_is_configured() and os.environ.get('FLASK_DEBUG', '1') != '1':
+        return jsonify(error="Password reset by email isn't available right now. Please contact support."), 503
+
+    ok = jsonify(status='ok', message='If that email has an account, a code is on its way.')
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return ok
+
+    now = datetime.utcnow()
+    recent = PasswordResetCode.query.filter(
+        PasswordResetCode.user_id == user.id,
+        PasswordResetCode.created_at >= now - timedelta(hours=1),
+    ).count()
+    if recent >= RESET_MAX_REQUESTS_PER_HOUR:
+        return jsonify(error='Too many requests. Please try again in an hour.'), 429
+
+    code = f'{secrets.randbelow(1_000_000):06d}'
+    db.session.add(PasswordResetCode(
+        user_id=user.id,
+        code_hash=generate_password_hash(code),
+        expires_at=now + RESET_CODE_LIFETIME,
+    ))
+    db.session.commit()
+
+    if email_is_configured():
+        send_email(
+            user.email,
+            'Your Learnora password reset code',
+            f"Your Learnora code is {code}.\n\nIt works for 10 minutes. "
+            "If you didn't ask to reset your password, you can ignore this email.",
+        )
+    else:
+        # Local development only (checked above): no mail server, so the
+        # code is shown in the backend's own console instead.
+        current_app.logger.warning('DEV ONLY - password reset code for %s: %s', user.email, code)
+    return ok
+
+
+@auth_bp.post('/reset-password')
+def reset_password():
+    # Step 2: the emailed code + the new password.
+    data = request.get_json(silent=True) or {}
+    email = (data.get('email') or '').strip().lower()
+    code = (data.get('code') or '').strip()
     new_password = data.get('new_password') or ''
 
-    if not email or not new_password:
-        return jsonify(error='Email and new password are required.'), 400
+    if not email or not code or not new_password:
+        return jsonify(error='Email, code and new password are required.'), 400
     if len(new_password) < 8:
         return jsonify(error='New password must be at least 8 characters.'), 400
 
+    invalid = jsonify(error='That code is wrong or has expired. Request a new one.')
     user = User.query.filter_by(email=email).first()
     if not user:
-        return jsonify(error='No account found with that email.'), 404
+        return invalid, 400
 
-    # No email is sent to prove ownership, so an admin account must never
-    # be resettable this way - anyone who knew the address could take over
-    # the whole moderation panel.
-    if user.is_admin:
-        return jsonify(error='This account cannot be reset here. Please contact support.'), 403
+    now = datetime.utcnow()
+    record = (
+        PasswordResetCode.query
+        .filter_by(user_id=user.id, used=False)
+        .order_by(PasswordResetCode.created_at.desc())
+        .first()
+    )
+    if not record or record.expires_at < now or record.attempts >= RESET_MAX_ATTEMPTS:
+        return invalid, 400
 
+    if not check_password_hash(record.code_hash, code):
+        record.attempts += 1
+        db.session.commit()
+        return invalid, 400
+
+    record.used = True
     user.password_hash = generate_password_hash(new_password)
     db.session.commit()
+    create_notification(
+        user.id, 'security_alert',
+        "Your password was just changed. If this wasn't you, contact support right away.",
+    )
+    send_email(
+        user.email,
+        'Your Learnora password was changed',
+        "Your Learnora password was just changed. If this wasn't you, please contact support right away.",
+    )
     return jsonify(status='ok')
 
 

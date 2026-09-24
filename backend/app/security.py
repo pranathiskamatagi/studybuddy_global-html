@@ -8,6 +8,7 @@ from flask import request
 from app.extensions import db
 from app.models import LoginDevice, utcnow
 from app.notification_helpers import create_notification
+from app.mailer import send_email
 
 
 def _describe_device(user_agent):
@@ -68,6 +69,13 @@ def record_login_device(user, data):
         create_notification(
             user.id, 'security_alert',
             f"New login to your account from {description}. If this wasn't you, change your password right away.",
+        )
+        send_email(
+            user.email,
+            'New login to your Learnora account',
+            f"Your Learnora account was just logged into from {description}.\n\n"
+            "If this was you, no action is needed. If it wasn't, change your password "
+            "right away (Settings > Change password) and contact support.",
         )
 
 
