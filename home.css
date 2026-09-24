@@ -834,7 +834,7 @@ body {
 
 
 /* ============================================================
-   PHONES: menu drawer + compact quote (like a chat app)
+   PHONES: menu drawer
    ============================================================ */
 .menu-btn {
   display: none;
@@ -907,219 +907,49 @@ body {
     padding: 14px 14px 40px;
   }
 
-  /* Quote: a slim strip, not a tall card. */
-  .quote-banner {
-    padding: 12px 14px 12px 34px;
-    min-height: 0;
-    margin-bottom: 14px;
-    border-radius: 14px;
-  }
-  .quote-mark {
-    left: 10px;
-    top: 4px;
-    font-size: 30px;
-  }
-  .quote-text {
-    font-size: 12.5px;
-    line-height: 1.45;
-  }
-  .quote-author {
-    font-size: 11px;
-    margin-top: 2px;
-  }
-  .quote-trend-icon {
-    display: none;
-  }
-  .quote-dots {
-    display: none;
-  }
 }
 
+
 /* ============================================================
-   PHONES: compact action cards + one-strip community requests
+   PHONES: same layout as the laptop, just smaller (see phone-zoom.css)
    ============================================================ */
 @media (max-width: 768px) {
   .cta-row {
-    gap: 8px;
-    margin-bottom: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
-  .cta-card {
-    padding: 12px 14px;
-    border-radius: 14px;
-  }
-  .cta-card .icon-badge {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-  }
-  .cta-card .icon-badge svg {
-    width: 17px;
-    height: 17px;
-  }
-  .cta-card h3 {
-    margin: 8px 0 2px;
-    font-size: 14px;
-  }
-  .cta-card p {
-    font-size: 11px;
-    margin-bottom: 6px;
-  }
-  .cta-link {
-    font-size: 12px;
-  }
-
-  /* Every row-style card on Home (community requests, scheduled
-     sessions, pending requests, challenges...) is a slim, wide strip:
-     about 25% shorter, and 10% wider than before. */
-  .request-row {
-    padding: 7px 12px;
-    gap: 10px;
-    border-radius: 12px;
-  }
-  .avatar-lg {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
-  .request-name {
-    font-size: 12.5px;
-    margin-bottom: 0;
-  }
-  .request-country {
-    font-size: 10px;
-  }
-  .request-desc {
-    font-size: 11px;
-    line-height: 1.3;
-  }
-  .request-time {
-    font-size: 10px;
-    margin-top: 1px;
-  }
-  .request-btn {
-    padding: 5px 12px;
-    font-size: 11.5px;
-  }
-
-  /* ...and each of those lists scrolls sideways as ONE strip instead
-     of a tall stack. */
-  .requests-list {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 10px;
-    padding-bottom: 6px;
-    scroll-snap-type: x mandatory;
-  }
-  .requests-list .request-row {
-    flex: 0 0 auto;
-    width: 275px;
-    scroll-snap-align: start;
-  }
-  .requests-list .request-desc {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* Active study sessions (group chats): same slim, sideways strip. */
-  .sessions-row {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    padding-bottom: 6px;
-    scroll-snap-type: x mandatory;
-  }
-  .session-card {
-    flex: 0 0 275px;
-    padding: 12px 14px;
-    border-radius: 14px;
-    scroll-snap-align: start;
-  }
-  .session-card h4 {
-    font-size: 13px;
-    margin: 8px 0 2px;
-  }
-  .session-sub {
-    font-size: 11px;
-    margin-bottom: 8px;
-  }
-  .session-card .join-btn {
-    padding: 6px;
-    font-size: 12px;
-  }
-}
-
-/* Phones: coins / diamonds / rating / streak stay on ONE line. */
-@media (max-width: 768px) {
   .hud-row {
     flex-wrap: nowrap;
-    gap: 6px;
-    margin-bottom: 12px;
   }
-  .hud-chip {
-    flex: 1 1 0;
+  /* Every strip is full width, one line of text each. */
+  .request-info {
     min-width: 0;
-    justify-content: center;
-    gap: 5px;
-    padding: 4px 8px 4px 4px;
   }
-  .hud-icon {
-    width: 20px;
-    height: 20px;
-  }
-  .hud-icon svg {
-    width: 20px;
-    height: 20px;
-  }
-  .hud-value {
-    font-size: 12.5px;
-    white-space: nowrap;
-  }
-}
-
-/* The pending-request card shows its full "Scheduled for ..." line. */
-#pending-requests-list .request-desc {
-  display: block;
-  -webkit-line-clamp: unset;
-  overflow: visible;
-}
-
-/* Phones: section titles and the slim cards get even smaller text. */
-@media (max-width: 768px) {
-  .section-header h2 {
-    font-size: 14px;
-  }
-  .section-header .see-all,
-  .live-badge {
-    font-size: 10.5px;
-  }
-  .requests-list .request-row {
-    width: 260px;
-    padding: 6px 10px;
-  }
-  .request-name {
-    font-size: 11.5px;
-  }
-  .request-desc {
-    font-size: 10px;
-  }
+  .request-name,
+  .request-desc,
   .request-time {
-    font-size: 9px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .request-btn {
-    padding: 4px 10px;
-    font-size: 10.5px;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
-  .avatar-lg {
-    width: 24px;
-    height: 24px;
-    font-size: 11px;
+  .sessions-row {
+    grid-template-columns: repeat(3, 1fr);
   }
-  .app-name {
-    font-size: 13px;
+  /* The slide-in menu and its dark backdrop are fixed to the screen, so
+     they need the zoom cancelled out to still cover all of it. */
+  .sidebar {
+    height: calc(100vh / var(--phone-zoom));
+    max-height: calc(100vh / var(--phone-zoom));
   }
-  .greeting {
-    font-size: 12px;
+  .sidebar-backdrop.show {
+    width: calc(100vw / var(--phone-zoom));
+    height: calc(100vh / var(--phone-zoom));
+    inset: auto;
+    top: 0;
+    left: 0;
   }
 }

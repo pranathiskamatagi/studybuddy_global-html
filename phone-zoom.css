@@ -1,0 +1,23 @@
+/* Phones: show the whole app at about 55% size, like the laptop layout
+   shrunk down - text, buttons, cards and spacing all shrink together.
+   Only the page content is zoomed, so pop-ups (which are fixed to the
+   screen) keep their normal size. */
+:root {
+  --phone-zoom: 0.55;
+}
+@media (max-width: 768px) {
+  .app-screen,
+  .dashboard {
+    zoom: var(--phone-zoom);
+  }
+  /* A live chat is exactly one screen tall: cancel the zoom out of its
+     height, or it would only fill 55% of the screen. */
+  body:has(.chat-input-row) .app-screen {
+    height: calc(100dvh / var(--phone-zoom));
+    max-height: calc(100dvh / var(--phone-zoom));
+  }
+  .dashboard,
+  .app-screen {
+    min-height: calc(100vh / var(--phone-zoom));
+  }
+}
