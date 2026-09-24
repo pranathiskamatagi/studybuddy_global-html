@@ -1,7 +1,23 @@
-/* Phones are shown the laptop-style layout scaled down to fit: every page
-   tells the phone its screen is 730px wide (see the viewport line in each
-   page), and the phone shrinks everything to match. That shrinking is what
-   makes text, buttons and cards small - no zoom is applied here. */
+/* Phones see the laptop-style layout scaled down to fit: every page tells
+   the phone its screen is 730px wide (the viewport line in each page) and
+   the phone shrinks everything to match.
+
+   Backup: if a phone ignores that (phone-fit.js notices a narrow window
+   and adds .phone-fallback), the page content is shrunk with zoom instead. */
 :root {
   --phone-zoom: 1;
+}
+html.phone-fallback {
+  --phone-zoom: 0.55;
+}
+@media (max-width: 768px) {
+  html.phone-fallback .app-screen,
+  html.phone-fallback .dashboard {
+    zoom: var(--phone-zoom);
+    min-height: calc(100vh / var(--phone-zoom));
+  }
+  html.phone-fallback body:has(.chat-input-row) .app-screen {
+    height: calc(100dvh / var(--phone-zoom));
+    max-height: calc(100dvh / var(--phone-zoom));
+  }
 }

@@ -223,3 +223,30 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+/* Phones: buttons in a row under the details, forms full width. */
+@media (max-width: 768px) {
+  .user-row {
+    flex-wrap: wrap;
+  }
+  .user-body {
+    flex: 1 1 60%;
+    min-width: 0;
+  }
+  .user-actions {
+    flex-direction: row;
+    flex: 1 1 100%;
+    gap: 8px;
+  }
+  .user-actions button {
+    flex: 1;
+  }
+  .bonus-form,
+  .message-form {
+    width: 100%;
+  }
+  .message-form textarea {
+    width: 100%;
+    min-height: 64px;
+  }
+}
