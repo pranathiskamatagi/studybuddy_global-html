@@ -33,6 +33,10 @@
   body:has(.chat-input-row) .app-screen {
     height: 100vh;
     max-height: 100vh;
+    /* dvh follows the visible screen as the phone keyboard opens/closes,
+       so the typing bar stays right above the keyboard inside the app. */
+    height: 100dvh;
+    max-height: 100dvh;
     overflow: hidden;
   }
 }
