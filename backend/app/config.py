@@ -7,6 +7,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def _optional(name):
+    # A setting typed as "none" (or "-"/"skip") means "not set up yet" -
+    # some hosting forms refuse to leave a box empty.
+    value = (os.environ.get(name) or '').strip()
+    return None if value.lower() in ('', 'none', '-', 'skip') else value
+
+
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
@@ -31,8 +38,8 @@ class Config:
     VAPID_CONTACT_EMAIL = os.environ.get('VAPID_CONTACT_EMAIL')
     # Outgoing email (reset codes, welcome email, new-device alerts). Any
     # SMTP provider works - e.g. Gmail with an "app password", or Brevo.
-    SMTP_HOST = os.environ.get('SMTP_HOST')
+    SMTP_HOST = _optional('SMTP_HOST')
     SMTP_PORT = int(os.environ.get('SMTP_PORT') or 587)
-    SMTP_USER = os.environ.get('SMTP_USER')
-    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD')
-    SMTP_FROM = os.environ.get('SMTP_FROM') or os.environ.get('SMTP_USER')
+    SMTP_USER = _optional('SMTP_USER')
+    SMTP_PASSWORD = _optional('SMTP_PASSWORD')
+    SMTP_FROM = _optional('SMTP_FROM') or _optional('SMTP_USER')
