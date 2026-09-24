@@ -535,6 +535,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     row.append(avatar, info, btn);
+    // Tapping anywhere on the card (except Cancel) opens Scheduled
+    // sessions, where the full details are.
+    row.style.cursor = 'pointer';
+    row.addEventListener('click', (event) => {
+      if (event.target.closest('button')) return;
+      window.location.href = 'scheduled-sessions.html';
+    });
     return row;
   }
 

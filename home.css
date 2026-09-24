@@ -1077,3 +1077,10 @@ body {
     white-space: nowrap;
   }
 }
+
+/* The pending-request card shows its full "Scheduled for ..." line. */
+#pending-requests-list .request-desc {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
