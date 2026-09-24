@@ -1,5 +1,8 @@
+import json
 import os
 import secrets
+import urllib.parse
+import urllib.request
 from datetime import datetime, timedelta
 
 from flask import Blueprint, request, jsonify, current_app
@@ -8,6 +11,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 
 from app.extensions import db
 from app.models import User, PasswordResetCode
+from app.config import Config
 from app.mailer import email_is_configured, send_email
 from app.gamification import REFERRAL_BONUS_COINS
 from app.notification_helpers import create_notification
@@ -95,6 +99,77 @@ def signup():
     # str(user.id) - flask-jwt-extended requires the identity to be a string.
     token = create_access_token(identity=str(user.id))
     return jsonify(token=token, user=user.to_public_dict()), 201
+
+
+@auth_bp.get('/config')
+def public_config():
+    # Non-secret settings the pages need. The Google client ID is meant to
+    # be public (it's visible in any "Sign in with Google" button).
+    return jsonify(googleClientId=Config.GOOGLE_CLIENT_ID)
+
+
+def _google_get(url, access_token=None):
+    request_obj = urllib.request.Request(url)
+    if access_token:
+        request_obj.add_header('Authorization', f'Bearer {access_token}')
+    with urllib.request.urlopen(request_obj, timeout=10) as response:
+        return json.load(response)
+
+
+@auth_bp.post('/google')
+def google_login():
+    # The page gets a Google access token in a popup and hands it here.
+    # Nothing is trusted until Google itself confirms the token belongs to
+    # THIS app and to a verified email address.
+    data = request.get_json(silent=True) or {}
+    access_token = (data.get('accessToken') or '').strip()
+    if not Config.GOOGLE_CLIENT_ID:
+        return jsonify(error="Google sign-in isn't set up yet."), 503
+    if not access_token:
+        return jsonify(error='Google sign-in failed. Please try again.'), 400
+
+    try:
+        info = _google_get(
+            'https://oauth2.googleapis.com/tokeninfo?access_token=' + urllib.parse.quote(access_token)
+        )
+        if info.get('aud') != Config.GOOGLE_CLIENT_ID:
+            return jsonify(error='Google sign-in failed. Please try again.'), 401
+        profile = _google_get('https://www.googleapis.com/oauth2/v3/userinfo', access_token)
+    except Exception as error:  # noqa: BLE001 - any failure talking to Google = a failed sign-in
+        current_app.logger.warning('Google sign-in check failed: %s', error)
+        return jsonify(error='Google sign-in failed. Please try again.'), 401
+
+    email = (profile.get('email') or '').strip().lower()
+    if not email or str(profile.get('email_verified')).lower() != 'true':
+        return jsonify(error='That Google account has no verified email.'), 401
+
+    user = User.query.filter_by(email=email).first()
+    is_new = user is None
+    if is_new:
+        # No password of their own - a random one nobody knows, so the
+        # only way in is Google (or "Forgot password" by email).
+        user = User(
+            fullname=(profile.get('name') or email.split('@')[0])[:120],
+            email=email,
+            password_hash=generate_password_hash(secrets.token_urlsafe(32)),
+        )
+        db.session.add(user)
+        db.session.commit()
+
+    if user.is_banned:
+        return jsonify(error='This account has been suspended.'), 403
+
+    if is_new:
+        send_email(
+            user.email,
+            'Welcome to Learnora',
+            f"Hi {user.fullname},\n\nWelcome to Learnora - Learn. Teach. Grow together.\n\n"
+            "Your account is ready. Log in any time to find a study buddy, teach what you know, "
+            "and earn coins and badges along the way.\n\nHappy learning!\nThe Learnora team",
+        )
+    record_login_device(user, data)
+    token = create_access_token(identity=str(user.id))
+    return jsonify(token=token, user=user.to_public_dict()), 201 if is_new else 200
 
 
 @auth_bp.post('/login')

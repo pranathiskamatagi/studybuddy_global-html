@@ -43,3 +43,6 @@ class Config:
     SMTP_USER = _optional('SMTP_USER')
     SMTP_PASSWORD = _optional('SMTP_PASSWORD')
     SMTP_FROM = _optional('SMTP_FROM') or _optional('SMTP_USER')
+    # Sign in with Google: the OAuth "client ID" from Google Cloud Console.
+    # Without it the Google button just says it isn't set up yet.
+    GOOGLE_CLIENT_ID = _optional('GOOGLE_CLIENT_ID')

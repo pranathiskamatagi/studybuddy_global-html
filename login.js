@@ -63,14 +63,64 @@ document.addEventListener('DOMContentLoaded', () => {
   // directly instead of "#".
 
   // ---------------------------------------------------------------
-  // FEATURE 3: Placeholder handler for the Google button - Apple sign-in
-  // was dropped (requires a paid $99/year Apple Developer account).
+  // FEATURE 3: Continue with Google - Google's own popup gives an access
+  // token, the server checks it with Google and logs the person in (or
+  // creates their account the first time).
   // ---------------------------------------------------------------
-  oauthButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const provider = button.dataset.provider;
-      alert(`${provider} sign-in isn't connected yet - we'll wire this up once we build the backend.`);
+  let googleClientId = null;
+  let googleTokenClient = null;
+
+  function loadGoogleScript() {
+    return new Promise((resolve, reject) => {
+      if (window.google && window.google.accounts) return resolve();
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.onload = resolve;
+      script.onerror = () => reject(new Error("Couldn't reach Google."));
+      document.head.appendChild(script);
     });
+  }
+
+  async function startGoogleSignIn(button) {
+    try {
+      if (!googleClientId) {
+        const config = await apiFetch('/auth/config');
+        googleClientId = config.googleClientId;
+      }
+      if (!googleClientId) {
+        showInfoModal("Google sign-in isn't set up yet. Please log in with your email for now.");
+        return;
+      }
+      await loadGoogleScript();
+      if (!googleTokenClient) {
+        googleTokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: googleClientId,
+          scope: 'openid email profile',
+          callback: async (response) => {
+            if (response.error || !response.access_token) return;
+            button.disabled = true;
+            try {
+              const data = await apiFetch('/auth/google', {
+                method: 'POST',
+                body: JSON.stringify({ accessToken: response.access_token, deviceId: getDeviceId() }),
+              });
+              saveSession(data.token, data.user);
+              window.location.href = 'home.html';
+            } catch (error) {
+              button.disabled = false;
+              showInfoModal(error.message);
+            }
+          },
+        });
+      }
+      googleTokenClient.requestAccessToken();
+    } catch (error) {
+      showInfoModal(error.message);
+    }
+  }
+
+  oauthButtons.forEach((button) => {
+    button.addEventListener('click', () => startGoogleSignIn(button));
   });
 
 });
