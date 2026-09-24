@@ -119,6 +119,11 @@ def get_challenge_to_play(challenge_id):
     challenge = db.session.get(QuizChallenge, challenge_id)
     if not challenge or challenge.challenged_id != my_id:
         return jsonify(error='Challenge not found.'), 404
+    if challenge.status == 'completed':
+        # Without this, an old Home card or notification let someone take
+        # the whole quiz again, only to be told at the very end that it
+        # had already been played.
+        return jsonify(error='You already played this challenge.'), 409
     return jsonify(challenge=challenge.to_play_dict())
 
 
