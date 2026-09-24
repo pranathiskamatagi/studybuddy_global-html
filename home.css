@@ -914,9 +914,42 @@ body {
    PHONES: same layout as the laptop, just smaller (see phone-zoom.css)
    ============================================================ */
 @media (max-width: 768px) {
+  /* The three big actions stack one under another, each a slim wide
+     strip: icon, title + one-line description, and the link at the end. */
   .cta-row {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .cta-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 16px;
+    padding: 14px 20px;
+  }
+  .cta-card .icon-badge {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+  }
+  .cta-card h3 {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    white-space: nowrap;
+  }
+  .cta-card p {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 2px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cta-card .cta-link {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    white-space: nowrap;
   }
   .hud-row {
     flex-wrap: nowrap;
