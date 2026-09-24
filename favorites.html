@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Favorites - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="favorites.css?v=2" />
+  <link rel="stylesheet" href="confirm-modal.css" />
+  <link rel="stylesheet" href="people-picker.css" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="profile.html" class="back-btn" id="back-btn" aria-label="Back to profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Profile</p>
+    </div>
+
+    <div class="top-actions-row">
+      <div>
+        <h1 class="title">Favorite partners</h1>
+        <p class="subtitle">Matching gives these people a real boost, so you're more likely to be paired with them again.</p>
+      </div>
+      <button type="button" id="add-favorite-btn" class="add-fab" aria-label="Add a favorite">+</button>
+    </div>
+
+    <!-- favorites.js builds one row per favorite in here -->
+    <div class="favorite-list" id="favorite-list"></div>
+
+    <div class="empty-state" id="empty-state" hidden>
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+      </div>
+      <p class="empty-title">No favorites yet</p>
+      <p class="empty-desc">Click a study partner's name in a chat to favorite them.</p>
+    </div>
+
+  </div>
+  <script src="dark-mode.js"></script>
+
+  <script src="api.js?v=7"></script>
+  <script src="confirm-modal.js"></script>
+  <script src="people-picker.js"></script>
+  <script src="favorites.js?v=2"></script>
+</body>
+</html>

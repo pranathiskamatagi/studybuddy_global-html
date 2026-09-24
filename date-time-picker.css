@@ -1,0 +1,274 @@
+/* A custom date + time picker - see date-time-picker.js. Matches the
+   app's own rounded/gradient look instead of the browser's own
+   unstyleable native calendar/time popups. */
+
+.dt-picker {
+  position: relative;
+}
+
+.dt-picker-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 12px;
+  background: white;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #1b2340;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.dt-picker-trigger svg {
+  width: 18px;
+  height: 18px;
+  color: #3f6fe0;
+  flex-shrink: 0;
+}
+.dt-picker-trigger:hover {
+  border-color: #b9c6ef;
+}
+
+.dt-picker-panel {
+  position: absolute;
+  z-index: 20;
+  /* Opens UPWARD from the trigger (grows above it), not downward - a
+     downward panel this tall (calendar + full time list + custom time
+     entry) routinely ran off the bottom of the screen. */
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  /* Without a cap, this stretches to match whatever full-page-width
+     container it's now inside (see full-width-layout.css) - blowing up
+     every day cell in the grid below to a huge size. Capping it keeps
+     the calendar/time picker itself compact no matter how wide the page
+     around it is. */
+  max-width: 380px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: white;
+  border: 1.5px solid #eef1fb;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(30, 41, 90, 0.16);
+  /* Extra top padding clears room for the close button below, which
+     would otherwise sit right on top of the month nav row. */
+  padding: 40px 16px 16px;
+}
+.dt-picker-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: #f5f7fc;
+  color: #8892b3;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+.dt-picker-close-btn:hover {
+  background: #eef1fb;
+  color: #1b2340;
+}
+
+.dt-picker-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.dt-picker-month-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1b2340;
+}
+.dt-picker-nav-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid #dfe6f7;
+  background: white;
+  color: #1b2340;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dt-picker-nav-btn:hover {
+  border-color: #3f6fe0;
+  color: #3f6fe0;
+}
+
+.dt-picker-weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #a7b0cc;
+  margin-bottom: 4px;
+}
+
+.dt-picker-day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 14px;
+}
+.dt-picker-day {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 9px;
+  background: #f5f8fe;
+  color: #1b2340;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dt-picker-day:hover:not(.disabled):not(.selected) {
+  background: #e2e7f5;
+}
+.dt-picker-day.blank {
+  background: none;
+  cursor: default;
+}
+.dt-picker-day.disabled {
+  color: #c7cee3;
+  background: none;
+  cursor: not-allowed;
+}
+.dt-picker-day.today {
+  box-shadow: inset 0 0 0 1.5px #f5a623;
+}
+.dt-picker-day.selected {
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  color: white;
+}
+
+.dt-picker-time-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #8892b3;
+  margin-bottom: 8px;
+}
+.dt-picker-time-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.dt-picker-time-slot {
+  padding: 7px 12px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #3d476b;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dt-picker-time-slot:hover {
+  border-color: #3f6fe0;
+}
+.dt-picker-time-slot.selected {
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  border-color: transparent;
+  color: white;
+}
+
+.dt-picker-custom-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8892b3;
+  margin: 12px 0 8px;
+}
+.dt-picker-custom-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dt-picker-custom-input {
+  width: 52px;
+  padding: 9px 8px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 10px;
+  background: white;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2340;
+  text-align: center;
+  outline: none;
+  /* Hides the native up/down number-spinner arrows - a plain typed
+     number reads better here than a tiny stepper control. */
+  -moz-appearance: textfield;
+}
+.dt-picker-custom-input::-webkit-outer-spin-button,
+.dt-picker-custom-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.dt-picker-custom-input:focus {
+  border-color: #3f6fe0;
+  box-shadow: 0 0 0 3px rgba(63, 111, 224, 0.12);
+}
+.dt-picker-custom-colon {
+  font-size: 15px;
+  font-weight: 700;
+  color: #8892b3;
+}
+.dt-picker-ampm-toggle {
+  display: flex;
+  gap: 4px;
+  margin-left: 6px;
+}
+.dt-picker-ampm-btn {
+  padding: 9px 12px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 10px;
+  background: white;
+  color: #3d476b;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.dt-picker-ampm-btn:hover {
+  border-color: #b9c6ef;
+}
+.dt-picker-ampm-btn.selected {
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  border-color: transparent;
+  color: white;
+}
+
+.dt-picker-done-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 11px 16px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  color: white;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.dt-picker-done-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

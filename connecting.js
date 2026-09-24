@@ -64,6 +64,17 @@ document.addEventListener('DOMContentLoaded', () => {
     goToMatchFound(data.partnerName, data.partnerId, data.partnerCountry, null);
   });
 
+  // An admin force-stopped this search right now (see admin.py's
+  // cancel_searching) - a real, immediate stop, not just letting it time
+  // out on its own.
+  presenceSocket.on('admin_cancelled', () => {
+    clearTimeout(searchTimer);
+    clearTimeout(takingAWhileTimer);
+    presenceSocket.emit('stop_searching');
+    alert('Admin cancelled your session.');
+    window.location.href = 'home.html';
+  });
+
   if (leftName) {
     const leftNoticeEl = document.getElementById('left-notice');
     leftNoticeEl.textContent = `${leftName} left the session - let's find you someone new.`;
@@ -309,6 +320,11 @@ document.addEventListener('DOMContentLoaded', () => {
           .catch((error) => {
             if (error.status === 409) {
               showPartnerOffline(withName);
+              return;
+            }
+            if (error.status === 403 && error.message === 'blocked') {
+              alert("You can't be matched with this person.");
+              window.location.href = 'home.html';
               return;
             }
             // A network/server hiccup checking online status shouldn't

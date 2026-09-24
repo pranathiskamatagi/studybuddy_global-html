@@ -8,8 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="home.css" />
+  <link rel="stylesheet" href="home.css?v=4" />
   <link rel="stylesheet" href="confirm-modal.css" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
   <link rel="stylesheet" href="points-popup.css?v=4" />
 </head>
 <body>
@@ -119,7 +121,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg>
             <span class="notif-dot" id="notif-dot"></span>
           </button>
-          <button class="avatar-btn" aria-label="Profile">
+          <button class="avatar-btn" id="avatar-btn" aria-label="Profile">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>
           </button>
         </div>
@@ -201,6 +203,42 @@
         </div>
       </section>
 
+      <!-- ============ RESUME AN ABANDONED 1-ON-1 SESSION ============ -->
+      <!-- A real session left without clicking "End session" - the chat
+           tab closed, the browser back button, a dropped connection.
+           Nothing else in the app shows this was still open, so it's shown
+           here to actually resume rather than being silently lost. Starts
+           hidden until there's a real one of your own. -->
+      <section class="section-block" id="resume-session-section" hidden>
+        <div class="section-header">
+          <h2>Resume your session</h2>
+        </div>
+        <div class="requests-list" id="resume-session-list"></div>
+      </section>
+
+      <!-- ============ READY-TO-JOIN SCHEDULED SESSION ============ -->
+      <!-- Whole section starts hidden - home.js only reveals it once a
+           real accepted scheduled session's time has actually arrived. -->
+      <section class="section-block" id="ready-scheduled-section" hidden>
+        <div class="section-header">
+          <h2>Time to study! <span class="live-badge">Ready</span></h2>
+          <a href="scheduled-sessions.html" class="see-all">See all</a>
+        </div>
+        <div class="requests-list" id="ready-scheduled-list"></div>
+      </section>
+
+      <!-- ============ YOUR OWN PENDING SCHEDULED REQUESTS ============ -->
+      <!-- A "Schedule for later" post that nobody's answered YET - only
+           ever showed a one-time alert() before, with nowhere afterward
+           to see it was still out there. Starts hidden until there's a
+           real one of your own. -->
+      <section class="section-block" id="pending-requests-section" hidden>
+        <div class="section-header">
+          <h2>Your pending requests</h2>
+        </div>
+        <div class="requests-list" id="pending-requests-list"></div>
+      </section>
+
       <!-- ============ ACTIVE STUDY SESSIONS ============ -->
       <!-- Whole section starts hidden - home.js only reveals it once there
            are real active groups to show, instead of showing an empty
@@ -224,14 +262,28 @@
         <div class="requests-list" id="requests-list"></div>
       </section>
 
+      <!-- ============ PENDING QUIZ CHALLENGES ============ -->
+      <!-- Whole section starts hidden - home.js only reveals it once
+           there's a real challenge waiting to be played. -->
+      <section class="section-block" id="challenges-section" hidden>
+        <div class="section-header">
+          <h2>Quiz challenges</h2>
+          <a href="challenges.html" class="see-all">See all</a>
+        </div>
+        <div class="requests-list" id="challenges-list"></div>
+      </section>
+
     </div>
   </div>
 
   <script src="confirm-modal.js"></script>
+  <script src="dark-mode.js"></script>
   <script src="sound.js"></script>
   <script src="points-popup.js"></script>
-  <script src="api.js?v=5"></script>
+  <script src="api.js?v=7"></script>
   <script src="socket.io.min.js"></script>
-  <script src="home.js?v=6"></script>
+  <script src="push.js?v=2"></script>
+  <script src="info-modal.js"></script>
+  <script src="home.js?v=20"></script>
 </body>
 </html>

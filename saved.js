@@ -19,15 +19,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openSavedSummary(item) {
-    // Reopens ai-summary.html with the same info that was saved - since
-    // the placeholder content is always the same for a given topic, this
-    // shows the exact same mind map + summary the person saved.
+    // Reopens ai-summary.html for the REAL session this was saved from -
+    // ai-summary.js requires a real sessionId to load anything at all
+    // (see its own check), so a saved item from before sessionId was
+    // captured here can't be reopened - caught below instead of silently
+    // bouncing to Home with no explanation.
+    if (!item.sessionId) {
+      alert("This was saved before session links were tracked, so it can't be reopened. Delete it and save a fresh one from a real session.");
+      return;
+    }
     const params = new URLSearchParams({
-      partner: item.partner,
+      partner: item.partner || '',
       color: item.color,
       topic: item.topic,
-      country: item.country,
-      flag: item.flag,
+      country: item.country || '',
+      flag: item.flag || '',
+      sessionId: item.sessionId,
     });
     window.location.href = 'ai-summary.html?' + params.toString();
   }

@@ -115,4 +115,77 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ---------------------------------------------------------------
+  // Schedule for later - posts a real open ask ("wants a group session
+  // for X on Y") instead of creating the group right now. Anyone
+  // interested clicks "I'm interested" on it (see connect.js/home.js),
+  // which just notifies the poster - the real group itself gets
+  // created/joined the normal way (this same page, same subject+topic)
+  // once the time actually arrives, same as an instant group already
+  // merges anyone picking the same thing into one real group.
+  // ---------------------------------------------------------------
+  const scheduleToggleBtn = document.getElementById('schedule-later-toggle-btn');
+  const scheduleForm = document.getElementById('schedule-later-form');
+  const scheduleSubmitBtn = document.getElementById('schedule-later-submit-btn');
+
+  let chosenDateTime = null;
+  initDateTimePicker('schedule-later-datetime', (value) => {
+    chosenDateTime = value;
+  });
+
+  scheduleToggleBtn.addEventListener('click', () => {
+    if (!subjectInput.value.trim() || !topicInput.value.trim()) {
+      errorMessage.textContent = 'Please fill in a subject and topic first.';
+      errorMessage.hidden = false;
+      return;
+    }
+    errorMessage.hidden = true;
+    scheduleForm.hidden = !scheduleForm.hidden;
+    if (!scheduleForm.hidden) {
+      scheduleForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  scheduleSubmitBtn.addEventListener('click', () => {
+    errorMessage.hidden = true;
+
+    if (!subjectInput.value.trim() || !topicInput.value.trim()) {
+      errorMessage.textContent = 'Please fill in a subject and topic to continue.';
+      errorMessage.hidden = false;
+      return;
+    }
+    if (!chosenDateTime) {
+      errorMessage.textContent = 'Pick a real date and time first.';
+      errorMessage.hidden = false;
+      return;
+    }
+    if (chosenDateTime.getTime() <= Date.now()) {
+      errorMessage.textContent = 'Pick a time in the future.';
+      errorMessage.hidden = false;
+      return;
+    }
+
+    scheduleSubmitBtn.disabled = true;
+    apiFetch('/help-requests', {
+      method: 'POST',
+      body: JSON.stringify({
+        mode: 'group',
+        subject: subjectInput.value.trim(),
+        topic: topicInput.value.trim(),
+        scheduledFor: chosenDateTime.toISOString(),
+      }),
+    })
+      .then(() => {
+        showInfoModal("Request posted! We'll let you know as people show interest - come back here to actually create the group once it's time.", {
+          onClose: () => { window.location.href = 'home.html'; },
+        });
+      })
+      .catch((error) => {
+        if (handleAuthError(error)) return;
+        scheduleSubmitBtn.disabled = false;
+        errorMessage.textContent = error.message;
+        errorMessage.hidden = false;
+      });
+  });
+
 });

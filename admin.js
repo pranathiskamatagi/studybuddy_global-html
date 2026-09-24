@@ -24,6 +24,28 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('stat-total-sessions').textContent = sessionsData.sessions.length;
       document.getElementById('stat-banned-users').textContent = usersData.users.filter((u) => u.isBanned).length;
 
+      const peopleListEl = document.getElementById('people-list');
+      document.getElementById('people-count').textContent = `(${usersData.users.length})`;
+      usersData.users.forEach((u) => {
+        const row = document.createElement('a');
+        row.className = 'people-row';
+        row.href = `admin-user-detail.html?userId=${u.id}`;
+        const avatar = document.createElement('span');
+        avatar.className = 'people-avatar';
+        avatar.textContent = (u.fullname || '?').trim().charAt(0).toUpperCase();
+        const name = document.createElement('span');
+        name.className = 'people-name';
+        name.textContent = u.fullname + (u.isAdmin ? ' 🛡' : '') + (u.isBanned ? ' (suspended)' : '');
+        const sub = document.createElement('span');
+        sub.className = 'people-sub';
+        sub.textContent = u.email + (u.country ? ` · ${u.country}` : '');
+        const text = document.createElement('span');
+        text.className = 'people-text';
+        text.append(name, sub);
+        row.append(avatar, text);
+        peopleListEl.appendChild(row);
+      });
+
       const openReports = reportsData.reports.filter((r) => !r.reviewed).length;
       document.getElementById('stat-open-reports').textContent = openReports;
       if (openReports > 0) {

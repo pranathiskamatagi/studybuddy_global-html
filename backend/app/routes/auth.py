@@ -4,6 +4,16 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 
 from app.extensions import db
 from app.models import User
+from app.gamification import REFERRAL_BONUS_COINS
+from app.notification_helpers import create_notification
+from app.security import record_login_device, login_locked, note_failed_login, clear_failed_logins
+from app.weekly_recap import maybe_send_weekly_recap
+from app.referral_nudge import maybe_send_referral_nudge
+from app.scheduled_reminders import (
+    maybe_send_scheduled_reminders,
+    maybe_cancel_unmatched_requests,
+    maybe_cancel_unmatched_group_requests,
+)
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -32,16 +42,44 @@ def signup():
     if User.query.filter_by(email=email).first():
         return jsonify(error='An account with that email already exists.'), 409
 
+    # An invite link - see users.py's referral endpoint for how it's
+    # generated - carries the inviter's real user id. Only a real,
+    # existing account counts; a stale/bad id just means no referral
+    # bonus, not a signup failure.
+    referred_by_id = None
+    raw_ref = data.get('referredBy')
+    if raw_ref:
+        try:
+            referrer = db.session.get(User, int(raw_ref))
+            if referrer:
+                referred_by_id = referrer.id
+        except (TypeError, ValueError):
+            pass
+
     user = User(
         fullname=fullname,
         email=email,
         password_hash=generate_password_hash(password),
         country=country,
         grade=grade,
+        referred_by_id=referred_by_id,
     )
+    if referred_by_id:
+        user.points += REFERRAL_BONUS_COINS
     db.session.add(user)
     db.session.commit()
 
+    if referred_by_id:
+        referrer = db.session.get(User, referred_by_id)
+        referrer.points += REFERRAL_BONUS_COINS
+        db.session.commit()
+        create_notification(
+            referred_by_id,
+            'referral',
+            f"{fullname} joined using your invite - you both got +{REFERRAL_BONUS_COINS} coins!",
+        )
+
+    record_login_device(user, data)
     # str(user.id) - flask-jwt-extended requires the identity to be a string.
     token = create_access_token(identity=str(user.id))
     return jsonify(token=token, user=user.to_public_dict()), 201
@@ -56,16 +94,22 @@ def login():
     if not email or not password:
         return jsonify(error='Please fill in both fields.'), 400
 
+    if login_locked(email):
+        return jsonify(error='Too many wrong attempts. Please wait 10 minutes and try again.'), 429
+
     user = User.query.filter_by(email=email).first()
 
     # check_password_hash returns False safely if user is None-derived
     # garbage, but we still guard explicitly so the error message is right.
     if not user or not check_password_hash(user.password_hash, password):
+        note_failed_login(email)
         return jsonify(error='Incorrect email or password.'), 401
+    clear_failed_logins(email)
 
     if user.is_banned:
         return jsonify(error='This account has been suspended.'), 403
 
+    record_login_device(user, data)
     token = create_access_token(identity=str(user.id))
     return jsonify(token=token, user=user.to_public_dict())
 
@@ -91,6 +135,12 @@ def reset_password():
     if not user:
         return jsonify(error='No account found with that email.'), 404
 
+    # No email is sent to prove ownership, so an admin account must never
+    # be resettable this way - anyone who knew the address could take over
+    # the whole moderation panel.
+    if user.is_admin:
+        return jsonify(error='This account cannot be reset here. Please contact support.'), 403
+
     user.password_hash = generate_password_hash(new_password)
     db.session.commit()
     return jsonify(status='ok')
@@ -103,4 +153,9 @@ def me():
     user = db.session.get(User, int(user_id))
     if not user:
         return jsonify(error='User not found.'), 404
+    maybe_send_weekly_recap(user)
+    maybe_send_referral_nudge(user)
+    maybe_send_scheduled_reminders(user)
+    maybe_cancel_unmatched_requests(user)
+    maybe_cancel_unmatched_group_requests(user)
     return jsonify(user=user.to_public_dict())

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashcards - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="flashcards.css?v=1" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <button type="button" class="back-btn" id="back-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </button>
+      <p class="kicker">Flashcards</p>
+    </div>
+
+    <div id="loading-view">
+      <p class="loading-text">Loading your flashcards...</p>
+    </div>
+
+    <div id="result-view" hidden>
+      <p class="progress-label" id="progress-label">Card 1 of 3</p>
+
+      <!-- flashcards.js flips this between the label (front) and detail
+           (back) - a real click/tap, not a hover, so it works on phones. -->
+      <button type="button" class="flashcard" id="flashcard">
+        <p class="flashcard-text" id="flashcard-text"></p>
+        <p class="flashcard-hint">Tap to flip</p>
+      </button>
+
+      <div class="flashcard-nav">
+        <button type="button" id="prev-card-btn" class="card-nav-btn">← Prev</button>
+        <button type="button" id="next-card-btn" class="card-nav-btn">Next →</button>
+      </div>
+    </div>
+
+    <div id="unavailable-view" hidden>
+      <p class="unavailable-text">No summary to build flashcards from yet - generate an AI summary for this session first.</p>
+    </div>
+
+  </div>
+  <script src="dark-mode.js"></script>
+
+  <script src="api.js?v=7"></script>
+  <script src="flashcards.js"></script>
+</body>
+</html>

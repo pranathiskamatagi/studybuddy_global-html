@@ -51,6 +51,30 @@ class User(db.Model):
     # already-open session too, not just block the next login.
     is_banned = db.Column(db.Boolean, nullable=False, default=False)
 
+    # Subjects this person has marked as ones they're confident TEACHING -
+    # separate from actual teaching history (StudySession), this is a
+    # self-declared list so someone can be found/browsed even before their
+    # first real session. A plain list of strings, same JSON-column pattern
+    # as Rating.feedback_reasons below.
+    teaches_subjects = db.Column(db.JSON, nullable=True)
+
+    # Set once, at signup, if they arrived via someone else's invite link -
+    # never changes after that. Nullable (most people just sign up
+    # directly). Used by auth.py to credit both people a one-time bonus.
+    referred_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+
+    # Last time the weekly-recap notification was sent to this person - see
+    # app/weekly_recap.py. Nullable (never sent yet for a new account).
+    last_recap_sent_at = db.Column(db.DateTime, nullable=True)
+
+    # Which categories of real phone push notifications this person wants -
+    # see app/push.py's NOTIFICATION_CATEGORIES for the fixed set of keys.
+    # Nullable/sparse on purpose: a category simply missing from this dict
+    # (every existing account, before they ever open Settings) means "on",
+    # not "off" - so turning this feature on for everyone never silently
+    # goes quiet for people who've never touched the toggle.
+    notification_prefs = db.Column(db.JSON, nullable=True)
+
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
 
     def average_rating(self):
@@ -76,9 +100,14 @@ class User(db.Model):
             'points': self.points,
             'diamonds': self.diamonds,
             'streak': self.current_streak_days,
+            'longestStreak': self.longest_streak_days,
             'rating': self.average_rating(),
             'online': self.id in get_online_user_ids(),
             'isAdmin': self.is_admin,
+            'teachesSubjects': self.teaches_subjects or [],
+            'referralCount': User.query.filter_by(referred_by_id=self.id).count(),
+            'notificationPrefs': self.notification_prefs or {},
+            'pushEnabled': PushSubscription.query.filter_by(user_id=self.id).first() is not None,
         }
 
     def to_limited_public_dict(self):
@@ -87,6 +116,7 @@ class User(db.Model):
         # same as to_public_dict(): no email, no points/diamonds/streak/
         # rating, nothing gamification-related. Just enough to know who
         # you're talking to.
+        from app.sockets import get_online_user_ids  # deferred - see HelpRequest.to_public_dict for why
         return {
             'id': self.id,
             'fullname': self.fullname,
@@ -94,6 +124,8 @@ class User(db.Model):
             'photo': self.photo_data,
             'bio': self.bio,
             'isAdmin': self.is_admin,
+            'teachesSubjects': self.teaches_subjects or [],
+            'online': self.id in get_online_user_ids(),
         }
 
 
@@ -152,11 +184,22 @@ class Message(db.Model):
     # safety check BEFORE this row is ever created, so nothing unsafe is
     # ever stored or shown at all).
     image_data = db.Column(db.Text, nullable=True)
+    # A data: URI (e.g. "data:audio/webm;base64,...") - same pattern as
+    # image_data, for a real voice message (see routes/sessions.py's
+    # send_audio_message). No AI safety check on this one - unlike an
+    # image, there's no fast, reliable way to moderate audio content the
+    # same way, so this is a smaller "real, not fake" first version.
+    audio_data = db.Column(db.Text, nullable=True)
     # Soft-delete, like WhatsApp's "This message was deleted" - the
     # original text/image gets REPLACED (not just hidden client-side), so
     # deleting something actually removes it from what to_public_dict ever
     # sends out again, not just from one person's current screen.
     deleted = db.Column(db.Boolean, nullable=False, default=False)
+    # A real admin warning sent INTO a live session (see routes/admin.py's
+    # warn_session) - deliberately a separate flag rather than checking
+    # sender.is_admin, since a real admin having an ORDINARY chat as an
+    # actual participant must still show their real name, not "Admin".
+    is_admin_message = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
 
     def to_public_dict(self):
@@ -165,9 +208,11 @@ class Message(db.Model):
             'id': self.id,
             'sessionId': self.session_id,
             'senderId': self.sender_id,
-            'senderName': sender.fullname if sender else 'Unknown',
+            'senderName': 'Admin' if self.is_admin_message else (sender.fullname if sender else 'Unknown'),
+            'isAdminMessage': self.is_admin_message,
             'text': '' if self.deleted else self.text,
             'imageData': None if self.deleted else self.image_data,
+            'audioData': None if self.deleted else self.audio_data,
             'deleted': self.deleted,
             'createdAt': self.created_at.isoformat(),
         }
@@ -237,6 +282,21 @@ class Notification(db.Model):
         }
 
 
+class PushSubscription(db.Model):
+    # One row per browser/device that's granted notification permission -
+    # the same person on their phone AND their laptop means two rows, both
+    # getting pushed to. Everything here (endpoint + the two keys) comes
+    # straight from the browser's PushSubscription object (see push.js) -
+    # this server never generates any of it, only stores and later uses it
+    # to address an encrypted push through that browser's push service.
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    endpoint = db.Column(db.Text, nullable=False, unique=True)
+    p256dh_key = db.Column(db.Text, nullable=False)
+    auth_key = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+
+
 class UnlockedAchievement(db.Model):
     # This row existing means the achievement is at least ELIGIBLE (its
     # condition has been met, or - for perfect_quiz - quiz.js reported a
@@ -289,6 +349,10 @@ class QuizSet(db.Model):
     topic = db.Column(db.String(120), nullable=False)
     level = db.Column(db.String(60))
     questions = db.Column(db.JSON, nullable=False)  # list of {q, options (4 strings), correct (0-3)}
+    # Part of the cache key alongside topic - a 5-question cached set can't
+    # serve someone who asked for 10, so the variant pool is kept separate
+    # per count too (see quiz_generator.py).
+    question_count = db.Column(db.Integer, nullable=False, default=5, server_default='5')
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
 
     def to_public_dict(self):
@@ -305,10 +369,25 @@ class HelpRequest(db.Model):
     subject = db.Column(db.String(120))
     topic = db.Column(db.String(120))
     level = db.Column(db.String(60))
-    status = db.Column(db.String(20), nullable=False, default='open')  # 'open' or 'fulfilled'
+    status = db.Column(db.String(20), nullable=False, default='open')  # 'open', 'fulfilled', or 'cancelled'
     created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    # Set only for a "Schedule for later" request (choose-subject.html/
+    # teach-subject.html) - a real future time this person wants a
+    # partner for, instead of right now. Nullable: every OTHER request in
+    # this table is instant/"right now" and leaves this null, unchanged
+    # from before this column existed.
+    scheduled_for = db.Column(db.DateTime, nullable=True)
+    # Only ever incremented for a mode='group' request (see routes/
+    # requests.py's interested_in_group_request) - a real running count of
+    # how many distinct people have clicked "I'm interested" so far, so the
+    # ORIGINAL POSTER can actually see real interest building on Home
+    # instead of a generic "waiting for someone" that never changes.
+    interested_count = db.Column(db.Integer, nullable=False, default=0)
+    # Who's already been counted - clicking "I'm interested" twice (or on
+    # two tabs) must not inflate the count as if a second real person had.
+    interested_user_ids = db.Column(db.JSON, nullable=False, default=list)
 
-    def to_public_dict(self):
+    def to_public_dict(self, viewer_id=None):
         # Deferred import - see GroupMembership.to_public_dict for why
         # this can't be a top-level import in this file.
         from app.sockets import get_online_user_ids
@@ -322,7 +401,19 @@ class HelpRequest(db.Model):
             'subject': self.subject,
             'topic': self.topic,
             'level': self.level,
+            # Without this, "I'm interested" always rendered as the fresh,
+            # un-clicked button on every reload - even for someone who'd
+            # already clicked it, with no way to tell from the row itself.
+            # That's what caused someone to click it 3 times thinking
+            # nothing had happened, when the first click had already real
+            # succeeded (interested_count only ever counts them once
+            # either way - see interested_in_group_request).
+            'amInterested': viewer_id is not None and viewer_id in (self.interested_user_ids or []),
             'createdAt': self.created_at.isoformat(),
+            # 'Z' appended - see ScheduledSession.to_public_dict for why
+            # (SQLite drops the timezone marker on storage).
+            'scheduledFor': (self.scheduled_for.isoformat() + 'Z') if self.scheduled_for else None,
+            'interestedCount': self.interested_count,
             'online': self.user_id in get_online_user_ids(),
         }
 
@@ -369,6 +460,21 @@ class SupportMessage(db.Model):
             'message': self.message,
             'createdAt': self.created_at.isoformat(),
         }
+
+
+class LoginDevice(db.Model):
+    # Every browser/device this account has logged in from - lets a login
+    # from somewhere NEW trigger a "was this you?" security notification
+    # (see app/security.py). device_id is a random id the browser keeps in
+    # its own storage, not anything identifying about the person.
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    device_id = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(120), nullable=False)
+    first_seen = db.Column(db.DateTime, nullable=False, default=utcnow)
+    last_seen = db.Column(db.DateTime, nullable=False, default=utcnow)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'device_id', name='uq_login_device_user_device'),)
 
 
 class Block(db.Model):
@@ -421,5 +527,148 @@ class Report(db.Model):
             'sessionId': self.session_id,
             'reason': self.reason,
             'reviewed': self.reviewed,
+            'createdAt': self.created_at.isoformat(),
+        }
+
+
+class Favorite(db.Model):
+    # A real "prefer this study partner" mark - the OPPOSITE of
+    # matching.py's RECENT_PARTNER_PENALTY (which nudges AWAY from a
+    # rematch by default). Favoriting someone overrides that: matching
+    # gives a favorited candidate a real boost instead of a penalty.
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    favorite_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    __table_args__ = (db.UniqueConstraint('user_id', 'favorite_id', name='uq_favorite_pair'),)
+
+    def to_public_dict(self):
+        user = db.session.get(User, self.favorite_id)
+        return {
+            'userId': self.favorite_id,
+            'fullname': user.fullname if user else 'Unknown',
+            'country': user.country if user else None,
+            'photo': user.photo_data if user else None,
+        }
+
+
+class QuizChallenge(db.Model):
+    # A real, persisted "I bet I score higher than you" challenge between
+    # two people. `questions` is a real, frozen COPY of the exact question
+    # set the challenger just took (see quiz_generator.py - two separate
+    # calls for the same topic can return different variants once a
+    # topic's variant pool exists, so storing the literal set here, once,
+    # is what actually guarantees both people answer identical questions -
+    # a shared topic name alone wouldn't).
+    id = db.Column(db.Integer, primary_key=True)
+    challenger_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    challenged_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    subject = db.Column(db.String(120))
+    topic = db.Column(db.String(120), nullable=False)
+    level = db.Column(db.String(60))
+    questions = db.Column(db.JSON, nullable=False)  # list of {q, options (4 strings), correct (0-3)}
+    # 'pending' (sent, not yet played by the challenged person),
+    # 'completed' (both scores in).
+    status = db.Column(db.String(20), nullable=False, default='pending')
+    # Nullable - a challenge sent WITHOUT the challenger taking it first
+    # (see routes/challenges.py's send_challenge) has no real challenger
+    # score to compare against yet, only a real quiz waiting for the
+    # challenged person to play.
+    challenger_score = db.Column(db.Integer, nullable=True)
+    challenged_score = db.Column(db.Integer, nullable=True)
+    total_questions = db.Column(db.Integer, nullable=False)
+    # An optional real message from the challenger, shown to the
+    # challenged person alongside the quiz itself (e.g. "Bet you can't
+    # beat this!") - nullable, since most challenges won't bother with one.
+    note = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    completed_at = db.Column(db.DateTime, nullable=True)
+
+    def to_public_dict(self):
+        challenger = db.session.get(User, self.challenger_id)
+        challenged = db.session.get(User, self.challenged_id)
+        return {
+            'id': self.id,
+            'challengerId': self.challenger_id,
+            'challengerName': challenger.fullname if challenger else 'Unknown',
+            'challengedId': self.challenged_id,
+            'challengedName': challenged.fullname if challenged else 'Unknown',
+            'subject': self.subject,
+            'topic': self.topic,
+            'level': self.level,
+            'status': self.status,
+            'challengerScore': self.challenger_score,
+            'challengedScore': self.challenged_score,
+            'totalQuestions': self.total_questions,
+            'note': self.note,
+            'createdAt': self.created_at.isoformat(),
+        }
+
+    def to_play_dict(self):
+        # Same shape as to_public_dict(), plus the actual questions - only
+        # used by the ONE endpoint that hands a challenge to whoever's
+        # about to play it (see routes/challenges.py), not the list view.
+        data = self.to_public_dict()
+        data['questions'] = self.questions
+        return data
+
+
+class ScheduledSession(db.Model):
+    # A real future-dated study session proposal - alongside instant
+    # matching (connecting.html), not instead of it. One person proposes a
+    # subject/topic/time to a specific other real person; that person
+    # accepts or declines. An accepted one becomes joinable (a real
+    # StudySession + session.html) once its time has actually arrived -
+    # see routes/scheduled.py's join endpoint for how that hand-off works.
+    id = db.Column(db.Integer, primary_key=True)
+    proposer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    invitee_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    subject = db.Column(db.String(120))
+    topic = db.Column(db.String(120))
+    mode = db.Column(db.String(20), nullable=False)  # proposer's role: 'learn' or 'teach'
+    scheduled_for = db.Column(db.DateTime, nullable=False)
+    # 'pending' (awaiting the invitee's response), 'accepted', 'declined',
+    # 'completed' (the real session it produced has ended), 'cancelled'.
+    status = db.Column(db.String(20), nullable=False, default='pending')
+    session_id = db.Column(db.Integer, db.ForeignKey('study_session.id'), nullable=True)
+    # Set only when this came from choose-subject.html/teaching-tips.html's
+    # "Schedule for later" flow picking a SPECIFIC recommended/searched
+    # person (as opposed to two people who already know each other
+    # deliberately scheduling together) - see routes/scheduled.py's
+    # decline_scheduled(), which only auto-broadcasts to other qualified
+    # teachers when this is true. Declining a session two friends set up
+    # on purpose should never spam a pile of strangers.
+    open_to_others = db.Column(db.Boolean, nullable=False, default=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    # Both nullable, set once each - just prevents sending the SAME
+    # opportunistic reminder/no-show check (see app/scheduled_reminders.py)
+    # more than once for the same real appointment.
+    reminder_sent_at = db.Column(db.DateTime, nullable=True)
+    no_show_notified_at = db.Column(db.DateTime, nullable=True)
+    # Set the moment each side actually calls the real join endpoint (see
+    # routes/scheduled.py's join_scheduled) - lets the opportunistic check
+    # in scheduled_reminders.py tell "nobody joined" apart from "only one
+    # side joined" apart from "both joined" (which completes it right away).
+    proposer_joined_at = db.Column(db.DateTime, nullable=True)
+    invitee_joined_at = db.Column(db.DateTime, nullable=True)
+
+    def to_public_dict(self):
+        proposer = db.session.get(User, self.proposer_id)
+        invitee = db.session.get(User, self.invitee_id)
+        return {
+            'id': self.id,
+            'proposerId': self.proposer_id,
+            'proposerName': proposer.fullname if proposer else 'Unknown',
+            'inviteeId': self.invitee_id,
+            'inviteeName': invitee.fullname if invitee else 'Unknown',
+            'subject': self.subject,
+            'topic': self.topic,
+            'mode': self.mode,
+            # 'Z' appended - SQLite drops the timezone marker on storage,
+            # so this is naive-but-really-UTC; same fix timeAgo() already
+            # relies on elsewhere (api.js) to parse timestamps correctly.
+            'scheduledFor': self.scheduled_for.isoformat() + 'Z',
+            'status': self.status,
+            'sessionId': self.session_id,
             'createdAt': self.created_at.isoformat(),
         }

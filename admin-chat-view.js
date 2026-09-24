@@ -24,12 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function addMessage(m) {
     const bubble = document.createElement('div');
-    bubble.className = 'msg';
+    bubble.className = 'msg' + (m.isAdminMessage ? ' msg-admin' : '');
     if (m.id) messageBubbles.set(m.id, bubble);
 
     const senderP = document.createElement('p');
     senderP.className = 'msg-sender';
-    senderP.textContent = m.senderName;
+    senderP.textContent = m.isAdminMessage ? '⚠️ Admin (you)' : m.senderName;
     bubble.appendChild(senderP);
 
     if (m.deleted) {
@@ -109,6 +109,36 @@ document.addEventListener('DOMContentLoaded', () => {
     p.className = 'msg-deleted-text';
     p.textContent = 'This message was deleted';
     bubble.insertBefore(p, bubble.querySelector('.msg-time'));
+  });
+
+  // ---------------------------------------------------------------
+  // Send a real, visible warning into the live chat
+  // ---------------------------------------------------------------
+  document.getElementById('warn-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const input = document.getElementById('warn-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    apiFetch(`/admin/sessions/${sessionId}/warn`, {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+    })
+      .then(() => { input.value = ''; })
+      .catch((error) => alert("Couldn't send that: " + error.message));
+  });
+
+  // ---------------------------------------------------------------
+  // Force-end this session right now
+  // ---------------------------------------------------------------
+  const cancelBtn = document.getElementById('cancel-session-btn');
+  cancelBtn.hidden = false;
+  cancelBtn.addEventListener('click', () => {
+    showConfirmModal('End this session right now? Both people will be notified and sent back to Home.', () => {
+      apiFetch(`/admin/sessions/${sessionId}/cancel`, { method: 'POST' })
+        .then(() => alert('Session cancelled.'))
+        .catch((error) => alert(error.message));
+    }, { confirmText: 'Cancel session', danger: true });
   });
 
 });

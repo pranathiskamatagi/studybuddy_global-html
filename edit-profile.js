@@ -80,11 +80,56 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('fullname').value = user.fullname || '';
     countrySelect.value = user.country || '';
     gradeSelect.value = user.grade || '';
-    languageSelect.value = user.language || '';
     bioInput.value = user.bio || '';
     updateCharCount();
     renderAvatar(user);
+    renderTeachTags(user.teachesSubjects || []);
   }
+
+  // ---------------------------------------------------------------
+  // "Subjects you teach" - a plain, editable list of tags (see
+  // profile.py's teachesSubjects), rendered as removable chips.
+  // ---------------------------------------------------------------
+  let teachSubjects = [];
+  const teachTagRow = document.getElementById('teach-tag-row');
+  const teachSubjectInput = document.getElementById('teach-subject-input');
+
+  function renderTeachTags(subjects) {
+    teachSubjects = subjects.slice();
+    teachTagRow.innerHTML = '';
+    teachSubjects.forEach((subject) => {
+      const chip = document.createElement('span');
+      chip.className = 'teach-tag';
+      const label = document.createElement('span');
+      label.textContent = subject;
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'teach-tag-remove';
+      removeBtn.textContent = '✕';
+      removeBtn.addEventListener('click', () => {
+        renderTeachTags(teachSubjects.filter((s) => s !== subject));
+      });
+      chip.append(label, removeBtn);
+      teachTagRow.appendChild(chip);
+    });
+  }
+
+  function addTeachSubject() {
+    const value = teachSubjectInput.value.trim();
+    if (!value) return;
+    if (!teachSubjects.some((s) => s.toLowerCase() === value.toLowerCase())) {
+      renderTeachTags([...teachSubjects, value]);
+    }
+    teachSubjectInput.value = '';
+  }
+
+  document.getElementById('add-teach-subject-btn').addEventListener('click', addTeachSubject);
+  teachSubjectInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      addTeachSubject();
+    }
+  });
 
   const cachedUser = getStoredUser();
   if (cachedUser) fillForm(cachedUser);
@@ -149,8 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fullname: document.getElementById('fullname').value.trim(),
         country: countrySelect.value,
         grade: gradeSelect.value,
-        language: languageSelect.value,
         bio: bioInput.value.trim(),
+        teachesSubjects: teachSubjects,
       };
       // Only included when the person actually picked a new photo this
       // visit - otherwise the backend leaves the existing one untouched.

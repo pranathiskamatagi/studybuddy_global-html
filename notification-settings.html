@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notification Settings - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="settings.css?v=2" />
+  <link rel="stylesheet" href="notification-settings.css?v=1" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="settings.html" class="back-btn" id="back-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Settings</p>
+    </div>
+
+    <h1 class="notif-title">Notifications</h1>
+
+    <div class="settings-group">
+      <label class="toggle-row">
+        <span>Phone notifications</span>
+        <input type="checkbox" id="toggle-push" />
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </label>
+    </div>
+    <p class="notif-status" id="push-status"></p>
+
+    <p class="section-heading">Notify me about</p>
+    <div class="settings-group" id="category-group">
+      <label class="toggle-row">
+        <span>Messages</span>
+        <input type="checkbox" class="category-toggle" data-category="messages" checked />
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </label>
+      <label class="toggle-row">
+        <span>Matches &amp; sessions</span>
+        <input type="checkbox" class="category-toggle" data-category="matches" checked />
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </label>
+      <label class="toggle-row">
+        <span>Scheduled sessions</span>
+        <input type="checkbox" class="category-toggle" data-category="scheduled" checked />
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </label>
+      <label class="toggle-row">
+        <span>Ratings &amp; rewards</span>
+        <input type="checkbox" class="category-toggle" data-category="rewards" checked />
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </label>
+      <label class="toggle-row">
+        <span>Announcements &amp; safety</span>
+        <input type="checkbox" class="category-toggle" data-category="announcements" checked />
+        <span class="toggle-switch" aria-hidden="true"></span>
+      </label>
+    </div>
+    <p class="notif-hint">These control what can reach your phone's lock screen. Everything still shows up in your Notifications page either way.</p>
+
+  </div>
+
+  <script src="dark-mode.js"></script>
+  <script src="api.js?v=7"></script>
+  <script src="push.js?v=2"></script>
+  <script src="notification-settings.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invite a Friend - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="invite.css?v=1" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="profile.html" class="back-btn" id="back-btn" aria-label="Back to profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Profile</p>
+    </div>
+
+    <div class="invite-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6M22 11h-6"></path></svg>
+    </div>
+
+    <h1 class="title">Invite a friend</h1>
+    <p class="subtitle">You both get <span id="bonus-amount">50</span> coins the moment they sign up with your link.</p>
+
+    <div class="link-box">
+      <p class="link-text" id="link-text">—</p>
+      <button type="button" id="copy-btn" class="copy-btn">Copy</button>
+    </div>
+
+    <p class="referral-count" id="referral-count">—</p>
+
+  </div>
+  <script src="dark-mode.js"></script>
+
+  <script src="api.js?v=7"></script>
+  <script src="invite.js"></script>
+</body>
+</html>

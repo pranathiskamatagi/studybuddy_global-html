@@ -10,8 +10,11 @@
 
   <!-- Reuses home.css for the session/request card styles - they're
        identical, so there's no reason to duplicate ~100 lines of CSS. -->
-  <link rel="stylesheet" href="home.css" />
-  <link rel="stylesheet" href="connect.css" />
+  <link rel="stylesheet" href="home.css?v=4" />
+  <link rel="stylesheet" href="connect.css?v=2" />
+  <link rel="stylesheet" href="confirm-modal.css" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
 <body>
 
@@ -43,9 +46,11 @@
     </section>
 
   </div>
+  <script src="dark-mode.js"></script>
 
-  <script src="api.js?v=5"></script>
+  <script src="api.js?v=7"></script>
   <script src="socket.io.min.js"></script>
-  <script src="connect.js?v=3"></script>
+  <script src="info-modal.js"></script>
+  <script src="connect.js?v=7"></script>
 </body>
 </html>

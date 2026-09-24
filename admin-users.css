@@ -80,6 +80,22 @@
   color: #e0453f;
   margin-top: 2px;
 }
+.user-stats {
+  font-size: 11px;
+  color: #56618a;
+  margin-top: 4px;
+}
+.user-history-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #3f6fe0;
+  text-decoration: none;
+}
+.user-history-link:hover {
+  text-decoration: underline;
+}
 .ban-btn {
   flex-shrink: 0;
   padding: 8px 16px;
@@ -147,6 +163,56 @@
   border-color: #3f6fe0;
 }
 .bonus-form button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  color: white;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.message-btn {
+  padding: 8px 16px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #34c77b;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.message-btn:hover {
+  border-color: #34c77b;
+  background: #eafaf1;
+}
+.message-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f4fc;
+  width: 100%;
+}
+.message-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  outline: none;
+  resize: none;
+}
+.message-form textarea:focus {
+  border-color: #3f6fe0;
+}
+.message-form button {
+  align-self: flex-end;
   padding: 8px 14px;
   border: none;
   border-radius: 10px;

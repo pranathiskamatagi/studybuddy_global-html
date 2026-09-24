@@ -250,6 +250,14 @@ body {
   width: 20px;
   height: 20px;
 }
+.avatar-btn {
+  overflow: hidden;
+}
+.avatar-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .notif-dot {
   position: absolute;
   top: 8px;
@@ -678,13 +686,26 @@ body {
   color: #a7b0cc;
   margin-top: 3px;
 }
+/* A scheduled-for-later request reads as "plan for this," not "recent
+   activity" - a real, differently-colored callout instead of the plain
+   gray "X minutes ago" text every other request row uses. */
+.request-time-scheduled {
+  color: #3f6fe0;
+  font-weight: 700;
+}
 .request-btn {
   width: auto;
   padding: 10px 20px;
 }
 
 /* ---------- Small screens ---------- */
-@media (max-width: 780px) {
+/* 1024px, not 780px - the old threshold left a real gap for tablet-width
+   screens (roughly 780-1024px, very common for actual tablets and some
+   large phones): the sidebar snapped back to its full 88px desktop size
+   and .cta-row's 3-column grid squeezed every card into an unreadably
+   narrow, wrapping mess. Everything below already looks right at both
+   phone AND tablet widths, so the fix was just widening when it kicks in. */
+@media (max-width: 1024px) {
   .sessions-row {
     grid-template-columns: 1fr;
   }
@@ -750,12 +771,10 @@ body {
     font-size: 15px;
   }
 
-  /* CTA cards (I wanna learn/teach/group chat) stay at their original,
-     full size on mobile - these are the main actions on the page, so
-     they're meant to be the most prominent thing here. Only the grid
-     goes to 1 column (full width each) instead of 3 cramped columns. */
+  /* CTA cards (I wanna learn/teach/group chat) stay in their real 3-in-a-
+     row layout through tablet widths too - see the separate, narrower
+     640px query below for where they actually stack. */
   .cta-row {
-    grid-template-columns: 1fr;
     gap: 14px;
   }
 
@@ -798,5 +817,15 @@ body {
     font-size: 12px;
     margin-left: auto;
     flex-shrink: 0;
+  }
+}
+
+/* Only a true phone width actually needs the CTA cards to stack - a
+   tablet (or a laptop window) still has plenty of room for the real
+   3-in-a-row layout above, which is also just a better-looking, less
+   "empty" use of the space than one long stacked column. */
+@media (max-width: 640px) {
+  .cta-row {
+    grid-template-columns: 1fr;
   }
 }

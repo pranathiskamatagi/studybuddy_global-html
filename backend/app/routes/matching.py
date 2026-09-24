@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import func
 
 from app.extensions import db, socketio
-from app.models import User, HelpRequest, StudySession, Block
+from app.models import User, HelpRequest, StudySession, Block, Favorite
 from app.sockets import get_searching_user_ids, get_online_user_ids
 
 matching_bp = Blueprint('matching', __name__, url_prefix='/api')
@@ -48,6 +48,17 @@ EXPERIENCE_SCORE_PER_SESSION = 2
 EXPERIENCE_SESSION_CAP = 3
 SAME_GRADE_SCORE = 2
 RATING_WEIGHT = 0.5
+# A small nudge AWAY from whoever your last real 1-on-1 partner was, so two
+# people who are both frequently online and well-matched don't just keep
+# getting stuck with each other every single search - but small enough
+# that they still win when they're genuinely the best (or only) real
+# option, e.g. they also have a real open request for this exact subject.
+RECENT_PARTNER_PENALTY = 3
+# The opposite nudge, on purpose: someone you've explicitly favorited (see
+# app/routes/favorites.py) should be MORE likely to come up, not less -
+# this deliberately outweighs RECENT_PARTNER_PENALTY so favoriting someone
+# you just studied with still brings them back to the top.
+FAVORITE_BOOST = 4
 
 # An "open" HelpRequest can sit around for hours (see requests.py's own
 # 6-hour display window) - but matching someone to a request that old
@@ -58,7 +69,7 @@ RATING_WEIGHT = 0.5
 RECENT_REQUEST_WINDOW = timedelta(minutes=20)
 
 
-def _score_candidate(candidate, me, subject, topic, opposite_mode):
+def _score_candidate(candidate, me, subject, topic, opposite_mode, recent_partner_id, favorite_ids):
     # relevance = a real, currently-OPEN request for this exact subject -
     # the only thing that counts as "genuinely active right now." Past
     # experience, same grade, and rating are all tiebreak-only: useful for
@@ -120,7 +131,46 @@ def _score_candidate(candidate, me, subject, topic, opposite_mode):
     if rating:
         tiebreak += rating * RATING_WEIGHT
 
+    # Nudge away from a rematch with whoever you just studied with - see
+    # RECENT_PARTNER_PENALTY above for why this is small, not exclusion.
+    if recent_partner_id and candidate.id == recent_partner_id:
+        tiebreak -= RECENT_PARTNER_PENALTY
+
+    # ...but a real, explicit favorite overrides that nudge - see
+    # FAVORITE_BOOST above.
+    if candidate.id in favorite_ids:
+        tiebreak += FAVORITE_BOOST
+
     return relevance, tiebreak, reason
+
+
+def _get_favorite_ids(my_id):
+    return {f.favorite_id for f in Favorite.query.filter_by(user_id=my_id).all()}
+
+
+def _is_blocked_pair(user_a_id, user_b_id):
+    # A block only makes sense as a two-way exclusion (see match_candidate()
+    # above) - checked here too since matched_with_me()'s DB fallback and
+    # announce_match() both hand back a real match WITHOUT ever going
+    # through match_candidate()'s own exclusion list.
+    return (
+        Block.query.filter_by(blocker_id=user_a_id, blocked_id=user_b_id).first() is not None
+        or Block.query.filter_by(blocker_id=user_b_id, blocked_id=user_a_id).first() is not None
+    )
+
+
+def _get_recent_partner_id(my_id):
+    last_session = (
+        StudySession.query
+        .filter(StudySession.mode != 'group')
+        .filter(StudySession.ended_at.isnot(None))
+        .filter(db.or_(StudySession.learner_id == my_id, StudySession.partner_id == my_id))
+        .order_by(StudySession.ended_at.desc())
+        .first()
+    )
+    if not last_session:
+        return None
+    return last_session.partner_id if last_session.learner_id == my_id else last_session.learner_id
 
 
 @matching_bp.get('/match-candidate')
@@ -168,7 +218,12 @@ def match_candidate():
         return jsonify(candidate=None)
 
     opposite_mode = 'teach' if mode == 'learn' else 'learn'
-    scored = [(_score_candidate(c, me, subject, topic, opposite_mode), c) for c in candidates]
+    recent_partner_id = _get_recent_partner_id(my_id)
+    favorite_ids = _get_favorite_ids(my_id)
+    scored = [
+        (_score_candidate(c, me, subject, topic, opposite_mode, recent_partner_id, favorite_ids), c)
+        for c in candidates
+    ]
     # Only candidates with actual relevance (an open request or real past
     # experience for THIS subject) are eligible at all - grade/rating are
     # tie-breakers for ranking among relevant people, not a way to
@@ -220,7 +275,54 @@ def matched_with_me():
     # instead of leaving someone stuck "Finding your match" forever.
     my_id = int(get_jwt_identity())
     payload = _pop_pending_match(my_id)
-    return jsonify(match=payload)
+    if payload:
+        return jsonify(match=payload)
+
+    # The pending-match cache above only lives for PENDING_MATCH_TTL (30s)
+    # - a real gap if the live push AND every poll during that window all
+    # missed (e.g. a dropped connection right as the match happened).
+    # Past that window there was nothing left to self-heal from, so
+    # someone could be stuck on "Finding your match" forever even though
+    # a real session already exists for them. This checks the actual
+    # database as a second, durable fallback: is there a real, still-open
+    # 1-on-1 session where someone ELSE already made THIS person the
+    # partner? If so, it's a real match no matter how long ago it happened.
+    # Only a RECENT session counts - hundreds of old sessions were never
+    # formally ended (people just closed the tab), and without a cutoff
+    # one of those weeks-old rows kept resurfacing as a brand-new
+    # "Match found" with someone who was never actually searching.
+    fresh_cutoff = datetime.utcnow() - timedelta(minutes=10)
+    existing = (
+        StudySession.query
+        .filter(StudySession.mode != 'group')
+        .filter(StudySession.partner_id == my_id)
+        .filter(StudySession.ended_at.is_(None))
+        .filter(StudySession.started_at >= fresh_cutoff)
+        .order_by(StudySession.id.desc())
+        .first()
+    )
+    if not existing:
+        return jsonify(match=None)
+
+    learner = db.session.get(User, existing.learner_id)
+    if not learner:
+        return jsonify(match=None)
+
+    # A block made AFTER this session was created (but never properly
+    # closed - see session.js's Block button) must still win here - this
+    # fallback existing at all is exactly what let a blocked person
+    # resurface as a "real" match, bypassing the block entirely.
+    if _is_blocked_pair(my_id, existing.learner_id):
+        return jsonify(match=None)
+
+    return jsonify(match={
+        'partnerId': existing.learner_id,
+        'partnerName': learner.fullname,
+        'partnerCountry': learner.country,
+        'subject': existing.subject or '',
+        'topic': existing.topic or '',
+        'mode': 'learn' if existing.mode == 'teach' else 'teach',
+    })
 
 
 @matching_bp.post('/announce-match')
@@ -247,6 +349,13 @@ def announce_match():
     me = db.session.get(User, my_id)
     if not me:
         return jsonify(error='Not found.'), 404
+
+    # This path skips match_candidate() entirely (see above), which is
+    # the ONLY place a block was actually being checked - clicking a
+    # community request from someone you'd blocked (or who'd blocked you)
+    # went through with zero enforcement until this check existed.
+    if _is_blocked_pair(my_id, int(partner_id)):
+        return jsonify(error='blocked'), 403
 
     # A community request stays postable/clickable whether or not its
     # poster is around right now, but "Match Found" itself shouldn't lie -

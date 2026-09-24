@@ -8,7 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="choose-subject.css" />
+  <link rel="stylesheet" href="choose-subject.css?v=8" />
+  <link rel="stylesheet" href="date-time-picker.css?v=5" />
+  <link rel="stylesheet" href="people-picker.css" />
+  <link rel="stylesheet" href="confirm-modal.css" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
 <body>
 
@@ -82,11 +87,44 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
         Find study partner
       </button>
+
+      <button type="button" class="schedule-later-btn" id="schedule-later-toggle-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+        Schedule for later instead
+      </button>
+
+      <!-- Revealed only after clicking the button above - a real future
+           time instead of searching right now (see choose-subject.js). -->
+      <div class="schedule-later-form" id="schedule-later-form" hidden>
+        <label id="schedule-later-time-label">When do you want to study this?</label>
+        <!-- date-time-picker.js builds the real calendar + time-slot
+             widget inside this, in place of a native date/time input. -->
+        <div id="schedule-later-datetime"></div>
+
+        <button type="button" class="pick-person-toggle-btn" id="pick-person-toggle-btn">🎯 Want a specific person? (optional)</button>
+
+        <!-- Revealed only after clicking the toggle above. -->
+        <div class="pick-person-panel" id="pick-person-panel" hidden>
+          <p class="pick-person-heading" id="pick-person-heading" hidden>Recommended - they teach this</p>
+          <div class="pick-person-list" id="pick-person-recommend-list"></div>
+          <button type="button" class="pick-person-search-btn" id="pick-person-search-btn">🔍 Search for someone else</button>
+          <div class="pick-person-chosen" id="pick-person-chosen" hidden>
+            Sending to <strong id="pick-person-chosen-name"></strong>
+            <button type="button" id="pick-person-clear-btn" aria-label="Remove">✕</button>
+          </div>
+        </div>
+
+        <button type="button" class="schedule-later-submit-btn" id="schedule-later-submit-btn">Post request</button>
+      </div>
     </form>
   </div>
+  <script src="dark-mode.js"></script>
 
-  <script src="api.js?v=5"></script>
+  <script src="api.js?v=7"></script>
   <script src="socket.io.min.js"></script>
-  <script src="choose-subject.js"></script>
+  <script src="people-picker.js"></script>
+  <script src="date-time-picker.js?v=4"></script>
+  <script src="info-modal.js"></script>
+  <script src="choose-subject.js?v=6"></script>
 </body>
 </html>

@@ -76,11 +76,18 @@ body {
   margin-bottom: 22px;
 }
 .admin-stat {
+  display: block;
   background: white;
   border: 1.5px solid #eef1fb;
   border-radius: 14px;
   padding: 12px 14px;
   text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.admin-stat:hover {
+  border-color: #dbe2f5;
 }
 .admin-stat-value {
   font-size: 20px;
@@ -147,4 +154,73 @@ body {
   padding: 2px 8px;
   border-radius: 999px;
   vertical-align: middle;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
+}
+
+/* ---------- Registered people list ---------- */
+.people-heading {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1b2340;
+  margin: 26px 0 10px;
+}
+.people-heading span {
+  color: #8892b3;
+  font-weight: 600;
+}
+.people-list {
+  background: white;
+  border: 1.5px solid #e6ebf7;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.people-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  text-decoration: none;
+  border-bottom: 1px solid #eef1f9;
+}
+.people-row:last-child {
+  border-bottom: none;
+}
+.people-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  color: white;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.people-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.people-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2340;
+}
+.people-sub {
+  font-size: 12px;
+  color: #8892b3;
 }

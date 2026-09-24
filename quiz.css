@@ -180,6 +180,13 @@ body {
 /* ---------- Buttons ---------- */
 .save-btn {
   width: 100%;
+  /* Capped so it reads like a real action button at its normal phone
+     size, not stretched edge-to-edge across the full-width page - same
+     fix as login.css/signup.css's identical buttons. */
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
   padding: 15px 24px;
   border: none;
   border-radius: 999px;
@@ -311,4 +318,18 @@ body {
   color: #8892b3;
   line-height: 1.6;
   margin-bottom: 28px;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
 }

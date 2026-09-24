@@ -40,6 +40,7 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
+  overflow: hidden;
   background: linear-gradient(135deg, #3f6fe0, #34c77b);
   color: white;
   font-size: 26px;
@@ -48,6 +49,11 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 14px;
+}
+.profile-view-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .profile-view-name {
   font-size: 16px;
@@ -64,6 +70,181 @@
   font-size: 13px;
   color: #3d476b;
   line-height: 1.5;
+}
+
+.profile-view-teaches {
+  margin-top: 14px;
+  text-align: left;
+}
+.profile-view-teaches-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a7b0cc;
+  margin-bottom: 6px;
+}
+.profile-view-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.profile-view-chip {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #21894f;
+  background: #eaf8f0;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.profile-view-favorite-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px 14px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #56618a;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.profile-view-favorite-btn:hover {
+  border-color: #f472b6;
+}
+.profile-view-favorite-btn.is-favorite {
+  border-color: #f472b6;
+  background: #fdf0f6;
+  color: #d6336c;
+}
+
+.profile-view-schedule-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #3f6fe0;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.profile-view-schedule-btn:hover {
+  border-color: #3f6fe0;
+}
+.profile-view-schedule-form {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+.profile-view-schedule-form input {
+  padding: 9px 12px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: #1b2340;
+  outline: none;
+}
+.profile-view-schedule-form input:focus {
+  border-color: #3f6fe0;
+}
+.profile-view-schedule-send-btn {
+  padding: 9px 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  color: white;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.profile-view-schedule-status {
+  font-size: 11.5px;
+  color: #8892b3;
+  text-align: center;
+}
+
+.profile-view-challenge-row {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+.profile-view-challenge-row input {
+  padding: 9px 12px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: #1b2340;
+  outline: none;
+}
+.profile-view-challenge-row input:focus {
+  border-color: #3f6fe0;
+}
+.profile-view-challenge-btn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f5a623, #f76b1c);
+  color: white;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.profile-view-ask-row {
+  margin-top: 4px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+.profile-view-ask-row input {
+  padding: 9px 12px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: #1b2340;
+  outline: none;
+}
+.profile-view-ask-row input:focus {
+  border-color: #34c77b;
+}
+.profile-view-ask-btn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  color: white;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.profile-view-ask-status {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #34c77b;
+  text-align: center;
 }
 
 /* Small reusable "Admin" badge - shown next to a name wherever it's

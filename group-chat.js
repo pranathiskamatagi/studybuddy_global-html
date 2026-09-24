@@ -27,6 +27,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const sessionStartTime = Date.now();
   document.getElementById('group-topic').textContent = topic;
 
+  // ---------------------------------------------------------------
+  // Warn before leaving a live group session any way OTHER than the real
+  // "End session"/exit button - see session.js's identical guard for why.
+  // ---------------------------------------------------------------
+  let leavingConfirmed = false;
+  history.pushState({ studybuddySessionGuard: true }, '', location.href);
+  window.addEventListener('popstate', () => {
+    if (leavingConfirmed) return;
+    history.pushState({ studybuddySessionGuard: true }, '', location.href);
+    showConfirmModal("You're in a session - are you sure you want to go back?", () => {
+      leavingConfirmed = true;
+      window.location.href = 'home.html';
+    }, { confirmText: 'Leave session', danger: true });
+  });
+  // Deliberately no 'beforeunload' guard here - see session.js's identical
+  // guard for why (it would fire on legitimate redirects too, and can't
+  // show our own wording anyway).
+
   const messagesEl = document.getElementById('chat-messages');
   const form = document.getElementById('chat-form');
   const input = document.getElementById('chat-input');
@@ -82,9 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
     bubble.appendChild(p);
   }
 
-  function addMessage(text, isSent, senderName, messageId, deleted, imageData) {
+  function addMessage(text, isSent, senderName, messageId, deleted, imageData, audioData, isAdminMessage) {
     const bubble = document.createElement('div');
-    bubble.className = 'msg ' + (isSent ? 'msg-sent' : 'msg-received');
+    bubble.className = 'msg ' + (isSent ? 'msg-sent' : 'msg-received') + (isAdminMessage ? ' msg-admin' : '');
 
     if (messageId) messageBubbles.set(messageId, bubble);
 
@@ -95,10 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // A real admin warning sent into this live chat (see admin.py's
+    // warn_session) - the ⚠️ prefix plus the distinct .msg-admin styling
+    // (below) make it impossible to mistake for a real group member,
+    // even though senderName already reads "Admin" for these.
     if (!isSent) {
       const senderEl = document.createElement('p');
       senderEl.className = 'msg-sender';
-      senderEl.textContent = senderName;
+      senderEl.textContent = isAdminMessage ? '⚠️ Admin' : senderName;
       bubble.appendChild(senderEl);
     }
 
@@ -110,7 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const img = document.createElement('img');
       img.src = imageData;
       img.alt = 'Shared image';
+      img.addEventListener('click', () => openImageLightbox(imageData));
       bubble.appendChild(img);
+    }
+    if (audioData) {
+      bubble.classList.add('msg-audio');
+      bubble.appendChild(buildAudioPlayerBubble(audioData));
     }
     if (text) {
       const p = document.createElement('p');
@@ -158,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     p.textContent = text;
     messagesEl.appendChild(p);
     scrollToBottom();
+    return p;
   }
 
   const avatarColors = ['blue', 'green', 'pink', 'orange'];
@@ -279,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   apiFetch(`/sessions/${sessionId}/messages`)
     .then((data) => {
-      data.messages.forEach((m) => addMessage(m.text, m.senderId === myId, m.senderName, m.id, m.deleted, m.imageData));
+      data.messages.forEach((m) => addMessage(m.text, m.senderId === myId, m.senderName, m.id, m.deleted, m.imageData, m.audioData, m.isAdminMessage));
       // Opening the chat means seeing everything already in it - mark up
       // to the newest loaded message as read right away.
       if (data.messages.length) {
@@ -363,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // The server broadcasts to EVERYONE in the room (sender included) -
     // that's what actually renders it, same pattern as session.js.
     const isSent = message.senderId === myId;
-    addMessage(message.text, isSent, message.senderName, message.id, message.deleted, message.imageData);
+    addMessage(message.text, isSent, message.senderName, message.id, message.deleted, message.imageData, message.audioData, message.isAdminMessage);
     lastMessageAt = Date.now();
     quietNudgeShown = false;
     if (!isSent && typeof playMessageSound === 'function') playMessageSound();
@@ -395,6 +423,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMemberCount(memberCount);
     // Someone leaving changes who counts toward "read by everyone."
     refreshAllTicks();
+  });
+
+  // An admin forced this group session closed right now (see admin.py's
+  // cancel_session) - a real, immediate end for everyone in it, same as
+  // session.js's 1-on-1 handling.
+  socket.on('admin_cancelled', () => {
+    alert('Admin cancelled your session.');
+    window.location.href = 'home.html';
   });
 
   // ---------------------------------------------------------------
@@ -480,34 +516,199 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.getContext('2d').drawImage(img, 0, 0, width, height);
 
         const imageData = canvas.toDataURL('image/jpeg', 0.85);
-        imageBtn.disabled = true;
-        addSystemNotice('Checking image...');
 
-        apiFetch(`/sessions/${sessionId}/messages/image`, {
-          method: 'POST',
-          body: JSON.stringify({ imageData }),
-        })
-          .then(() => {
-            // No local addMessage() call here either, on purpose - same
-            // as a text message, the 'new_message' broadcast is what
-            // actually puts it on screen, for everyone the same way.
+        // Show it first so the person can double-check before it goes out.
+        showImagePreviewBeforeSend(imageData, () => {
+          imageBtn.disabled = true;
+          const checkingNotice = addSystemNotice('Checking image...');
+
+          apiFetch(`/sessions/${sessionId}/messages/image`, {
+            method: 'POST',
+            body: JSON.stringify({ imageData }),
           })
-          .catch((error) => {
-            if (handleAuthError(error)) return;
-            alert(error.message || 'Could not send that image.');
-          })
-          .finally(() => {
-            imageBtn.disabled = false;
-          });
+            .then(() => {
+              // No local addMessage() call here either, on purpose - same
+              // as a text message, the 'new_message' broadcast is what
+              // actually puts it on screen, for everyone the same way.
+            })
+            .catch((error) => {
+              if (handleAuthError(error)) return;
+              alert(error.message || 'Could not send that image.');
+            })
+            .finally(() => {
+              imageBtn.disabled = false;
+              checkingNotice.remove();
+            });
+        });
       };
       img.src = reader.result;
     };
     reader.readAsDataURL(file);
   });
 
-  document.getElementById('mic-btn').addEventListener('click', () => {
-    alert('Voice messages aren\'t built yet.');
+  // ---------------------------------------------------------------
+  // Real voice messages - same pattern as session.js's 1-on-1 chat, see
+  // there for why there's no AI safety check on these (unlike images).
+  // ---------------------------------------------------------------
+  const micBtn = document.getElementById('mic-btn');
+  const chatForm = document.getElementById('chat-form');
+  const recordingBar = document.getElementById('recording-bar');
+  const recordingControls = document.getElementById('recording-controls');
+  const recordingPreview = document.getElementById('recording-preview');
+  const recordingPreviewPlayer = document.getElementById('recording-preview-player');
+  const recordingTimeEl = document.getElementById('recording-time');
+  const recordingDotEl = document.getElementById('recording-dot');
+  const recordingHintEl = document.getElementById('recording-hint');
+  const recordingCancelBtn = document.getElementById('recording-cancel-btn');
+  const recordingPauseBtn = document.getElementById('recording-pause-btn');
+  const recordingPauseIcon = document.getElementById('recording-pause-icon');
+  const recordingResumeIcon = document.getElementById('recording-resume-icon');
+  const recordingStopBtn = document.getElementById('recording-stop-btn');
+  const previewDiscardBtn = document.getElementById('preview-discard-btn');
+  const previewSendBtn = document.getElementById('preview-send-btn');
+  const MAX_RECORDING_MS = 60 * 1000;
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let autoStopTimer = null;
+  let recordingTimerInterval = null;
+  let segmentStartedAt = 0;
+  let accumulatedMs = 0;
+  let isPaused = false;
+  let previewBlobUrl = null;
+  let recordingCancelled = false;
+
+  function blobToDataUri(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function resetRecordingUI() {
+    chatForm.hidden = false;
+    recordingBar.hidden = true;
+    recordingControls.hidden = false;
+    recordingPreview.hidden = true;
+    recordingPreviewPlayer.innerHTML = '';
+    if (previewBlobUrl) {
+      URL.revokeObjectURL(previewBlobUrl);
+      previewBlobUrl = null;
+    }
+  }
+
+  function sendRecording(blob) {
+    blobToDataUri(blob)
+      .then((audioData) => apiFetch(`/sessions/${sessionId}/messages/audio`, {
+        method: 'POST',
+        body: JSON.stringify({ audioData }),
+      }))
+      .then(() => {})
+      .catch((error) => {
+        if (handleAuthError(error)) return;
+        alert(error.message || 'Could not send that voice message.');
+      });
+  }
+
+  function currentElapsedMs() {
+    return accumulatedMs + (isPaused ? 0 : Date.now() - segmentStartedAt);
+  }
+
+  function updateTimerDisplay() {
+    const elapsed = Math.floor(currentElapsedMs() / 1000);
+    recordingTimeEl.textContent = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, '0')}`;
+  }
+
+  async function startRecording() {
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (error) {
+      alert("Couldn't access your microphone - check your browser's permission for this site.");
+      return;
+    }
+
+    recordedChunks = [];
+    recordingCancelled = false;
+    isPaused = false;
+    recordingPauseIcon.hidden = false;
+    recordingResumeIcon.hidden = true;
+    recordingDotEl.classList.remove('paused');
+    recordingHintEl.textContent = 'Recording voice message...';
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.addEventListener('dataavailable', (event) => {
+      if (event.data.size > 0) recordedChunks.push(event.data);
+    });
+    mediaRecorder.addEventListener('stop', () => {
+      stream.getTracks().forEach((track) => track.stop());
+      clearTimeout(autoStopTimer);
+      clearInterval(recordingTimerInterval);
+
+      if (recordingCancelled || !recordedChunks.length) {
+        resetRecordingUI();
+        return;
+      }
+      const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+      previewBlobUrl = URL.createObjectURL(blob);
+      recordingPreviewPlayer.innerHTML = '';
+      recordingPreviewPlayer.appendChild(buildAudioPlayerBubble(previewBlobUrl));
+      recordingControls.hidden = true;
+      recordingPreview.hidden = false;
+      previewSendBtn.onclick = () => {
+        sendRecording(blob);
+        resetRecordingUI();
+      };
+    });
+
+    mediaRecorder.start();
+    chatForm.hidden = true;
+    recordingBar.hidden = false;
+    recordingControls.hidden = false;
+    recordingPreview.hidden = true;
+    accumulatedMs = 0;
+    segmentStartedAt = Date.now();
+    updateTimerDisplay();
+    recordingTimerInterval = setInterval(updateTimerDisplay, 500);
+    autoStopTimer = setTimeout(() => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    }, MAX_RECORDING_MS);
+  }
+
+  micBtn.addEventListener('click', startRecording);
+
+  recordingPauseBtn.addEventListener('click', () => {
+    if (!mediaRecorder) return;
+    if (isPaused) {
+      mediaRecorder.resume();
+      segmentStartedAt = Date.now();
+      isPaused = false;
+      recordingPauseIcon.hidden = false;
+      recordingResumeIcon.hidden = true;
+      recordingDotEl.classList.remove('paused');
+      recordingHintEl.textContent = 'Recording voice message...';
+    } else {
+      mediaRecorder.pause();
+      accumulatedMs += Date.now() - segmentStartedAt;
+      isPaused = true;
+      recordingPauseIcon.hidden = true;
+      recordingResumeIcon.hidden = false;
+      recordingDotEl.classList.add('paused');
+      recordingHintEl.textContent = 'Paused';
+    }
   });
+
+  recordingStopBtn.addEventListener('click', () => {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  });
+
+  recordingCancelBtn.addEventListener('click', () => {
+    recordingCancelled = true;
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    else resetRecordingUI();
+  });
+
+  previewDiscardBtn.addEventListener('click', resetRecordingUI);
 
   // ---------------------------------------------------------------
   // Safety menu
@@ -624,6 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------------------------------------------------------------
   document.getElementById('end-session-btn').addEventListener('click', () => {
     showConfirmModal('Exit this study session?', async () => {
+      leavingConfirmed = true;
       let elapsedMinutes, diamondEarned;
       try {
         ({ elapsedMinutes, diamondEarned } = await leaveAndAwardPoints());

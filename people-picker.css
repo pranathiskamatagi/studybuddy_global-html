@@ -1,0 +1,131 @@
+.people-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 320;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(27, 35, 64, 0.35);
+  padding: 20px;
+}
+
+.people-picker-card {
+  width: 100%;
+  max-width: 320px;
+  max-height: 70vh;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 60px rgba(30, 41, 90, 0.25);
+}
+
+.people-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.people-picker-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1b2340;
+}
+.people-picker-close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #f1f4fc;
+  color: #56618a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.people-picker-close-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.people-picker-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.people-picker-search-icon {
+  width: 16px;
+  height: 16px;
+  color: #8892b3;
+  position: absolute;
+  left: 12px;
+  pointer-events: none;
+}
+.people-picker-search-wrap input {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #1b2340;
+  outline: none;
+}
+.people-picker-search-wrap input:focus {
+  border-color: #3f6fe0;
+}
+
+.people-picker-list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.people-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1b2340;
+  text-align: left;
+  cursor: pointer;
+}
+.people-picker-row:hover {
+  background: #f5f8fe;
+}
+.people-picker-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #4f7de0, #3f6fe0);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.people-picker-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.people-picker-empty {
+  text-align: center;
+  color: #a7b0cc;
+  font-size: 12.5px;
+  padding: 20px 0;
+}

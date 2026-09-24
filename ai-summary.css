@@ -101,11 +101,9 @@ body {
   margin-bottom: 16px;
 }
 
-/* ---------- Mind map ----------
-   A simple top-down "tree": one central topic box, a trunk line down,
-   then a horizontal line branching out to 3 child boxes below it. */
+/* ---------- Mind map central topic ---------- */
 .mindmap {
-  margin-bottom: 28px;
+  margin-bottom: 18px;
 }
 .mindmap-central {
   width: fit-content;
@@ -118,61 +116,11 @@ body {
   border-radius: 12px;
   text-align: center;
 }
-.mindmap-trunk {
-  width: 2px;
-  height: 18px;
-  background: #dfe6f7;
-  margin: 0 auto;
-}
-.mindmap-branches {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  position: relative;
-  padding-top: 18px;
-}
-/* The horizontal line connecting all 3 branches together, spanning from
-   the first branch's center to the last branch's center. */
-.mindmap-branches::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: calc(100% / 6);   /* center of the 1st of 3 equal-width columns */
-  right: calc(100% / 6);  /* center of the 3rd of 3 equal-width columns */
-  height: 2px;
-  background: #dfe6f7;
-}
-.branch-wrap {
-  position: relative;
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-/* The short vertical stub connecting each branch node up to the
-   horizontal line above it. */
-.branch-wrap::before {
-  content: "";
-  position: absolute;
-  top: -18px;
-  height: 18px;
-  width: 2px;
-  background: #dfe6f7;
-}
-.branch-node {
-  background: white;
-  border: 1.5px solid #dfe6f7;
-  border-radius: 10px;
-  padding: 8px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #1b2340;
-  text-align: center;
-}
 
-/* ---------- Branch details ---------- */
-/* The real substance behind each short branch label above - as long as
-   it needs to be, the page just scrolls (this is a plain vertical list,
-   not constrained by the tree diagram's connector-line math). */
+/* ---------- Branches ----------
+   However many the conversation actually had (no fixed count) - a
+   plain vertical list of numbered cards, as long as it needs to be;
+   the page just scrolls instead of squeezing them into a fixed box. */
 .branch-details {
   display: flex;
   flex-direction: column;
@@ -180,21 +128,41 @@ body {
   margin-bottom: 24px;
 }
 .branch-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   background: white;
   border: 1.5px solid #eef1fb;
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.branch-detail-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.branch-detail-body {
+  flex: 1;
+  min-width: 0;
 }
 .branch-detail-label {
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 700;
-  color: #3f6fe0;
+  color: #1b2340;
   margin: 0 0 4px;
 }
 .branch-detail-text {
-  font-size: 13.5px;
-  line-height: 1.5;
-  color: #1b2340;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #56618a;
   margin: 0;
 }
 
@@ -261,6 +229,33 @@ body {
   transform: none;
 }
 
+.flashcards-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #56618a;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.flashcards-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.flashcards-btn:hover {
+  border-color: #3f6fe0;
+  color: #3f6fe0;
+}
+
 /* ---------- Back to Home ---------- */
 .home-link-btn {
   width: 100%;
@@ -279,4 +274,18 @@ body {
 .home-link-btn:hover {
   border-color: #3f6fe0;
   color: #3f6fe0;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
 }

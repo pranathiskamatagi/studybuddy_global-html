@@ -226,6 +226,12 @@ body {
 /* ---------- Call-to-action button (same style as the welcome screen) ---------- */
 .cta-button {
   width: 100%;
+  /* Same reasoning as login.css's identical button - capped so it reads
+     like a real action button at its normal phone size, not stretched
+     edge-to-edge across the full-width page. */
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
   padding: 16px 24px;
   border: none;
   border-radius: 999px;
@@ -375,4 +381,18 @@ body {
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
 }

@@ -4,6 +4,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const listEl = document.getElementById('rating-list');
 
+  function buildEditForm(r, commentP) {
+    const form = document.createElement('div');
+    form.className = 'edit-rating-form';
+    form.hidden = true;
+
+    const starsInput = document.createElement('input');
+    starsInput.type = 'number';
+    starsInput.min = '1';
+    starsInput.max = '5';
+    starsInput.value = r.stars;
+
+    const badgeInput = document.createElement('input');
+    badgeInput.type = 'text';
+    badgeInput.placeholder = 'Badge text (blank = hides the badge)';
+    badgeInput.value = r.badgeText || '';
+
+    const commentInput = document.createElement('textarea');
+    commentInput.placeholder = 'Comment';
+    commentInput.value = r.comment || '';
+    commentInput.rows = 2;
+
+    const saveBtn = document.createElement('button');
+    saveBtn.type = 'button';
+    saveBtn.textContent = 'Save';
+    saveBtn.addEventListener('click', () => {
+      const stars = Math.min(5, Math.max(1, Number(starsInput.value) || r.stars));
+      const comment = commentInput.value.trim();
+      const badge_text = badgeInput.value.trim();
+      apiFetch(`/admin/ratings/${r.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ stars, comment, badge_text }),
+      })
+        .then(load)
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          alert(error.message);
+        });
+    });
+
+    form.append(starsInput, badgeInput, commentInput, saveBtn);
+    return form;
+  }
+
   function buildRow(r) {
     const row = document.createElement('div');
     row.className = 'rating-row';
@@ -20,6 +63,14 @@ document.addEventListener('DOMContentLoaded', () => {
     stars.textContent = '★'.repeat(r.stars) + '☆'.repeat(5 - r.stars);
     left.append(names, stars);
 
+    const actions = document.createElement('div');
+    actions.className = 'rating-actions';
+
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'edit-rating-btn';
+    editBtn.textContent = 'Edit';
+
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'remove-rating-btn';
@@ -35,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }, { confirmText: 'Remove', danger: true });
     });
 
-    top.append(left, btn);
+    actions.append(editBtn, btn);
+    top.append(left, actions);
     row.appendChild(top);
 
     if (r.badgeText) {
@@ -55,6 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
     time.className = 'rating-time';
     time.textContent = timeAgo(r.createdAt);
     row.appendChild(time);
+
+    const editForm = buildEditForm(r);
+    row.appendChild(editForm);
+    editBtn.addEventListener('click', () => {
+      editForm.hidden = !editForm.hidden;
+    });
 
     return row;
   }

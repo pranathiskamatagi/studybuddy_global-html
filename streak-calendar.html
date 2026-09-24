@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streak Calendar - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="streak-calendar.css?v=3" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="profile.html" class="back-btn" id="back-btn" aria-label="Back to profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Profile</p>
+    </div>
+
+    <h1 class="title">Streak calendar</h1>
+
+    <!-- streak-calendar.js fills these three in from real data -->
+    <div class="streak-stats-row">
+      <div class="streak-stat">
+        <p class="streak-stat-value" id="stat-current">—</p>
+        <p class="streak-stat-label">Current streak</p>
+      </div>
+      <div class="streak-stat">
+        <p class="streak-stat-value" id="stat-longest">—</p>
+        <p class="streak-stat-label">Longest streak</p>
+      </div>
+      <div class="streak-stat">
+        <p class="streak-stat-value" id="stat-total-days">—</p>
+        <p class="streak-stat-label">Days studied</p>
+      </div>
+    </div>
+
+    <div class="month-nav">
+      <button type="button" id="prev-month-btn" class="month-nav-btn" aria-label="Previous month">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </button>
+      <p class="month-label" id="month-label">—</p>
+      <button type="button" id="next-month-btn" class="month-nav-btn" aria-label="Next month">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </button>
+    </div>
+
+    <div class="weekday-row">
+      <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+    </div>
+
+    <!-- streak-calendar.js fills this with one cell per day of the month -->
+    <div class="calendar-grid" id="calendar-grid"></div>
+
+    <div class="legend-row">
+      <span class="legend-dot active"></span> Studied
+      <span class="legend-dot"></span> No session
+    </div>
+
+    <p class="milestones-heading">Streak rewards</p>
+    <!-- streak-calendar.js fills this with one row per real milestone,
+         marking which ones this account has actually reached. -->
+    <div class="milestones-list" id="milestones-list"></div>
+
+  </div>
+  <script src="dark-mode.js"></script>
+
+  <script src="api.js?v=7"></script>
+  <script src="streak-calendar.js?v=3"></script>
+</body>
+</html>

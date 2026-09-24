@@ -29,6 +29,23 @@ MIN_MINUTES_FOR_POINTS = 5
 TEACHING_TIPS_BONUS_FOR_TEACHER = 50
 TEACHING_TIPS_BONUS_FOR_LEARNER = 30
 
+# Both sides of a real invite get this once the invited friend actually
+# signs up (not just clicks the link) - see routes/auth.py's signup().
+REFERRAL_BONUS_COINS = 50
+
+# Quiz Challenges - a real coin reward just for actually taking the quiz
+# (either side: sending a challenge or playing one someone sent you),
+# the same amount whatever the score - see routes/challenges.py.
+QUIZ_CHALLENGE_ATTEND_COINS = 15
+
+# Real coin rewards for hitting a round streak number - shown on
+# streak-calendar.html, awarded the moment current_streak_days actually
+# reaches one of these. A fresh climb back to the same number after a
+# broken streak earns it again - that's the point (it's motivating to
+# rebuild a streak, not a loophole - you can only genuinely reach 7
+# consecutive days again after enough real elapsed time).
+STREAK_MILESTONES = {3: 20, 7: 50, 14: 100, 30: 250, 60: 500, 100: 1000}
+
 
 def update_streak(user):
     """Call alongside award_session_points, for the SAME qualifying
@@ -37,10 +54,11 @@ def update_streak(user):
     string of instant sessions). Consecutive CALENDAR DAYS (UTC), not
     24-hour windows - studying at 11pm and again at 7am the next day
     still counts as two different days, same as Duolingo-style streaks
-    everywhere else work."""
+    everywhere else work. Returns the milestone number just reached (and
+    awards its coins), or None if this session didn't land on one."""
     today = date.today()
     if user.last_streak_date == today:
-        return  # already studied today - a second session doesn't double-count
+        return None  # already studied today - a second session doesn't double-count
     if user.last_streak_date == today - timedelta(days=1):
         user.current_streak_days += 1  # picked up right where yesterday left off
     else:
@@ -48,24 +66,32 @@ def update_streak(user):
     user.last_streak_date = today
     user.longest_streak_days = max(user.longest_streak_days, user.current_streak_days)
 
+    if user.current_streak_days in STREAK_MILESTONES:
+        user.points += STREAK_MILESTONES[user.current_streak_days]
+        return user.current_streak_days
+    return None
+
 
 def award_session_points(user, mode, minutes):
     """Call once, when a session ENDS. Updates points/diamonds on `user`
     in place - the caller is responsible for saving (db.session.commit()).
     Does nothing at all if the session didn't last long enough. Returns
-    True if a diamond was earned, so the caller can pop up a celebration
-    for it (points aren't the only reward worth celebrating)."""
+    (diamond_earned, streak_milestone) - diamond_earned is a bool, and
+    streak_milestone is the streak-day number just reached (or None) -
+    so the caller can pop up a celebration for either (points alone
+    aren't the only reward worth celebrating)."""
     if minutes is None or minutes <= MIN_MINUTES_FOR_POINTS:
-        return False
+        return False, None
 
     user.points += POINTS_FOR_TEACH if mode == 'teach' else POINTS_FOR_LEARN
-    update_streak(user)
+    streak_milestone = update_streak(user)
 
     user.completed_session_count += 1
+    diamond_earned = False
     if user.completed_session_count % SESSIONS_PER_DIAMOND == 0:
         user.diamonds += 1
-        return True
-    return False
+        diamond_earned = True
+    return diamond_earned, streak_milestone
 
 
 def award_rating(rater, ratee, stars):

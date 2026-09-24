@@ -8,7 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="admin-chat-view.css" />
+  <link rel="stylesheet" href="admin-chat-view.css?v=3" />
+  <link rel="stylesheet" href="confirm-modal.css" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
 <body>
 
@@ -18,7 +21,8 @@
       <a href="admin-sessions.html" class="back-btn" aria-label="Back to conversations">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
       </a>
-      <p class="kicker">🛡 Admin · read only</p>
+      <p class="kicker">🛡 Admin · watching silently</p>
+      <button type="button" id="cancel-session-btn" class="cancel-session-btn" hidden>Cancel session</button>
     </div>
 
     <!-- admin-chat-view.js fills this with the real message history, then
@@ -26,10 +30,20 @@
          'admin_watch' - never visible to the people actually chatting). -->
     <div class="chat-messages" id="chat-messages"></div>
 
-  </div>
+    <!-- A real, visible intervention - unlike the silent watch above,
+         sending this DOES show up in the live chat, clearly labeled as
+         from Admin (see admin.py's warn_session). -->
+    <form id="warn-form" class="warn-form">
+      <input type="text" id="warn-input" placeholder="Send a warning into this chat..." />
+      <button type="submit" class="warn-send-btn">Send</button>
+    </form>
 
-  <script src="api.js?v=5"></script>
+  </div>
+  <script src="dark-mode.js"></script>
+
+  <script src="api.js?v=7"></script>
   <script src="socket.io.min.js"></script>
-  <script src="admin-chat-view.js"></script>
+  <script src="confirm-modal.js"></script>
+  <script src="admin-chat-view.js?v=2"></script>
 </body>
 </html>

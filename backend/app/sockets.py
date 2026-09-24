@@ -8,9 +8,10 @@ from flask_socketio import emit, join_room
 from flask_jwt_extended import decode_token
 
 from app.extensions import socketio, db
-from app.models import StudySession, Message, User, MessageReadState, utcnow
+from app.models import StudySession, Message, User, MessageReadState, GroupMembership, utcnow
 from app.safety import check_message_for_address
 from app.distraction import check_topic_drift
+from app.push import send_push_to_user
 
 # Socket.IO connections aren't HTTP requests, so there's no
 # @jwt_required() to lean on here - instead we verify the token once,
@@ -241,17 +242,52 @@ def handle_send_message(data):
     # rather than also locally rendering what it just sent.
     emit('new_message', message.to_public_dict(), room=f'session-{session_id}')
 
+    # Real phone push for whoever's NOT connected at all right now (app
+    # fully closed, not just this chat not focused - there's no reliable
+    # signal for "open but looking elsewhere" without more client-side
+    # plumbing than this is worth). Someone actually online already sees
+    # this arrive live, same as always - pushing on top of that would
+    # just be a redundant, noisy duplicate.
+    sender = db.session.get(User, user_id)
+    online_ids = get_online_user_ids()
+    if session.mode == 'group':
+        recipient_ids = [
+            m.user_id for m in GroupMembership.query.filter_by(session_id=session_id).all()
+            if m.user_id != user_id
+        ]
+    else:
+        recipient_ids = [pid for pid in (session.learner_id, session.partner_id) if pid and pid != user_id]
+    for recipient_id in recipient_ids:
+        if recipient_id in online_ids:
+            continue
+        recipient = db.session.get(User, recipient_id)
+        if recipient:
+            send_push_to_user(
+                recipient, 'messages',
+                sender.fullname if sender else 'New message',
+                text[:200],
+                url=f'/{"group-chat" if session.mode == "group" else "session"}.html?sessionId={session_id}',
+            )
+
     # Physical-address check - runs in the BACKGROUND, after the message
     # has already been delivered, so a slow AI call never delays the chat
     # itself. See app/safety.py for why this can't run before sending.
+    # Every OTHER long-enough message, not every single one - this and
+    # the off-topic check below share the same small daily free AI quota
+    # with quizzes and AI summaries elsewhere in the app, and an address
+    # check on every message in a real, active conversation was eating
+    # most of that quota by itself, leaving too little for anything else
+    # for the rest of the day. Still catches a shared address within a
+    # message or two either way - "moments later," same as before.
     app_obj = current_app._get_current_object()
-    socketio.start_background_task(_run_address_check, app_obj, text, user_id, session_id)
+    message_count = Message.query.filter_by(session_id=session_id).count()
+    if message_count % 2 == 0:
+        socketio.start_background_task(_run_address_check, app_obj, text, user_id, session_id)
 
     # Off-topic check - every 6th message, not every single one (an AI
     # call per message would be slow and expensive for no real benefit).
     # See app/distraction.py for why this can't be instant either.
     topic = session.topic or session.subject
-    message_count = Message.query.filter_by(session_id=session_id).count()
     if topic and message_count % 6 == 0:
         socketio.start_background_task(_run_topic_drift_check, app_obj, session_id, topic)
 

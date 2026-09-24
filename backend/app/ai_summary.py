@@ -1,7 +1,9 @@
 # Real AI-generated mind maps + summaries, using Gemini to actually read a
 # session's real chat transcript and reason about it - not a fixed
-# template. Kept to a fixed shape (exactly 3 mind-map branches) to match
-# the hand-built layout in ai-summary.html/css.
+# template. Branch count is flexible (2-6) instead of a fixed 3, so a
+# short conversation doesn't get padded with filler and a rich one
+# doesn't get real content cut to fit - the frontend renders however
+# many come back as a scrollable list (see ai-summary.html/css).
 
 import json
 
@@ -40,17 +42,23 @@ _RESPONSE_SCHEMA = {
                     'detail': {
                         'type': 'STRING',
                         'description': (
-                            '1-2 real sentences explaining what was ACTUALLY discussed under this branch - '
+                            '1-3 real sentences explaining what was ACTUALLY discussed under this branch - '
                             'specific enough that someone who missed the conversation would actually learn '
-                            'something from it, not just a restatement of the label.'
+                            'something from it, not just a restatement of the label. Reference the actual '
+                            'terms, numbers, or examples used in the transcript rather than a generic '
+                            'textbook description of the label.'
                         ),
                     },
                 },
                 'required': ['label', 'detail'],
             },
-            'minItems': 3,
-            'maxItems': 3,
-            'description': 'Exactly 3 mind-map branches for the main sub-topics actually discussed, each with a short label AND a real explanation.',
+            'minItems': 2,
+            'maxItems': 6,
+            'description': (
+                'One branch per genuinely distinct sub-topic actually discussed - however many that '
+                'really is (between 2 and 6). Never pad with a filler branch to hit a round number, and '
+                'never merge two distinct sub-topics into one branch just to stay under a limit.'
+            ),
         },
         'summary_points': {
             'type': 'ARRAY',
@@ -91,16 +99,34 @@ def get_or_create_summary(session):
     if len(messages) < _MIN_MESSAGES and total_chars < _MIN_TOTAL_CHARS:
         return {'available': False, 'reason': 'not_enough_conversation'}
 
-    transcript = '\n'.join(f'{_sender_name(m)}: {m.text}' for m in messages)
+    # Gemini only ever sees the typed transcript, never the audio itself -
+    # a voice message has no m.text at all, so without this it would just
+    # silently vanish from the summary as a blank line. Naming it explicitly
+    # keeps the transcript honest about what it's actually working from,
+    # and the prompt below tells Gemini to flag it too.
+    transcript = '\n'.join(
+        f"{_sender_name(m)}: {m.text if m.text else '[sent a voice message - not included, only typed text can be summarized]'}"
+        for m in messages
+    )
 
     prompt = (
         f"Here is a real chat transcript from a peer study session"
         f"{f' about {session.topic}' if session.topic else ''}"
         f"{f' ({session.subject})' if session.subject else ''}.\n\n"
         f"{transcript}\n\n"
-        "Based ONLY on what was actually discussed above, produce a mind map "
-        "and summary of this specific conversation. Do not invent topics that "
-        "weren't actually discussed."
+        "Produce a mind map and summary of THIS SPECIFIC conversation, following these rules strictly:\n"
+        "1. Every branch, detail, and summary point must be grounded in something one of these two "
+        "people actually typed above - not outside knowledge about the general subject, and not a "
+        "plausible-sounding guess at what a conversation on this topic would probably cover.\n"
+        "2. If the transcript is short or shallow on a point, say only what's really there - a short, "
+        "honest detail beats a longer invented one.\n"
+        "3. Do not add topics, examples, numbers, or explanations that were never mentioned, even if "
+        "they would normally be part of this subject.\n"
+        "4. Be specific: quote or closely paraphrase the actual wording, examples, or numbers used, "
+        "rather than a generic textbook restatement of the branch label.\n"
+        "5. If the transcript contains '[sent a voice message - not included, only typed text can be "
+        "summarized]', add ONE short closing note to the summary saying some voice messages in this "
+        "session couldn't be included."
     )
 
     client = _get_client()

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Challenge - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="challenge-quiz.css?v=2" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <button type="button" class="back-btn" id="back-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </button>
+      <p class="kicker" id="kicker-text">Quiz Challenge</p>
+    </div>
+
+    <div id="loading-view">
+      <div class="spinner" id="loading-spinner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path><circle cx="12" cy="12" r="4"></circle></svg></div>
+      <p class="loading-text" id="loading-text">Loading the quiz...</p>
+      <button type="button" id="retry-btn" class="submit-quiz-btn" hidden>Try again</button>
+    </div>
+
+    <div id="quiz-view" hidden>
+      <h2 class="quiz-title" id="quiz-title">Topic</h2>
+      <!-- Only shown when the challenger left a real note - see
+           challenge-quiz.js's renderQuiz(). -->
+      <p class="challenge-note" id="challenge-note" hidden></p>
+      <!-- challenge-quiz.js builds one question block per question in here -->
+      <div class="question-list" id="question-list"></div>
+      <p class="quiz-error" id="quiz-error" hidden>Please answer every question first.</p>
+      <button type="button" id="submit-quiz-btn" class="submit-quiz-btn">Submit</button>
+    </div>
+
+    <div id="result-view" hidden>
+      <div class="result-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4.5L6 21l1.5-7.5L2 9h7z"></path></svg>
+      </div>
+      <p class="result-score" id="result-score">4/5</p>
+      <p class="result-message" id="result-message"></p>
+      <button type="button" id="continue-btn" class="continue-btn">Done</button>
+    </div>
+
+  </div>
+  <script src="dark-mode.js"></script>
+
+  <script src="api.js?v=7"></script>
+  <script src="challenge-quiz.js?v=4"></script>
+</body>
+</html>

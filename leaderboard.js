@@ -3,15 +3,37 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!requireLogin()) return;
 
   const colors = ['blue', 'green', 'pink', 'orange'];
-  // Same person always gets the same color across the app (a real avatar
-  // photo isn't stored, so this is a stand-in) - picking it from their id
-  // means it never randomly changes between page loads.
+  // Same person always gets the same color across the app, used as the
+  // letter-avatar fallback when they haven't set a real photo - picking
+  // it from their id means it never randomly changes between page loads.
   function colorFor(userId) {
     return colors[userId % colors.length];
   }
 
   function initials(fullname) {
     return fullname.charAt(0).toUpperCase();
+  }
+
+  // Fills an avatar element with a real photo if this person has one, or
+  // the letter-avatar fallback otherwise - shared by the podium and the
+  // full-list rows below.
+  function fillAvatar(el, person) {
+    el.textContent = '';
+    if (person.photo) {
+      el.classList.remove('avatar-' + colorFor(person.id));
+      const img = document.createElement('img');
+      img.src = person.photo;
+      img.alt = '';
+      el.appendChild(img);
+    } else {
+      el.classList.add('avatar-' + colorFor(person.id));
+      el.textContent = initials(person.fullname);
+    }
+    if (person.online) {
+      const dot = document.createElement('span');
+      dot.className = 'presence-dot';
+      el.appendChild(dot);
+    }
   }
 
   const listEl = document.getElementById('rank-list');
@@ -27,13 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     col.hidden = false;
     const avatarEl = document.getElementById(`podium-${rank}-avatar`);
-    avatarEl.textContent = initials(person.fullname);
-    avatarEl.className = 'podium-avatar avatar-' + colorFor(person.id);
-    if (person.online) {
-      const dot = document.createElement('span');
-      dot.className = 'presence-dot';
-      avatarEl.appendChild(dot);
-    }
+    avatarEl.className = 'podium-avatar';
+    fillAvatar(avatarEl, person);
     // First name + last initial (e.g. "Sofia M.") - matches the mockup's
     // style without needing more room than the podium column has.
     const nameParts = person.fullname.trim().split(/\s+/);
@@ -61,16 +78,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = document.createElement('div');
         row.className = 'rank-row' + (person.id === myId ? ' is-you' : '');
 
-        row.innerHTML = `
-          <span class="rank-number">${index + 1}</span>
-          <span class="rank-avatar avatar-${colorFor(person.id)}">${initials(person.fullname)}${person.online ? '<span class="presence-dot"></span>' : ''}</span>
-          <span class="rank-name">${person.id === myId ? 'You' : person.fullname}${person.isAdmin ? ' <span class="admin-badge">🛡 Admin</span>' : ''}</span>
-          <div class="rank-stats">
-            <p class="rank-points">${person.points.toLocaleString()} coins</p>
-            <p class="rank-diamonds">${person.diamonds} 💎</p>
-          </div>
-        `;
+        const number = document.createElement('span');
+        number.className = 'rank-number';
+        number.textContent = index + 1;
 
+        const avatarEl = document.createElement('span');
+        avatarEl.className = 'rank-avatar';
+        fillAvatar(avatarEl, person);
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'rank-name';
+        nameEl.append(person.id === myId ? 'You' : person.fullname);
+        if (person.isAdmin) {
+          const badge = document.createElement('span');
+          badge.className = 'admin-badge';
+          badge.textContent = '🛡 Admin';
+          nameEl.append(' ', badge);
+        }
+
+        const stats = document.createElement('div');
+        stats.className = 'rank-stats';
+        const pointsEl = document.createElement('p');
+        pointsEl.className = 'rank-points';
+        pointsEl.textContent = `${person.points.toLocaleString()} coins`;
+        const diamondsEl = document.createElement('p');
+        diamondsEl.className = 'rank-diamonds';
+        diamondsEl.textContent = `${person.diamonds} 💎`;
+        stats.append(pointsEl, diamondsEl);
+
+        row.append(number, avatarEl, nameEl, stats);
         listEl.appendChild(row);
       });
     })

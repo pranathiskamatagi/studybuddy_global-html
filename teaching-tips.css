@@ -187,6 +187,19 @@ body {
   line-height: 1.6;
 }
 
+/* No shared <form> wrapper on this page (unlike choose-subject.html) to
+   cap once - each of these reads like a real phone-sized action button
+   instead of stretched edge-to-edge across the full-width page (see
+   full-width-layout.css). */
+.find-btn,
+.schedule-later-btn,
+.schedule-later-submit-btn,
+.pick-person-search-btn {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* ---------- Find a study partner button ---------- */
 .find-btn {
   width: 100%;
@@ -211,4 +224,176 @@ body {
 }
 .find-btn:hover {
   transform: translateY(-2px);
+}
+
+/* ---------- Schedule for later (secondary option) ---------- */
+.schedule-later-btn {
+  width: 100%;
+  padding: 14px 24px;
+  margin-top: 10px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #3d476b;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.schedule-later-btn svg {
+  width: 16px;
+  height: 16px;
+  color: #3f6fe0;
+}
+.schedule-later-btn:hover {
+  border-color: #3f6fe0;
+}
+
+.schedule-later-form {
+  margin-top: 14px;
+  padding: 16px;
+  background: #f5f8fe;
+  border: 1.5px solid #eef1fb;
+  border-radius: 16px;
+}
+.schedule-later-form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b2340;
+  margin-bottom: 4px;
+}
+.schedule-later-form .datetime-hint {
+  font-size: 11px;
+  color: #a7b0cc;
+  margin-bottom: 10px;
+}
+.schedule-later-form input[type="datetime-local"] {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 12px;
+  background: white;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1b2340;
+  outline: none;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.schedule-later-form input[type="datetime-local"]:hover {
+  border-color: #b9c6ef;
+}
+.schedule-later-form input[type="datetime-local"]:focus {
+  border-color: #3f6fe0;
+  box-shadow: 0 0 0 3px rgba(63, 111, 224, 0.12);
+}
+.schedule-later-form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(38%) sepia(84%) saturate(1350%) hue-rotate(200deg);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+.schedule-later-form input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  background: #eef3fc;
+}
+.schedule-later-submit-btn {
+  width: 100%;
+  padding: 13px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f6fe0 0%, #34c77b 100%);
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.schedule-later-error {
+  color: #e0453f;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* ---------- Pick a specific person (inside Schedule for later) ---------- */
+.pick-person-toggle-btn {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border: 1.5px dashed #dfe6f7;
+  border-radius: 12px;
+  background: white;
+  color: #56618a;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pick-person-toggle-btn:hover {
+  border-color: #3f6fe0;
+  color: #3f6fe0;
+}
+.pick-person-panel {
+  margin-bottom: 12px;
+}
+.pick-person-search-btn {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 12px;
+  background: white;
+  color: #3d476b;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pick-person-search-btn:hover {
+  border-color: #3f6fe0;
+}
+.pick-person-chosen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: #eaf8f0;
+  border: 1.5px solid #cdeedb;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #21894f;
+}
+.pick-person-chosen button {
+  border: none;
+  background: none;
+  color: #21894f;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
 }

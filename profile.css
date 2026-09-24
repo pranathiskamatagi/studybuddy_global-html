@@ -243,6 +243,59 @@ body {
   flex-shrink: 0;
 }
 
+/* ---------- New-features section (visually separate + colorful, so
+   these actually get noticed instead of blending into the plain
+   settings-style links above) ---------- */
+.new-features-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.new-features-heading-row .section-heading {
+  margin-bottom: 0;
+}
+.new-pill {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: white;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.new-features-list {
+  margin-bottom: 20px;
+}
+.link-row-new {
+  border-color: #dfe6f7;
+  box-shadow: 0 4px 14px rgba(63, 111, 224, 0.06);
+}
+.link-row-new .link-icon.icon-pink {
+  background: linear-gradient(135deg, #f9a8d4, #ec4899);
+  color: white;
+}
+.link-row-new .link-icon.icon-blue {
+  background: linear-gradient(135deg, #4f7de0, #3f6fe0);
+  color: white;
+}
+.link-row-new .link-icon.icon-purple {
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  color: white;
+}
+.link-row-new .link-icon.icon-orange {
+  background: linear-gradient(135deg, #fbbf24, #f5761c);
+  color: white;
+}
+.link-row-new .link-icon.icon-green {
+  background: linear-gradient(135deg, #34c77b, #21a866);
+  color: white;
+}
+.link-row-new .link-icon.icon-gold {
+  background: linear-gradient(135deg, #ffd166, #f5a623);
+  color: white;
+}
+
 /* ---------- Log out ---------- */
 .logout-btn {
   width: 100%;
@@ -260,4 +313,18 @@ body {
 }
 .logout-btn:hover {
   background: #fdf1f0;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
 }

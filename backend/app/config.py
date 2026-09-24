@@ -14,9 +14,18 @@ class Config:
     # someone out constantly during a normal study session - a week is
     # far more reasonable for this kind of app.
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    # Hosted Postgres providers hand out "postgres://..." URLs, which
+    # SQLAlchemy no longer accepts - it wants "postgresql://...".
+    SQLALCHEMY_DATABASE_URI = (os.environ.get('DATABASE_URL') or '').replace('postgres://', 'postgresql://', 1) or None
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CORS_ORIGIN = os.environ.get('CORS_ORIGIN')
     # Server-side only - never sent to the frontend. Used by app/ai_summary.py
     # to call the Gemini API for real mind maps/summaries.
     GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+    # Web push: the private key signs each push so the browser's push
+    # service trusts it came from this server; the public key is safe to
+    # send to the frontend (it's what the browser uses to create a
+    # subscription in the first place - see push.py).
+    VAPID_PRIVATE_KEY = os.environ.get('VAPID_PRIVATE_KEY')
+    VAPID_PUBLIC_KEY = os.environ.get('VAPID_PUBLIC_KEY')
+    VAPID_CONTACT_EMAIL = os.environ.get('VAPID_CONTACT_EMAIL')

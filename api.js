@@ -1,16 +1,24 @@
 // Shared helpers for talking to the Flask backend - included by any page
 // that needs to call the API, so this logic only lives in one place.
 
-// Auto-detects local dev vs. the real deployed site, so this never needs
-// manually flipping back and forth: on localhost/127.0.0.1 (dev, whether
-// that's Live Server, this project's own preview server, or a friend on
-// the same WiFi opening this machine's LAN IP), talk to the backend
-// running on THIS same machine at port 5000. Anywhere else (the real
-// deployed frontend), talk to the real deployed backend on Render.
-const IS_LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname) || location.hostname.startsWith('192.168.');
-const BACKEND_ORIGIN = IS_LOCAL
+// Auto-detects which backend to talk to, so this never needs manually
+// flipping back and forth between setups:
+//   - localhost/127.0.0.1/a 192.168.x LAN address (Live Server, this
+//     project's own preview server, or a friend on the same WiFi) - the
+//     frontend and backend run as two separate local processes, backend
+//     always on port 5000 of that same machine.
+//   - a temporary demo tunnel (see backend/app/__init__.py - Flask serves
+//     the frontend files itself for this case) - frontend and backend
+//     are the SAME origin, so just use that directly.
+//   - the real deployed site - frontend (Netlify) and backend (Render)
+//     are on two different real domains.
+const IS_LOCAL_SPLIT = ['localhost', '127.0.0.1'].includes(location.hostname) || location.hostname.startsWith('192.168.');
+const IS_SAME_ORIGIN_SERVER = location.port === '5000' || location.hostname.endsWith('.lhr.life');
+const BACKEND_ORIGIN = IS_LOCAL_SPLIT
   ? `http://${location.hostname}:5000`
-  : 'https://studybuddy-global-api.onrender.com';
+  : IS_SAME_ORIGIN_SERVER
+    ? location.origin
+    : 'https://studybuddy-global-api.onrender.com';
 const API_BASE = BACKEND_ORIGIN + '/api';
 // Same backend, but Socket.IO connects to the plain origin (no /api) -
 // it isn't a normal HTTP route, it upgrades the connection itself.
@@ -28,6 +36,22 @@ const USER_KEY = 'studybuddy_user';
 // browsers (Edge included) skip bfcache and do a real fresh reload
 // instead every time.
 window.addEventListener('unload', () => {});
+
+// A random id this browser keeps for itself - sent at login so the server
+// can tell "same device as before" from "a new device" and warn the
+// account owner about the latter. Not personal information.
+function getDeviceId() {
+  try {
+    let id = localStorage.getItem('studybuddy_device_id');
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(16) + Math.random().toString(16).slice(2));
+      localStorage.setItem('studybuddy_device_id', id);
+    }
+    return id;
+  } catch (e) {
+    return '';
+  }
+}
 
 function getToken() {
   return localStorage.getItem(TOKEN_KEY);
@@ -122,7 +146,7 @@ function handleAuthError(error) {
 // notice a notification and click it themselves. Same avatar-color rule
 // used everywhere a real user id needs a consistent color.
 const AVATAR_COLORS = ['blue', 'green', 'pink', 'orange'];
-function goToStartedSession(data) {
+function openStartedSession(data) {
   const sessionParams = new URLSearchParams({
     partner: data.partnerName,
     color: AVATAR_COLORS[data.partnerId % AVATAR_COLORS.length],
@@ -138,6 +162,53 @@ function goToStartedSession(data) {
     sessionId: data.sessionId,
   });
   window.location.href = 'session.html?' + sessionParams.toString();
+}
+
+// Only someone who is ACTIVELY searching (on the matching screens) has
+// agreed to be dropped into a chat the instant a partner is found.
+// Anyone else - on Home, in a quiz, on their profile - just gets a
+// "Join / Not now" popup, instead of being yanked out of whatever they
+// were doing into a chat they never asked for.
+const AUTO_JOIN_PAGES = ['connecting.html', 'match-found.html'];
+function goToStartedSession(data) {
+  const page = window.location.pathname.split('/').pop();
+  if (AUTO_JOIN_PAGES.includes(page)) {
+    openStartedSession(data);
+    return;
+  }
+  showSessionInvitePrompt(data);
+}
+
+// Several listeners on one page can all fire for the same push - only
+// one popup per session.
+let _promptedSessionId = null;
+function showSessionInvitePrompt(data) {
+  if (_promptedSessionId === data.sessionId) return;
+  _promptedSessionId = data.sessionId;
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(20,28,60,0.45);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px;font-family:Poppins,sans-serif;';
+  const card = document.createElement('div');
+  card.style.cssText = 'background:#fff;border-radius:22px;padding:26px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(20,28,60,0.25);';
+  const title = document.createElement('p');
+  title.style.cssText = 'margin:0 0 6px;font-size:17px;font-weight:700;color:#1b2340;';
+  title.textContent = `${data.partnerName} wants to study with you`;
+  const sub = document.createElement('p');
+  sub.style.cssText = 'margin:0 0 18px;font-size:14px;color:#6b7699;';
+  sub.textContent = data.topic || data.subject || 'A study session';
+  const joinBtn = document.createElement('button');
+  joinBtn.type = 'button';
+  joinBtn.textContent = 'Join now';
+  joinBtn.style.cssText = 'width:100%;padding:13px;border:none;border-radius:999px;background:linear-gradient(90deg,#3f6fe0,#34c77b);color:#fff;font:700 15px Poppins,sans-serif;cursor:pointer;';
+  const laterBtn = document.createElement('button');
+  laterBtn.type = 'button';
+  laterBtn.textContent = 'Not now';
+  laterBtn.style.cssText = 'width:100%;margin-top:8px;padding:11px;border:none;background:none;color:#6b7699;font:600 14px Poppins,sans-serif;cursor:pointer;';
+  joinBtn.addEventListener('click', () => openStartedSession(data));
+  laterBtn.addEventListener('click', () => overlay.remove());
+  card.append(title, sub, joinBtn, laterBtn);
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
 }
 
 // Universal live auto-redirect: previously only wired into 5 specific

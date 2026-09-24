@@ -8,7 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="ai-summary.css" />
+  <link rel="stylesheet" href="ai-summary.css?v=4" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
 <body>
 
@@ -30,14 +32,11 @@
       <h2 class="section-heading">Mind map</h2>
       <div class="mindmap">
         <div class="mindmap-central" id="mindmap-topic">Topic</div>
-        <div class="mindmap-trunk" aria-hidden="true"></div>
-        <!-- ai-summary.js fills this with the real branches Gemini returned -->
-        <div class="mindmap-branches" id="mindmap-branches"></div>
       </div>
 
-      <!-- The tree above only has room for short labels - this is the
-           real substance behind each one, long as it needs to be
-           (scrolling is fine, see ai-summary.js's renderMindMap). -->
+      <!-- ai-summary.js fills this with however many real branches Gemini
+           returned - as many or as few as the conversation actually had,
+           no fixed count, the page just scrolls if it's long. -->
       <div class="branch-details" id="branch-details"></div>
 
       <h2 class="section-heading">Summary</h2>
@@ -51,6 +50,13 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"></path></svg>
         <span id="save-btn-text">Save this summary</span>
       </button>
+
+      <!-- Turns the same real branches above into flashcards to review
+           later - see flashcards.js. -->
+      <button type="button" id="flashcards-btn" class="flashcards-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="10" rx="2"></rect><rect x="7" y="9" width="14" height="10" rx="2"></rect></svg>
+        Practice with flashcards
+      </button>
     </div>
 
     <!-- Shown for a real session that didn't have enough real chat yet to
@@ -61,9 +67,10 @@
 
     <button type="button" id="back-btn" class="home-link-btn">Back to session end</button>
   </div>
+  <script src="dark-mode.js"></script>
 
-  <script src="api.js?v=5"></script>
+  <script src="api.js?v=7"></script>
   <script src="socket.io.min.js"></script>
-  <script src="ai-summary.js"></script>
+  <script src="ai-summary.js?v=4"></script>
 </body>
 </html>

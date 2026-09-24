@@ -74,6 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // await pauses right here until the server responds, without
       // freezing the rest of the page the way a truly synchronous
       // wait would.
+      // A referral link (see invite.js) carries the inviter's user id as
+      // ?ref=<id> - passed straight through so both people get credited
+      // once, real, at the moment this account is actually created.
+      const referredBy = new URLSearchParams(window.location.search).get('ref');
+
       const data = await apiFetch('/auth/signup', {
         method: 'POST',
         body: JSON.stringify({
@@ -82,6 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
           password: passwordInput.value,
           country: countrySelect.value,
           grade: gradeSelect.value,
+          referredBy: referredBy || undefined,
+          deviceId: getDeviceId(),
         }),
       });
 

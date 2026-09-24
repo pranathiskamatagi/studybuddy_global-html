@@ -24,7 +24,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   // this side would call POST /sessions again and create a SEPARATE,
   // disconnected session instead of joining the one that already exists.
   const existingSessionId = params.get('sessionId') || '';
+  // Set only by a scheduled session's "Join now" (home.js/scheduled-
+  // sessions.js) - the whole POINT of a scheduled session is that BOTH
+  // people separately click Join themselves once it's time, unlike
+  // instant matching where starting it for one side reasonably means
+  // starting it for both. Without this, the first person to click
+  // Join silently pulled the other one into a live chat too, via the
+  // exact same 'session_started' auto-redirect instant matching uses
+  // on purpose (see api.js's goToStartedSession) - appropriate there,
+  // not here.
+  const isScheduledJoin = params.get('scheduled') === '1';
   const myId = getStoredUser()?.id;
+
+  // ---------------------------------------------------------------
+  // Warn before leaving a live session via the browser's own Back button -
+  // without this, walking away mid-chat just silently strands the other
+  // person with no idea you're gone.
+  // ---------------------------------------------------------------
+  let leavingConfirmed = false;
+  history.pushState({ studybuddySessionGuard: true }, '', location.href);
+  window.addEventListener('popstate', () => {
+    if (leavingConfirmed) return;
+    history.pushState({ studybuddySessionGuard: true }, '', location.href);
+    showConfirmModal("You're in a session - are you sure you want to go back?", () => {
+      leavingConfirmed = true;
+      window.location.href = 'home.html';
+    }, { confirmText: 'Leave session', danger: true });
+  });
+  // Deliberately no 'beforeunload' guard here - it would also fire for
+  // every legitimate programmatic redirect this page already does (a
+  // block, the other person ending the session, an expired login...),
+  // and its browser-native prompt can't show our own wording anyway.
+  // The popstate trap above covers what was actually reported: leaving
+  // via the browser's own Back button.
 
   // This page should never be opened with no real partner - that only
   // happens from a stale bookmark/tab or typing the URL directly. Same
@@ -60,14 +92,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const data = await apiFetch('/sessions', {
         method: 'POST',
-        body: JSON.stringify({ mode, subject, topic, level, partner_id: partnerId || undefined }),
+        body: JSON.stringify({
+          mode, subject, topic, level, partner_id: partnerId || undefined,
+          skip_live_redirect: isScheduledJoin,
+        }),
       });
       sessionId = data.session.id;
       sessionWasCreated = Boolean(data.created);
     } catch (error) {
       if (handleAuthError(error)) return; // expired login - already redirecting
-      // Any failure shouldn't block the chat itself - worst case, this
-      // session's points don't get awarded at the end.
+      if (error.message === 'blocked') {
+        // A real block (either direction) - never show a chat UI for this
+        // pair at all, not even an untracked one.
+        alert("You can't chat with this person.");
+        window.location.href = 'home.html';
+        return;
+      }
+      // Any OTHER failure shouldn't block the chat itself - worst case,
+      // this session's points don't get awarded at the end.
       console.warn('Could not start a tracked session:', error.message);
     }
   }
@@ -78,6 +120,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const partnerNameEl = document.getElementById('chat-partner-name');
   partnerNameEl.textContent = partnerName;
 
+  // A real, live presence line - NOT a hardcoded "Active now" that used to
+  // show regardless of whether they actually were. Starts blank until the
+  // real profile-preview fetch below answers it, then kept live by the
+  // same partner_joined/partner_left socket events already used for the
+  // reconnect-grace logic further down.
+  const statusEl = document.getElementById('chat-partner-status');
+  function setPresence(isOnline) {
+    statusEl.textContent = isOnline ? 'Active now' : 'Offline';
+    statusEl.classList.toggle('offline', !isOnline);
+  }
+
   // Clicking either the avatar or the name shows the same limited profile
   // view (see profile-view-modal.js) - real people only have a real
   // partnerId, never a fake demo person.
@@ -86,8 +139,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('.chat-partner').addEventListener('click', () => showProfileView(partnerId));
 
     // Also fetch just enough to know whether to show the Admin badge next
-    // to their name here - the popup gets this itself when opened, but the
-    // header badge needs it up front.
+    // to their name here (the popup gets this itself when opened, but the
+    // header badge needs it up front) AND their real, current online status.
     apiFetch(`/users/${partnerId}/profile-preview`)
       .then((data) => {
         if (data.user.isAdmin) {
@@ -96,8 +149,26 @@ document.addEventListener('DOMContentLoaded', async () => {
           badge.textContent = '🛡 Admin';
           partnerNameEl.append(' ', badge);
         }
+        setPresence(data.user.online);
       })
-      .catch(() => {}); // purely decorative - never worth breaking the chat over
+      .catch(() => setPresence(true)); // decorative fallback only - never worth breaking the chat over
+
+    // Self-heal backup, same idea as matching.py's pending-match backup -
+    // 'partner_joined'/'partner_left' normally keep this live instantly,
+    // but a disconnect that isn't a clean tab-close (a lost connection
+    // that never sends a real close signal, a missed broadcast) can leave
+    // the socket events never firing while the backend's own online-users
+    // list is already correct. Without this, the header could keep
+    // showing "Active now" for someone who's actually long gone, with
+    // nothing to ever correct it for the rest of the chat. Checking the
+    // real status again every 20s means it can never be wrong for long.
+    setInterval(() => {
+      apiFetch(`/users/${partnerId}/profile-preview`)
+        .then((data) => setPresence(data.user.online))
+        .catch(() => {});
+    }, 20 * 1000);
+  } else {
+    setPresence(true);
   }
 
   // ---------------------------------------------------------------
@@ -141,9 +212,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     bubble.appendChild(p);
   }
 
-  function addMessage(text, isSent, imageData, messageId, deleted) {
+  function addMessage(text, isSent, imageData, messageId, deleted, audioData, isAdminMessage) {
     const bubble = document.createElement('div');
-    bubble.className = 'msg ' + (isSent ? 'msg-sent' : 'msg-received');
+    bubble.className = 'msg ' + (isSent ? 'msg-sent' : 'msg-received') + (isAdminMessage ? ' msg-admin' : '');
 
     if (messageId) messageBubbles.set(messageId, bubble);
 
@@ -154,6 +225,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    // A real admin warning sent into this live chat (see admin.py's
+    // warn_session) - never silent, always clearly labeled so it can
+    // never be mistaken for something either participant said.
+    if (isAdminMessage) {
+      const label = document.createElement('p');
+      label.className = 'msg-admin-label';
+      label.textContent = '⚠️ Admin';
+      bubble.appendChild(label);
+    }
+
     if (imageData) {
       // A real image message (see the image button below) - already
       // passed a Gemini safety check server-side before this could ever
@@ -162,7 +243,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const img = document.createElement('img');
       img.src = imageData;
       img.alt = 'Shared image';
+      img.addEventListener('click', () => openImageLightbox(imageData));
       bubble.appendChild(img);
+    }
+    if (audioData) {
+      bubble.classList.add('msg-audio');
+      bubble.appendChild(buildAudioPlayerBubble(audioData));
     }
     if (text) {
       const p = document.createElement('p');
@@ -218,6 +304,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     p.textContent = text;
     messagesEl.appendChild(p);
     scrollToBottom();
+    return p;
   }
 
   let socket = null;
@@ -313,7 +400,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // rendering it locally the instant it's sent. Both people see
     // messages appear the exact same way.
     const isSent = message.senderId === myId;
-    addMessage(message.text, isSent, message.imageData, message.id, message.deleted);
+    addMessage(message.text, isSent, message.imageData, message.id, message.deleted, message.audioData, message.isAdminMessage);
     lastMessageAt = Date.now();
     quietNudgeShown = false;
     // Only for messages FROM the other person - sending your own doesn't
@@ -391,12 +478,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   // startRematchGracePeriod above for why this waits instead of
   // redirecting instantly.
   socket.on('partner_left', (data) => {
+    setPresence(false);
     startRematchGracePeriod(`${data.name || partnerName} left - waiting to see if they reconnect...`, data.name);
   });
 
   // They actually joined (or came back) within the grace window - cancel
   // any pending rematch and let the chat carry on as if nothing happened.
   socket.on('partner_joined', (data) => {
+    setPresence(true);
     if (!rematchTimer) return;
     clearTimeout(rematchTimer);
     rematchTimer = null;
@@ -431,6 +520,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = 'session-end.html?' + endParams.toString();
   });
 
+  // An admin forced this session closed right now (see admin.py's
+  // cancel_session) - no points/rating flow, just an honest heads-up and
+  // straight back to Home, same as any other real, immediate end.
+  socket.on('admin_cancelled', () => {
+    if (rematchTimer) {
+      clearTimeout(rematchTimer);
+      rematchTimer = null;
+    }
+    alert('Admin cancelled your session.');
+    window.location.href = 'home.html';
+  });
+
   // This click just created the session - nobody's confirmed joining it
   // yet, so start the SAME grace period rather than assuming the partner
   // (who may just be mid-page-transition right now) is already here.
@@ -447,7 +548,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // reconnecting after a refresh).
     apiFetch(`/sessions/${sessionId}/messages`)
       .then((data) => {
-        data.messages.forEach((m) => addMessage(m.text, m.senderId === myId, m.imageData, m.id, m.deleted));
+        data.messages.forEach((m) => addMessage(m.text, m.senderId === myId, m.imageData, m.id, m.deleted, m.audioData, m.isAdminMessage));
         // Opening the chat means seeing everything already in it -
         // mark up to the newest loaded message as read right away.
         if (data.messages.length) {
@@ -557,36 +658,217 @@ document.addEventListener('DOMContentLoaded', async () => {
         canvas.getContext('2d').drawImage(img, 0, 0, width, height);
 
         const imageData = canvas.toDataURL('image/jpeg', 0.85);
-        imageBtn.disabled = true;
-        addSystemNotice('Checking image...');
 
-        apiFetch(`/sessions/${sessionId}/messages/image`, {
-          method: 'POST',
-          body: JSON.stringify({ imageData }),
-        })
-          .then(() => {
-            // No local addMessage() call here either, on purpose - same
-            // as a text message, the 'new_message' broadcast is what
-            // actually puts it on screen, for both people the same way.
+        // Show it first so the person can double-check before it goes out.
+        showImagePreviewBeforeSend(imageData, () => {
+          imageBtn.disabled = true;
+          const checkingNotice = addSystemNotice('Checking image...');
+
+          apiFetch(`/sessions/${sessionId}/messages/image`, {
+            method: 'POST',
+            body: JSON.stringify({ imageData }),
           })
-          .catch((error) => {
-            if (handleAuthError(error)) return;
-            // A real, specific reason from image_safety.py when flagged -
-            // an honest explanation, not a generic failure.
-            alert(error.message || 'Could not send that image.');
-          })
-          .finally(() => {
-            imageBtn.disabled = false;
-          });
+            .then(() => {
+              // No local addMessage() call here either, on purpose - same
+              // as a text message, the 'new_message' broadcast is what
+              // actually puts it on screen, for both people the same way.
+            })
+            .catch((error) => {
+              if (handleAuthError(error)) return;
+              // A real, specific reason from image_safety.py when flagged -
+              // an honest explanation, not a generic failure.
+              alert(error.message || 'Could not send that image.');
+            })
+            .finally(() => {
+              imageBtn.disabled = false;
+              checkingNotice.remove();
+            });
+        });
       };
       img.src = reader.result;
     };
     reader.readAsDataURL(file);
   });
 
-  document.getElementById('mic-btn').addEventListener('click', () => {
-    alert('Voice messages aren\'t built yet.');
+  // ---------------------------------------------------------------
+  // Real voice messages - tap the mic to start recording, tap again (or
+  // wait for the auto-stop cap) to send. No AI safety check on these
+  // (see backend/app/models.py's audio_data comment for why) - a smaller
+  // first version than image sharing, but a real recording either way,
+  // not a fake alert.
+  // ---------------------------------------------------------------
+  const micBtn = document.getElementById('mic-btn');
+  const chatForm = document.getElementById('chat-form');
+  const recordingBar = document.getElementById('recording-bar');
+  const recordingControls = document.getElementById('recording-controls');
+  const recordingPreview = document.getElementById('recording-preview');
+  const recordingPreviewPlayer = document.getElementById('recording-preview-player');
+  const recordingTimeEl = document.getElementById('recording-time');
+  const recordingDotEl = document.getElementById('recording-dot');
+  const recordingHintEl = document.getElementById('recording-hint');
+  const recordingCancelBtn = document.getElementById('recording-cancel-btn');
+  const recordingPauseBtn = document.getElementById('recording-pause-btn');
+  const recordingPauseIcon = document.getElementById('recording-pause-icon');
+  const recordingResumeIcon = document.getElementById('recording-resume-icon');
+  const recordingStopBtn = document.getElementById('recording-stop-btn');
+  const previewDiscardBtn = document.getElementById('preview-discard-btn');
+  const previewSendBtn = document.getElementById('preview-send-btn');
+  const MAX_RECORDING_MS = 60 * 1000; // a generous cap, not an unbounded recording
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let autoStopTimer = null;
+  let recordingTimerInterval = null;
+  let segmentStartedAt = 0; // Date.now() when the current (unpaused) segment began
+  let accumulatedMs = 0; // total recorded time before the current segment
+  let isPaused = false;
+  let previewBlobUrl = null;
+  let recordingCancelled = false;
+
+  function blobToDataUri(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function resetRecordingUI() {
+    chatForm.hidden = false;
+    recordingBar.hidden = true;
+    recordingControls.hidden = false;
+    recordingPreview.hidden = true;
+    recordingPreviewPlayer.innerHTML = '';
+    if (previewBlobUrl) {
+      URL.revokeObjectURL(previewBlobUrl);
+      previewBlobUrl = null;
+    }
+  }
+
+  function sendRecording(blob) {
+    blobToDataUri(blob)
+      .then((audioData) => apiFetch(`/sessions/${sessionId}/messages/audio`, {
+        method: 'POST',
+        body: JSON.stringify({ audioData }),
+      }))
+      .then(() => {
+        // No local addMessage() here either, on purpose - same as an
+        // image or typed message, the 'new_message' broadcast is what
+        // actually puts it on screen, for both people the same way.
+      })
+      .catch((error) => {
+        if (handleAuthError(error)) return;
+        alert(error.message || 'Could not send that voice message.');
+      });
+  }
+
+  function currentElapsedMs() {
+    return accumulatedMs + (isPaused ? 0 : Date.now() - segmentStartedAt);
+  }
+
+  function updateTimerDisplay() {
+    const elapsed = Math.floor(currentElapsedMs() / 1000);
+    recordingTimeEl.textContent = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, '0')}`;
+  }
+
+  // Swaps the normal input row for the recording bar - a live timer, a
+  // pause/resume button, a cancel (discard) button, and a stop button,
+  // instead of just a pulsing mic icon with no way to back out of an
+  // accidental recording.
+  async function startRecording() {
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (error) {
+      alert("Couldn't access your microphone - check your browser's permission for this site.");
+      return;
+    }
+
+    recordedChunks = [];
+    recordingCancelled = false;
+    isPaused = false;
+    recordingPauseIcon.hidden = false;
+    recordingResumeIcon.hidden = true;
+    recordingDotEl.classList.remove('paused');
+    recordingHintEl.textContent = 'Recording voice message...';
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.addEventListener('dataavailable', (event) => {
+      if (event.data.size > 0) recordedChunks.push(event.data);
+    });
+    mediaRecorder.addEventListener('stop', () => {
+      // Stopping the mic access itself (not just the recorder) so the
+      // browser's own "microphone in use" indicator goes away right away.
+      stream.getTracks().forEach((track) => track.stop());
+      clearTimeout(autoStopTimer);
+      clearInterval(recordingTimerInterval);
+
+      if (recordingCancelled || !recordedChunks.length) {
+        resetRecordingUI();
+        return;
+      }
+      // Instead of uploading immediately, show a real playback preview -
+      // lets you actually listen back and check it before it's really
+      // sent, with a chance to discard and redo it instead.
+      const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+      previewBlobUrl = URL.createObjectURL(blob);
+      recordingPreviewPlayer.innerHTML = '';
+      recordingPreviewPlayer.appendChild(buildAudioPlayerBubble(previewBlobUrl));
+      recordingControls.hidden = true;
+      recordingPreview.hidden = false;
+      previewSendBtn.onclick = () => {
+        sendRecording(blob);
+        resetRecordingUI();
+      };
+    });
+
+    mediaRecorder.start();
+    chatForm.hidden = true;
+    recordingBar.hidden = false;
+    recordingControls.hidden = false;
+    recordingPreview.hidden = true;
+    accumulatedMs = 0;
+    segmentStartedAt = Date.now();
+    updateTimerDisplay();
+    recordingTimerInterval = setInterval(updateTimerDisplay, 500);
+    autoStopTimer = setTimeout(() => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    }, MAX_RECORDING_MS);
+  }
+
+  micBtn.addEventListener('click', startRecording);
+
+  recordingPauseBtn.addEventListener('click', () => {
+    if (!mediaRecorder) return;
+    if (isPaused) {
+      mediaRecorder.resume();
+      segmentStartedAt = Date.now();
+      isPaused = false;
+      recordingPauseIcon.hidden = false;
+      recordingResumeIcon.hidden = true;
+      recordingDotEl.classList.remove('paused');
+      recordingHintEl.textContent = 'Recording voice message...';
+    } else {
+      mediaRecorder.pause();
+      accumulatedMs += Date.now() - segmentStartedAt;
+      isPaused = true;
+      recordingPauseIcon.hidden = true;
+      recordingResumeIcon.hidden = false;
+      recordingDotEl.classList.add('paused');
+      recordingHintEl.textContent = 'Paused';
+    }
   });
+
+  recordingStopBtn.addEventListener('click', () => {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  });
+
+  recordingCancelBtn.addEventListener('click', () => {
+    recordingCancelled = true;
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    else resetRecordingUI();
+  });
+
+  previewDiscardBtn.addEventListener('click', resetRecordingUI);
 
   // ---------------------------------------------------------------
   // Safety menu: toggles open/closed, and closes if you click anywhere
@@ -632,16 +914,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   document.getElementById('block-btn').addEventListener('click', () => {
-    showConfirmModal(`Block ${partnerName}? You won't be matched with them again, and this session will end.`, () => {
-      apiFetch('/blocks', { method: 'POST', body: JSON.stringify({ user_id: Number(partnerId) }) })
-        .then(() => {
-          alert(`You've blocked ${partnerName}.`);
-          window.location.href = 'home.html';
-        })
-        .catch((error) => {
-          if (handleAuthError(error)) return;
-          alert('Could not block this person right now: ' + error.message);
-        });
+    showConfirmModal(`Block ${partnerName}? You won't be matched with them again, and this session will end.`, async () => {
+      try {
+        await apiFetch('/blocks', { method: 'POST', body: JSON.stringify({ user_id: Number(partnerId) }) });
+      } catch (error) {
+        if (handleAuthError(error)) return;
+        alert('Could not block this person right now: ' + error.message);
+        return;
+      }
+
+      // The block itself doesn't close the underlying session row - left
+      // open, it can later resurface as a "real" match through
+      // matched-with-me's DB fallback, completely bypassing the block
+      // that was just made. Actually ending it here (same call End
+      // Session makes) is what makes "you won't be matched again" true.
+      const elapsedMinutes = Math.max(1, Math.round((Date.now() - sessionStartTime) / 60000));
+      try {
+        await awardSessionPoints(elapsedMinutes);
+      } catch (error) {
+        // Already blocked either way - a failed/expired session-end call
+        // shouldn't leave the block itself unconfirmed to the user.
+      }
+      if (socket) socket.disconnect();
+
+      alert(`You've blocked ${partnerName}.`);
+      window.location.href = 'home.html';
     }, { confirmText: 'Block', danger: true });
   });
 
@@ -650,6 +947,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ---------------------------------------------------------------
   document.getElementById('end-session-btn').addEventListener('click', () => {
     showConfirmModal('End this session?', async () => {
+      leavingConfirmed = true;
       // Math.max(1, ...) means even a very short test session still
       // shows "1 min" instead of a slightly odd "0 min".
       const elapsedMinutes = Math.max(1, Math.round((Date.now() - sessionStartTime) / 60000));

@@ -197,3 +197,80 @@ body {
 .save-btn:hover {
   transform: translateY(-2px);
 }
+
+.teach-tag-input-row {
+  display: flex;
+  gap: 8px;
+}
+.teach-tag-input-row input {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #1b2340;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.teach-tag-input-row input:focus {
+  border-color: #3f6fe0;
+}
+.add-tag-btn {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  color: white;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.teach-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.teach-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #21894f;
+  background: #eaf8f0;
+  padding: 5px 8px 5px 12px;
+  border-radius: 999px;
+}
+.teach-tag-remove {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(33, 137, 79, 0.15);
+  color: #21894f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
+}

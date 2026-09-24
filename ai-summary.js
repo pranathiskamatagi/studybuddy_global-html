@@ -34,34 +34,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // instead of breaking on branch.label being undefined.
     const normalized = branches.map((b) => (typeof b === 'string' ? { label: b, detail: '' } : b));
 
-    // The tree diagram only has room for a short label per branch (the
-    // connecting lines are drawn assuming 3 short, roughly-equal-width
-    // boxes) - the REAL explanation for each one goes in the detail list
-    // below instead, which can be as long as it needs to be.
-    const branchesEl = document.getElementById('mindmap-branches');
-    branchesEl.innerHTML = '';
-    normalized.forEach((branch) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'branch-wrap';
-      const node = document.createElement('div');
-      node.className = 'branch-node';
-      node.textContent = branch.label;
-      wrap.appendChild(node);
-      branchesEl.appendChild(wrap);
-    });
-
+    // However many branches the conversation actually had (no fixed
+    // count) - each rendered as a numbered card with its real
+    // explanation, in a list that just scrolls if it runs long.
     const detailsEl = document.getElementById('branch-details');
     detailsEl.innerHTML = '';
-    normalized.filter((branch) => branch.detail).forEach((branch) => {
+    normalized.forEach((branch, index) => {
       const item = document.createElement('div');
       item.className = 'branch-detail-item';
+
+      const badge = document.createElement('div');
+      badge.className = 'branch-detail-badge';
+      badge.textContent = index + 1;
+
+      const body = document.createElement('div');
+      body.className = 'branch-detail-body';
       const label = document.createElement('p');
       label.className = 'branch-detail-label';
       label.textContent = branch.label;
-      const detail = document.createElement('p');
-      detail.className = 'branch-detail-text';
-      detail.textContent = branch.detail;
-      item.append(label, detail);
+      body.appendChild(label);
+      if (branch.detail) {
+        const detail = document.createElement('p');
+        detail.className = 'branch-detail-text';
+        detail.textContent = branch.detail;
+        body.appendChild(detail);
+      }
+
+      item.append(badge, body);
       detailsEl.appendChild(item);
     });
 
@@ -136,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
       color,
       country,
       flag,
+      sessionId, // required to actually reopen this later - see saved.js
       savedAt: Date.now(), // a plain number of milliseconds - easy to sort/format later
     });
 
@@ -143,6 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // localStorage is able to store.
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedSummaries));
     markButtonAsSaved();
+  });
+
+  document.getElementById('flashcards-btn').addEventListener('click', () => {
+    window.location.href = 'flashcards.html?sessionId=' + encodeURIComponent(sessionId);
   });
 
   document.getElementById('back-btn').addEventListener('click', () => {

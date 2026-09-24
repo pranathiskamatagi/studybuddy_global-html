@@ -172,3 +172,30 @@ body {
   border-color: #3f6fe0;
   color: #3f6fe0;
 }
+
+/* Only the action buttons stay phone-width - the rest of the page uses
+   the full screen like every other page. */
+.ai-card,
+.rate-section,
+.home-btn {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.home-btn {
+  display: block;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
+}

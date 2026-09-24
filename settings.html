@@ -8,8 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="settings.css" />
+  <link rel="stylesheet" href="settings.css?v=2" />
   <link rel="stylesheet" href="confirm-modal.css" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
 <body>
 
@@ -25,11 +27,6 @@
     <p class="section-heading">Preferences</p>
     <div class="settings-group">
       <label class="toggle-row">
-        <span>Push notifications</span>
-        <input type="checkbox" id="toggle-notifications" checked />
-        <span class="toggle-switch" aria-hidden="true"></span>
-      </label>
-      <label class="toggle-row">
         <span>Sound effects</span>
         <input type="checkbox" id="toggle-sound" checked />
         <span class="toggle-switch" aria-hidden="true"></span>
@@ -39,6 +36,14 @@
         <input type="checkbox" id="toggle-dark" />
         <span class="toggle-switch" aria-hidden="true"></span>
       </label>
+    </div>
+
+    <p class="section-heading">Notifications</p>
+    <div class="settings-group">
+      <a href="notification-settings.html" class="link-row" id="notification-settings-link">
+        <span>Notification settings</span>
+        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </a>
     </div>
 
     <p class="section-heading">Account</p>
@@ -58,6 +63,7 @@
 
   <script src="confirm-modal.js"></script>
   <script src="sound.js"></script>
-  <script src="settings.js"></script>
+  <script src="dark-mode.js"></script>
+  <script src="settings.js?v=2"></script>
 </body>
 </html>

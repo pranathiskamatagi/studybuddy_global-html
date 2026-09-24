@@ -51,9 +51,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (typeof playMatchSound === 'function') playMatchSound();
 
-  document.getElementById('partner-avatar').textContent = withName.charAt(0);
-  document.getElementById('partner-avatar').classList.add('avatar-' + avatarColors[Number(withPartnerId) % avatarColors.length]);
+  const partnerAvatarEl = document.getElementById('partner-avatar');
+  partnerAvatarEl.textContent = withName.charAt(0);
+  partnerAvatarEl.classList.add('avatar-' + avatarColors[Number(withPartnerId) % avatarColors.length]);
   document.getElementById('partner-name').textContent = withName;
+
+  // A real photo, if this partner set one - same shared preview endpoint
+  // the profile-view popup uses elsewhere in the app. Falls back to the
+  // letter avatar above if they don't have one, or on any error.
+  apiFetch(`/users/${withPartnerId}/profile-preview`)
+    .then((data) => {
+      if (data.user && data.user.photo) {
+        partnerAvatarEl.textContent = '';
+        const img = document.createElement('img');
+        img.src = data.user.photo;
+        img.alt = '';
+        partnerAvatarEl.appendChild(img);
+      }
+    })
+    .catch(() => {});
   // Not fetched here - "New study partner" is an honest enough placeholder
   // rather than a fake rating.
   document.getElementById('partner-rating').textContent = 'New study partner';

@@ -8,8 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="admin.css" />
-  <link rel="stylesheet" href="admin-sessions.css" />
+  <link rel="stylesheet" href="admin.css?v=3" />
+  <link rel="stylesheet" href="admin-sessions.css?v=4" />
+  <link rel="stylesheet" href="confirm-modal.css" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
 <body>
 
@@ -23,13 +26,21 @@
     </div>
 
     <h1 class="title">Conversations</h1>
-    <p class="subtitle">Newest first, across everyone.</p>
+    <p class="subtitle">Newest first, grouped by day.</p>
+
+    <input type="text" id="session-search-input" class="session-search-input" placeholder="Search by subject or topic..." />
+
+    <!-- admin-sessions.js fills this with one chip per real subject that
+         actually has conversations - "All" jumps back to showing everyone. -->
+    <div class="subject-filter-row" id="subject-filter-row"></div>
 
     <div class="session-list" id="session-list"></div>
 
   </div>
+  <script src="dark-mode.js"></script>
 
-  <script src="api.js?v=5"></script>
-  <script src="admin-sessions.js"></script>
+  <script src="api.js?v=7"></script>
+  <script src="confirm-modal.js"></script>
+  <script src="admin-sessions.js?v=5"></script>
 </body>
 </html>

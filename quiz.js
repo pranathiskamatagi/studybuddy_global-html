@@ -169,6 +169,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const partnerId = params.get('partnerId') || '';
   const country = params.get('country') || '';
   const fulfillRequestId = params.get('fulfillRequestId') || '';
+  // Set only when fulfilling a scheduled-for-later request (connect.js) -
+  // there's no live partner to search for, so fulfilling this just makes
+  // a real accepted scheduled session (see requests.py's fulfill_request)
+  // instead of dropping into connecting.html.
+  const scheduled = params.get('scheduled') === '1';
+
+  // ---------------------------------------------------------------
+  // Warn before leaving mid-quiz - discourages the obvious way to cheat
+  // (open a new tab, look up the answer, come back) without pretending
+  // to actually PREVENT it (nothing client-side truly can). Only armed
+  // while a real quiz is genuinely in progress - never on the picking/
+  // loading screens, and turned back off the moment it's submitted, so
+  // leaving afterward (to continue to teaching-tips.html, etc.) is silent.
+  let quizInProgress = false;
+  window.addEventListener('beforeunload', (event) => {
+    if (!quizInProgress) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
 
   // Looks up a topic in quizBank without requiring a perfect match -
   // typing "algebra" or "Algebra" should still find "Algebra II", since
@@ -252,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function startQuiz(questions) {
   document.getElementById('quiz-topic-title').textContent = topic + ' Quiz';
+  quizInProgress = true;
 
   // ---------------------------------------------------------------
   // Quiz state
@@ -347,6 +367,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('submit-btn').addEventListener('click', finishQuiz);
 
   function finishQuiz() {
+    quizInProgress = false; // submitted for real now - leaving from here on is fine
+
     // Count how many selected answers match their question's "correct" index.
     // reduce() walks through the array once, building up a single total.
     const score = selectedAnswers.reduce((total, answer, index) => {
@@ -373,19 +395,43 @@ document.addEventListener('DOMContentLoaded', () => {
           .catch((error) => console.warn('Could not report perfect quiz:', error.message));
       }
       // Only NOW - having actually proven they know the subject - claim
-      // the real learner's request. Fire-and-forget, same as elsewhere.
-      if (fulfillRequestId) {
-        apiFetch(`/help-requests/${fulfillRequestId}/fulfill`, { method: 'POST' })
-          .catch((error) => console.warn('Could not mark request fulfilled:', error.message));
-      }
+      // the real learner's request. AWAITED (not fire-and-forget) when the
+      // request is a scheduled one - the "You're set!" message below is a
+      // real claim ("they'll be notified, it's in Scheduled sessions"), so
+      // it must only show once the backend has actually confirmed that,
+      // not unconditionally. The backend also now rejects a SECOND fulfill
+      // of the same request (e.g. reaching this page twice via the back
+      // button) instead of silently creating a duplicate scheduled session -
+      // this is what surfaces that rejection honestly instead of hiding it.
+      const fulfillPromise = fulfillRequestId
+        ? apiFetch(`/help-requests/${fulfillRequestId}/fulfill`, { method: 'POST' })
+        : Promise.resolve(null);
+
       // Using .onclick (instead of addEventListener) means setting it
       // again always REPLACES the previous handler rather than stacking
       // a second one - handy here since finishQuiz() could technically
       // run more than once (e.g. if someone were able to submit twice).
-      continueBtn.onclick = () => {
-        const params = new URLSearchParams({ subject, topic, level, mode, requestId, with: withName, partnerId, country });
-        window.location.href = 'teaching-tips.html?' + params.toString();
-      };
+      continueBtn.onclick = scheduled
+        ? () => {
+            continueBtn.disabled = true;
+            fulfillPromise
+              .then(() => {
+                showInfoModal(`You're set! ${withName} will be notified, and this will show up in your Scheduled sessions.`, {
+                  onClose: () => { window.location.href = 'home.html'; },
+                });
+              })
+              .catch((error) => {
+                showInfoModal(error.message === 'This request has already been taken.'
+                  ? "You already claimed this one - no need to do it twice."
+                  : "Couldn't confirm this with the server: " + error.message, {
+                  onClose: () => { window.location.href = 'home.html'; },
+                });
+              });
+          }
+        : () => {
+            const params = new URLSearchParams({ subject, topic, level, mode, requestId, with: withName, partnerId, country });
+            window.location.href = 'teaching-tips.html?' + params.toString();
+          };
     } else {
       document.getElementById('result-message').textContent = "Almost there! Let's strengthen your understanding and try again.";
       continueBtn.textContent = 'Back to Home';
@@ -405,11 +451,32 @@ document.addEventListener('DOMContentLoaded', () => {
   function goToConnecting() {
     // No quiz was available at all for this topic - still counts as
     // "cleared" (nothing to fail), so the real request gets claimed here
-    // same as a passed quiz would.
-    if (fulfillRequestId) {
-      apiFetch(`/help-requests/${fulfillRequestId}/fulfill`, { method: 'POST' })
-        .catch((error) => console.warn('Could not mark request fulfilled:', error.message));
+    // same as a passed quiz would. Same reasoning as finishQuiz() above -
+    // for a scheduled request, this is AWAITED so the "You're set!" claim
+    // only shows once the backend has actually confirmed it, not
+    // unconditionally (which used to let it show even when the backend
+    // rejected a duplicate fulfill of the same request).
+    const fulfillPromise = fulfillRequestId
+      ? apiFetch(`/help-requests/${fulfillRequestId}/fulfill`, { method: 'POST' })
+      : Promise.resolve(null);
+
+    if (scheduled) {
+      fulfillPromise
+        .then(() => {
+          showInfoModal(`You're set! ${withName} will be notified, and this will show up in your Scheduled sessions.`, {
+            onClose: () => { window.location.href = 'home.html'; },
+          });
+        })
+        .catch((error) => {
+          showInfoModal(error.message === 'This request has already been taken.'
+            ? "You already claimed this one - no need to do it twice."
+            : "Couldn't confirm this with the server: " + error.message, {
+            onClose: () => { window.location.href = 'home.html'; },
+          });
+        });
+      return;
     }
+    fulfillPromise.catch((error) => console.warn('Could not mark request fulfilled:', error.message));
     const connectParams = new URLSearchParams({ subject, topic, level, mode, requestId, with: withName, partnerId, country });
     window.location.href = 'connecting.html?' + connectParams.toString();
   }

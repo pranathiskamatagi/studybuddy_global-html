@@ -47,8 +47,27 @@
   color: #a7b0cc;
   margin-top: 4px;
 }
-.remove-rating-btn {
+.rating-actions {
   flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+}
+.edit-rating-btn {
+  padding: 7px 14px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 999px;
+  background: white;
+  color: #3f6fe0;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.edit-rating-btn:hover {
+  border-color: #3f6fe0;
+  background: #f5f8fe;
+}
+.remove-rating-btn {
   padding: 7px 14px;
   border: 1.5px solid #dfe6f7;
   border-radius: 999px;
@@ -62,6 +81,43 @@
 .remove-rating-btn:hover {
   border-color: #e0453f;
   background: #fdeceb;
+}
+.edit-rating-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f4fc;
+}
+.edit-rating-form input,
+.edit-rating-form textarea {
+  padding: 8px 10px;
+  border: 1.5px solid #dfe6f7;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  outline: none;
+  resize: vertical;
+}
+.edit-rating-form input {
+  width: 64px;
+}
+.edit-rating-form input:focus,
+.edit-rating-form textarea:focus {
+  border-color: #3f6fe0;
+}
+.edit-rating-form button {
+  align-self: flex-end;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #3f6fe0, #34c77b);
+  color: white;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .empty-note {

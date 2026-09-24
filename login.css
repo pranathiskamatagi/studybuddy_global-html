@@ -170,6 +170,13 @@ body {
 /* ---------- Call-to-action button ---------- */
 .cta-button {
   width: 100%;
+  /* Without a cap, this stretches to match the page's full width (see
+     full-width-layout.css) - fine for the text inputs, but a real action
+     button reads much better at the same comfortable size it already has
+     on a phone, centered instead of edge-to-edge on a wide screen. */
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
   padding: 16px 24px;
   border: none;
   border-radius: 999px;
@@ -195,7 +202,8 @@ body {
   align-items: center;
   gap: 12px;
   width: 100%;
-  margin: 22px 0 18px;
+  max-width: 400px;
+  margin: 22px auto 18px;
   color: #a7b0cc;
   font-size: 13px;
   z-index: 1;
@@ -206,9 +214,12 @@ body {
   background: #e1e7f5;
 }
 
-/* ---------- OAuth (Google / Apple) buttons ---------- */
+/* ---------- OAuth (Google) button ---------- */
 .oauth-button {
   width: 100%;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
   padding: 13px 16px;
   border: 1.5px solid #dfe6f7;
   border-radius: 14px;
@@ -242,4 +253,18 @@ body {
   color: #3f6fe0;
   font-weight: 700;
   text-decoration: none;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
 }

@@ -6,6 +6,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!requireLogin()) return;
 
   // ---------------------------------------------------------------
+  // Real phone notifications - asked about automatically, once, instead
+  // of waiting for someone to find the toggle in Settings themselves.
+  // A browser will only ever show its OWN real permission prompt from a
+  // genuine user action, and only when permission has never been
+  // decided either way (Notification.permission === 'default') - there's
+  // no way to truly turn this on silently with zero interaction, but
+  // this is the closest thing to "on by default": the first real click
+  // anywhere on Home (any click at all) triggers the ONE real prompt,
+  // then never asks again automatically regardless of what they choose.
+  if (typeof isPushSupported === 'function' && isPushSupported()
+      && pushPermissionState() === 'default'
+      && !localStorage.getItem('studybuddy_push_auto_prompted')) {
+    const askOnce = () => {
+      document.removeEventListener('click', askOnce);
+      localStorage.setItem('studybuddy_push_auto_prompted', '1');
+      enablePushNotifications().catch(() => {}); // best-effort - never worth an alert on a page they didn't ask about this on
+    };
+    document.addEventListener('click', askOnce, { once: true });
+  }
+
+  // ---------------------------------------------------------------
   // FEATURE 0: Fill in real points/diamonds/rating from the backend,
   // replacing the hardcoded numbers this page used to show. We show
   // whatever's cached in localStorage from login/signup FIRST (instant,
@@ -22,6 +43,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // backend/app/admin_helpers.py for how the server enforces this too
     // (this is just what SHOWS the nav item, not what grants access).
     document.getElementById('admin-nav-item').hidden = !user.isAdmin;
+
+    const avatarBtn = document.getElementById('avatar-btn');
+    if (user.photo) {
+      avatarBtn.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = user.photo;
+      img.alt = '';
+      avatarBtn.appendChild(img);
+    } else if (!avatarBtn.querySelector('svg')) {
+      avatarBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>';
+    }
   }
 
   const cachedUser = getStoredUser();
@@ -59,6 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return avatarColors[id % avatarColors.length];
   }
 
+  // Same formatting scheduled-sessions.js uses for a real future date/time.
+  function formatWhen(iso) {
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {
+      weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+    });
+  }
+
   // Builds one real request row using safe DOM methods (createElement +
   // textContent), NOT innerHTML - these values (name, topic...) come from
   // real user input elsewhere in the app, so inserting them as raw HTML
@@ -68,13 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const row = document.createElement('div');
     row.className = 'request-row';
     // "Helping" a learn-request means YOU teach; helping a teach-request
-    // means YOU learn - always the opposite of their own mode.
-    row.dataset.mode = r.mode === 'learn' ? 'teach' : 'learn';
+    // means YOU learn - always the opposite of their own mode. A group
+    // request has no "opposite role" - everyone joining does the same
+    // thing (shows up), so this stays 'group' as-is.
+    row.dataset.mode = r.mode === 'group' ? 'group' : (r.mode === 'learn' ? 'teach' : 'learn');
     row.dataset.realUserId = r.userId;
     row.dataset.realRequestId = r.id;
     row.dataset.subject = r.subject || '';
     row.dataset.level = r.level || '';
     row.dataset.country = r.country || '';
+    row.dataset.scheduledFor = r.scheduledFor || '';
 
     const avatar = document.createElement('span');
     avatar.className = `avatar-sm avatar-${colorFor(r.userId)} avatar-lg`;
@@ -102,18 +145,40 @@ document.addEventListener('DOMContentLoaded', () => {
     descP.className = 'request-desc';
     const strong = document.createElement('strong');
     strong.textContent = r.topic || r.subject || 'something';
-    descP.append(r.mode === 'learn' ? 'Needs help with ' : 'Wants to teach ', strong);
+    if (r.mode === 'group') {
+      descP.append('Wants a group session for ', strong);
+    } else {
+      descP.append(r.mode === 'learn' ? 'Needs help with ' : 'Wants to teach ', strong);
+    }
 
     const timeP = document.createElement('p');
-    timeP.className = 'request-time';
-    timeP.textContent = timeAgo(r.createdAt);
+    // A scheduled-for-later request is a real future ask, not something
+    // that happened X minutes ago - shown with its own distinct styling
+    // so it reads as "plan for this" rather than "recent activity".
+    if (r.scheduledFor) {
+      timeP.className = 'request-time request-time-scheduled';
+      timeP.textContent = '📅 Wants this on ' + formatWhen(r.scheduledFor);
+    } else {
+      timeP.className = 'request-time';
+      timeP.textContent = timeAgo(r.createdAt);
+    }
 
     info.append(nameP, descP, timeP);
 
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'request-btn';
-    btn.textContent = r.mode === 'learn' ? 'Help' : 'Learn from';
+    // A page reload used to always render this fresh, even for someone
+    // who'd already clicked it - nothing distinguished "not yet" from
+    // "already did" on the row itself, so it looked like clicking never
+    // did anything and got clicked again. amInterested is the real,
+    // server-remembered answer to "did I already do this."
+    if (r.mode === 'group' && r.amInterested) {
+      btn.textContent = "You're interested ✓";
+      btn.disabled = true;
+    } else {
+      btn.textContent = r.mode === 'group' ? "I'm interested" : (r.scheduledFor ? 'I can help' : (r.mode === 'learn' ? 'Help' : 'Learn from'));
+    }
 
     row.append(avatar, info, btn);
     return row;
@@ -168,6 +233,330 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.activeGroups.length === 0) return; // stays hidden - nothing real to show
       data.activeGroups.forEach((s) => sessionsRow.appendChild(buildSessionCard(s)));
       sessionsSection.hidden = false;
+    })
+    .catch(() => {}); // stays hidden rather than show a broken-looking message
+
+  // ---------------------------------------------------------------
+  // A real 1-on-1 session left without clicking "End session" - see
+  // GET /sessions/active-1on1. Passing its real sessionId straight
+  // through (not calling POST /sessions again) is what makes this a
+  // genuine RESUME - session.js already knows to just reuse an existing
+  // session id instead of creating a second one (see its own
+  // existingSessionId handling).
+  // ---------------------------------------------------------------
+  const resumeSessionSection = document.getElementById('resume-session-section');
+  const resumeSessionList = document.getElementById('resume-session-list');
+
+  function buildResumeSessionRow(s) {
+    const row = document.createElement('div');
+    row.className = 'request-row';
+
+    const avatar = document.createElement('span');
+    avatar.className = `avatar-sm avatar-${colorFor(s.partnerId)} avatar-lg`;
+    avatar.textContent = s.partnerName.charAt(0).toUpperCase();
+
+    const info = document.createElement('div');
+    info.className = 'request-info';
+    const nameP = document.createElement('p');
+    nameP.className = 'request-name';
+    nameP.textContent = `${s.subject || s.topic || 'Study session'} with ${s.partnerName}`;
+    const descP = document.createElement('p');
+    descP.className = 'request-desc';
+    descP.textContent = "You left without ending this session - pick up where you left off.";
+    info.append(nameP, descP);
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'request-btn';
+    btn.textContent = 'Rejoin';
+    btn.addEventListener('click', () => {
+      const avatarColors = ['blue', 'green', 'pink', 'orange'];
+      const params = new URLSearchParams({
+        partner: s.partnerName,
+        color: avatarColors[Number(s.partnerId) % avatarColors.length],
+        topic: s.topic || '',
+        subject: s.subject || '',
+        level: s.level || '',
+        country: s.partnerCountry || '',
+        flag: '',
+        mode: s.mode,
+        partnerId: String(s.partnerId),
+        sessionId: String(s.id),
+      });
+      window.location.href = 'session.html?' + params.toString();
+    });
+
+    row.append(avatar, info, btn);
+    return row;
+  }
+
+  apiFetch('/sessions/active-1on1')
+    .then((data) => {
+      if (!data.activeSessions.length) return;
+      data.activeSessions.forEach((s) => resumeSessionList.appendChild(buildResumeSessionRow(s)));
+      resumeSessionSection.hidden = false;
+    })
+    .catch(() => {}); // stays hidden rather than show a broken-looking message
+
+  // ---------------------------------------------------------------
+  // A real accepted scheduled session whose time has actually arrived
+  // (same 10-minute-early window routes/scheduled.py's own join route
+  // allows) - previously the only way to notice this was remembering to
+  // check Scheduled Sessions yourself. Click straight into the real chat,
+  // same join logic scheduled-sessions.js already uses.
+  // ---------------------------------------------------------------
+  const readyScheduledSection = document.getElementById('ready-scheduled-section');
+  const readyScheduledList = document.getElementById('ready-scheduled-list');
+  const JOIN_EARLY_WINDOW_MS = 10 * 60 * 1000;
+
+  function buildReadyScheduledRow(scheduled) {
+    const otherId = scheduled.proposerId === myId ? scheduled.inviteeId : scheduled.proposerId;
+    const otherName = scheduled.proposerId === myId ? scheduled.inviteeName : scheduled.proposerName;
+
+    const row = document.createElement('div');
+    row.className = 'request-row';
+
+    const avatar = document.createElement('span');
+    avatar.className = `avatar-sm avatar-${colorFor(otherId)} avatar-lg`;
+    avatar.textContent = otherName.charAt(0).toUpperCase();
+
+    const info = document.createElement('div');
+    info.className = 'request-info';
+    const nameP = document.createElement('p');
+    nameP.className = 'request-name';
+    nameP.textContent = `${scheduled.subject || scheduled.topic} with ${otherName}`;
+    const descP = document.createElement('p');
+    descP.className = 'request-desc';
+    // Show the actual time it was scheduled for, not just "ready" - and
+    // call out when it's already past that time so it's obvious this is
+    // now overdue, not just early-window-ready.
+    const scheduledTime = formatWhen(scheduled.scheduledFor);
+    descP.textContent = Date.now() > new Date(scheduled.scheduledFor).getTime()
+      ? `Was scheduled for ${scheduledTime} - join now.`
+      : `Scheduled for ${scheduledTime}.`;
+    info.append(nameP, descP);
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'request-btn';
+    btn.textContent = 'Join now';
+    btn.addEventListener('click', () => {
+      apiFetch(`/scheduled/${scheduled.id}/join`, { method: 'POST' })
+        .then((data) => {
+          const avatarColors = ['blue', 'green', 'pink', 'orange'];
+          const params = new URLSearchParams({
+            partner: data.partnerName,
+            color: avatarColors[Number(otherId) % avatarColors.length],
+            topic: data.topic || '',
+            subject: data.subject || '',
+            level: '',
+            country: data.partnerCountry || '',
+            flag: '',
+            mode: data.mode,
+            partnerId: String(data.partnerId),
+            // Tells session.js (and sessions.py's start_session) that the
+            // OTHER person needs to click Join THEMSELVES too - no live
+            // auto-redirect just because THIS side joined first (see
+            // session.js's own scheduled handling for why).
+            scheduled: '1',
+          });
+          window.location.href = 'session.html?' + params.toString();
+        })
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          alert(error.message === 'not_yet' ? "It's not time yet." : error.message);
+        });
+    });
+
+    row.append(avatar, info, btn);
+    return row;
+  }
+
+  apiFetch('/scheduled')
+    .then((data) => {
+      const now = Date.now();
+      const ready = data.scheduled.filter((s) =>
+        s.status === 'accepted' && new Date(s.scheduledFor).getTime() - JOIN_EARLY_WINDOW_MS <= now
+      );
+      if (ready.length === 0) return; // stays hidden - nothing real to show
+      ready.forEach((s) => readyScheduledList.appendChild(buildReadyScheduledRow(s)));
+      readyScheduledSection.hidden = false;
+    })
+    .catch(() => {}); // stays hidden rather than show a broken-looking message
+
+  // A group "Schedule for later" request (either one you posted, or one
+  // you said "I'm interested" on) whose time has arrived - see
+  // GET /help-requests/group-ready. Previously there was no real "it's
+  // time" moment for a group at all - just an expectation you'd remember
+  // to come back and manually re-enter the same subject/topic yourself.
+  function buildGroupReadyRow(r) {
+    const row = document.createElement('div');
+    row.className = 'request-row';
+
+    const avatar = document.createElement('span');
+    avatar.className = 'avatar-sm avatar-pink avatar-lg';
+    avatar.textContent = '👥';
+
+    const info = document.createElement('div');
+    info.className = 'request-info';
+    const nameP = document.createElement('p');
+    nameP.className = 'request-name';
+    nameP.textContent = `${r.subject || r.topic} group session`;
+    const descP = document.createElement('p');
+    descP.className = 'request-desc';
+    // Same "Scheduled for X" / "Was scheduled for X - join now." pattern
+    // as the 1-on-1 ready card - without this it just said "ready" with
+    // no real time attached at all, same gap that card had before.
+    const scheduledTime = formatWhen(r.scheduledFor);
+    descP.textContent = Date.now() > new Date(r.scheduledFor).getTime()
+      ? `Was scheduled for ${scheduledTime} - join now.`
+      : `Scheduled for ${scheduledTime}.`;
+    info.append(nameP, descP);
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'request-btn';
+    btn.textContent = 'Join now';
+    btn.addEventListener('click', () => {
+      btn.disabled = true;
+      apiFetch('/sessions/join-or-create-group', {
+        method: 'POST',
+        body: JSON.stringify({ subject: r.subject, topic: r.topic }),
+      })
+        .then((data) => {
+          const params = new URLSearchParams({ sessionId: data.session.id, subject: r.subject, topic: r.topic });
+          window.location.href = (data.created ? 'group-waiting.html?' : 'group-chat.html?') + params.toString();
+        })
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          btn.disabled = false;
+          alert(error.message);
+        });
+    });
+
+    row.append(avatar, info, btn);
+    return row;
+  }
+
+  apiFetch('/help-requests/group-ready')
+    .then((data) => {
+      if (!data.requests.length) return;
+      data.requests.forEach((r) => readyScheduledList.appendChild(buildGroupReadyRow(r)));
+      readyScheduledSection.hidden = false;
+    })
+    .catch(() => {}); // stays hidden rather than show a broken-looking message
+
+  // ---------------------------------------------------------------
+  // Your own "Schedule for later" posts that nobody's answered yet - see
+  // GET /help-requests/mine. Used to just show a one-time alert() with no
+  // way to check on it again afterward.
+  // ---------------------------------------------------------------
+  const pendingRequestsSection = document.getElementById('pending-requests-section');
+  const pendingRequestsList = document.getElementById('pending-requests-list');
+
+  function buildPendingRequestRow(r) {
+    const row = document.createElement('div');
+    row.className = 'request-row';
+
+    const avatar = document.createElement('span');
+    avatar.className = 'avatar-sm avatar-blue avatar-lg';
+    avatar.textContent = '⏳';
+
+    const info = document.createElement('div');
+    info.className = 'request-info';
+    const nameP = document.createElement('p');
+    nameP.className = 'request-name';
+    nameP.textContent = r.subject || r.topic || 'Study session';
+    const descP = document.createElement('p');
+    descP.className = 'request-desc';
+    // A group request can get real interest from more than one person
+    // before anyone actually joins - show that instead of a generic
+    // "waiting" that never changes even once someone genuinely has.
+    const status = r.mode === 'group' && r.interestedCount > 0
+      ? `${r.interestedCount} ${r.interestedCount === 1 ? 'person is' : 'people are'} interested`
+      : 'waiting for someone to help';
+    descP.textContent = `Scheduled for ${formatWhen(r.scheduledFor)} - ${status}.`;
+    info.append(nameP, descP);
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'request-btn';
+    btn.textContent = 'Cancel';
+    btn.addEventListener('click', () => {
+      btn.disabled = true;
+      apiFetch(`/help-requests/${r.id}/cancel`, { method: 'POST' })
+        .then(() => {
+          row.remove();
+          if (!pendingRequestsList.children.length) pendingRequestsSection.hidden = true;
+        })
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          btn.disabled = false;
+          alert(error.message);
+        });
+    });
+
+    row.append(avatar, info, btn);
+    return row;
+  }
+
+  apiFetch('/help-requests/mine')
+    .then((data) => {
+      if (!data.requests.length) return;
+      data.requests.forEach((r) => pendingRequestsList.appendChild(buildPendingRequestRow(r)));
+      pendingRequestsSection.hidden = false;
+    })
+    .catch(() => {}); // stays hidden rather than show a broken-looking message
+
+  // ---------------------------------------------------------------
+  // Pending quiz challenges - real ones sent TO this person, not yet
+  // played. Easy to otherwise never notice (previously only reachable
+  // by remembering to open Quiz Challenges from Profile) - shown right
+  // on Home, same "hidden until there's something real" pattern as
+  // every other section here.
+  // ---------------------------------------------------------------
+  const challengesSection = document.getElementById('challenges-section');
+  const challengesList = document.getElementById('challenges-list');
+  const myId = getStoredUser()?.id;
+
+  function buildChallengeRow(c) {
+    const row = document.createElement('div');
+    row.className = 'request-row';
+
+    const avatar = document.createElement('span');
+    avatar.className = `avatar-sm avatar-${colorFor(c.challengerId)} avatar-lg`;
+    avatar.textContent = c.challengerName.charAt(0).toUpperCase();
+
+    const info = document.createElement('div');
+    info.className = 'request-info';
+    const nameP = document.createElement('p');
+    nameP.className = 'request-name';
+    nameP.textContent = c.challengerName;
+    const descP = document.createElement('p');
+    descP.className = 'request-desc';
+    const strong = document.createElement('strong');
+    strong.textContent = c.topic;
+    descP.append('Challenged you on ', strong, ` - scored ${c.challengerScore}/${c.totalQuestions}`);
+    info.append(nameP, descP);
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'request-btn';
+    btn.textContent = 'Take quiz';
+    btn.addEventListener('click', () => {
+      window.location.href = 'challenge-quiz.html?challengeId=' + c.id;
+    });
+
+    row.append(avatar, info, btn);
+    return row;
+  }
+
+  apiFetch('/challenges')
+    .then((data) => {
+      const pending = data.challenges.filter((c) => c.status === 'pending' && c.challengedId === myId);
+      if (pending.length === 0) return; // stays hidden - nothing real to show
+      pending.forEach((c) => challengesList.appendChild(buildChallengeRow(c)));
+      challengesSection.hidden = false;
     })
     .catch(() => {}); // stays hidden rather than show a broken-looking message
 
@@ -264,6 +653,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // "bonus diamond" mention right into the message when it applies.
     if (notif.type === 'rating') {
       showPointsPopup(notif.message, { icon: '⭐' });
+    }
+
+    // A bonus from the admin should feel the same way - a real popup
+    // right now, plus the coin/diamond numbers up top actually updating
+    // instead of only being right again after the next reload.
+    if (notif.type === 'bonus') {
+      showPointsPopup(notif.message, { icon: '🎁' });
+      apiFetch('/auth/me')
+        .then((data) => {
+          renderUser(data.user);
+          localStorage.setItem('studybuddy_user', JSON.stringify(data.user));
+        })
+        .catch(() => {});
     }
   });
 
@@ -392,6 +794,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const level = row.dataset.level || '';
     // "Help her/him" means YOU teach them; "Learn from" means you learn.
     const mode = row.dataset.mode || 'learn';
+
+    // A group's scheduled ask - unlike a 1-on-1, multiple people can be
+    // interested, so this never closes the request (see requests.py's
+    // interested_in_group_request) - it just tells the poster, and stays
+    // up for anyone else to see too.
+    if (mode === 'group') {
+      apiFetch(`/help-requests/${row.dataset.realRequestId}/interested`, { method: 'POST' })
+        .then(() => {
+          button.textContent = "You're interested ✓";
+          button.disabled = true;
+        })
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          alert(error.message);
+        });
+      return;
+    }
+
+    // A scheduled-for-later request - there's nobody to search for RIGHT
+    // NOW (see requests.py's fulfill_request, which turns this straight
+    // into a real accepted scheduled session instead of a live match).
+    if (row.dataset.scheduledFor) {
+      if (mode === 'teach') {
+        const params = new URLSearchParams({
+          with: personName, topic, subject, level, mode,
+          fulfillRequestId: row.dataset.realRequestId, scheduled: '1',
+        });
+        window.location.href = 'quiz.html?' + params.toString();
+        return;
+      }
+      apiFetch(`/help-requests/${row.dataset.realRequestId}/fulfill`, { method: 'POST' })
+        .then(() => {
+          showInfoModal(`You're set! ${personName} will be notified, and this will show up in your Scheduled sessions.`);
+          row.remove();
+          if (!requestsList.children.length) requestsSection.hidden = true;
+        })
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          alert("Couldn't take this one: " + error.message);
+        });
+      return;
+    }
 
     const params = new URLSearchParams({ with: personName, topic, subject, level, mode });
 

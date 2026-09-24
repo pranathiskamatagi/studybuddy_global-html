@@ -1,0 +1,706 @@
+/* Real dark mode, applied via body.dark-mode, toggled by dark-mode.js.
+   This app's CSS was never built on shared color variables (every page
+   picks its own hex colors), so this is a deliberate, separate override
+   stylesheet targeting each page's actual class names, rather than a
+   quick invert-filter hack that would also wreck photos/avatars. */
+
+body.dark-mode {
+  background: #0f1420;
+  color: #e8ecf7;
+}
+
+/* ---------- Shared surface tokens, re-used below ---------- */
+/* (not real CSS variables the rest of the app reads - just documenting
+   the palette used consistently through this file)
+   page bg:      #0f1420
+   card surface: #1a2138
+   input/chip:   #242c4a
+   border:       #2a3350
+   text:         #e8ecf7
+   muted text:   #8b93b8
+*/
+
+/* ============================================================
+   HOME
+   ============================================================ */
+body.dark-mode .sidebar {
+  background: #161d33;
+  border-right-color: #242c4a;
+}
+body.dark-mode .nav-item {
+  color: #8b93b8;
+}
+body.dark-mode .nav-item:hover {
+  background: #1e2643;
+}
+body.dark-mode .nav-item.active {
+  background: #23305c;
+  color: #8fb0ff;
+}
+body.dark-mode .sidebar-toggle {
+  background: #242c4a;
+  color: #8b93b8;
+}
+body.dark-mode .app-name {
+  color: #e8ecf7;
+}
+body.dark-mode .app-tagline,
+body.dark-mode .greeting {
+  color: #8b93b8;
+}
+body.dark-mode .icon-btn,
+body.dark-mode .avatar-btn {
+  background: #1a2138;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .hud-chip {
+  background: #1a2138;
+  box-shadow: none;
+  border: 1px solid #2a3350;
+}
+body.dark-mode .hud-value {
+  color: #e8ecf7;
+}
+body.dark-mode .quote-banner {
+  background: linear-gradient(90deg, #1c2a45, #16302a);
+}
+body.dark-mode .quote-text {
+  color: #e8ecf7;
+}
+body.dark-mode .quote-author {
+  color: #8b93b8;
+}
+body.dark-mode .cta-card,
+body.dark-mode .session-card,
+body.dark-mode .request-row {
+  background: #1a2138;
+  box-shadow: none;
+  border: 1px solid #2a3350;
+}
+body.dark-mode .cta-card h3,
+body.dark-mode .session-card h4,
+body.dark-mode .section-heading,
+body.dark-mode .request-name-text {
+  color: #e8ecf7;
+}
+body.dark-mode .cta-card p,
+body.dark-mode .session-sub,
+body.dark-mode .request-time,
+body.dark-mode .request-country {
+  color: #8b93b8;
+}
+
+/* ============================================================
+   1-ON-1 CHAT / GROUP CHAT
+   ============================================================ */
+body.dark-mode .app-screen {
+  background: #161d33;
+}
+body.dark-mode .chat-header {
+  border-bottom-color: #2a3350;
+}
+body.dark-mode .partner-name-sm {
+  color: #e8ecf7;
+}
+body.dark-mode .partner-status {
+  color: #8b93b8;
+}
+body.dark-mode .icon-btn-sm,
+body.dark-mode .input-icon-btn {
+  color: #8b93b8;
+}
+body.dark-mode .end-session-btn {
+  background: #242c4a;
+  color: #e8ecf7;
+  border-color: #2a3350;
+}
+body.dark-mode .msg-received {
+  background: #242c4a;
+  color: #e8ecf7;
+}
+body.dark-mode .msg-admin {
+  background: #3a2a10;
+  color: #ffcb73;
+  border-color: #6b4c1a;
+}
+body.dark-mode .msg-admin .msg-sender {
+  color: #ffcb73;
+}
+body.dark-mode .msg-sender {
+  color: #8fb0ff;
+}
+body.dark-mode .chat-input-row {
+  background: #1a2138;
+  border-top-color: #2a3350;
+}
+body.dark-mode .chat-input-row textarea {
+  background: transparent;
+  color: #e8ecf7;
+}
+body.dark-mode .chat-input-row textarea::placeholder {
+  color: #6b7396;
+}
+body.dark-mode .safety-menu,
+body.dark-mode .members-card {
+  background: #1a2138;
+  border-color: #2a3350;
+}
+body.dark-mode .safety-option {
+  color: #e8ecf7;
+}
+body.dark-mode .safety-option:hover,
+body.dark-mode .member-row:hover {
+  background: #242c4a;
+}
+body.dark-mode .member-row-name {
+  color: #e8ecf7;
+}
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+body.dark-mode .stat-card,
+body.dark-mode .chip {
+  background: #242c4a;
+  border-color: #2a3350;
+}
+body.dark-mode .profile-name,
+body.dark-mode .stat-value,
+body.dark-mode .section-heading,
+body.dark-mode .chip {
+  color: #e8ecf7;
+}
+body.dark-mode .profile-meta,
+body.dark-mode .stat-label {
+  color: #8b93b8;
+}
+body.dark-mode .profile-bio {
+  color: #b3bad9;
+}
+body.dark-mode .link-icon {
+  background: #242c4a;
+}
+
+/* ============================================================
+   LEADERBOARD
+   ============================================================ */
+body.dark-mode .rank-row {
+  background: #1a2138;
+  border-color: #2a3350;
+}
+body.dark-mode .rank-row.is-you {
+  background: linear-gradient(90deg, #1c2a45, #16302a);
+  border-color: #2f4a8a;
+}
+body.dark-mode .rank-name,
+body.dark-mode .podium-name {
+  color: #e8ecf7;
+}
+body.dark-mode .rank-row.is-you .rank-name {
+  color: #8fb0ff;
+}
+
+/* ============================================================
+   ACHIEVEMENTS
+   ============================================================ */
+body.dark-mode .achievement-card {
+  background: #1a2138;
+}
+body.dark-mode .achievement-title {
+  color: #e8ecf7;
+}
+body.dark-mode .achievement-desc {
+  color: #8b93b8;
+}
+body.dark-mode .achievement-card:not(.claimed):not(.claimable) .achievement-icon {
+  background: #242c4a;
+  color: #6b7396;
+}
+body.dark-mode .achievement-card:not(.claimed):not(.claimable) .achievement-fill {
+  background: #3a4468;
+}
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+body.dark-mode .notif-row {
+  background: #1a2138;
+  border-color: #2a3350;
+}
+body.dark-mode .notif-row.unread {
+  background: #1c2a45;
+  border-color: #2f4a8a;
+}
+body.dark-mode .notif-message {
+  color: #e8ecf7;
+}
+body.dark-mode .notif-time {
+  color: #8b93b8;
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+body.dark-mode .settings-group {
+  background: #1a2138;
+  border-color: #2a3350;
+}
+body.dark-mode .toggle-row,
+body.dark-mode .link-row {
+  color: #e8ecf7;
+  border-bottom-color: #2a3350;
+}
+body.dark-mode .toggle-switch {
+  background: #2a3350;
+}
+body.dark-mode .logout-btn {
+  background: #1a2138;
+  border-color: #2a3350;
+  color: #e0453f;
+}
+
+/* ============================================================
+   SHARED "CARD" SCREENS - every login/signup/form/flow/list screen
+   reuses the same handful of class names (.top-row, .back-btn,
+   .kicker, .title, .field label/input, .form-error, save/cta
+   buttons, white "row" cards, outline secondary buttons) - one
+   shared section here instead of repeating it per page.
+   ============================================================ */
+body.dark-mode .back-btn {
+  background: #242c4a;
+  color: #e8ecf7;
+  box-shadow: none;
+}
+body.dark-mode .kicker {
+  color: #8fb0ff;
+}
+body.dark-mode .title,
+body.dark-mode .accent {
+  color: #e8ecf7;
+}
+body.dark-mode .subtitle,
+body.dark-mode .tagline,
+body.dark-mode .field-hint,
+body.dark-mode .session-summary,
+body.dark-mode .match-desc,
+body.dark-mode .reassurance,
+body.dark-mode .no-quiz-text,
+body.dark-mode .result-message,
+body.dark-mode .confirmation-detail,
+body.dark-mode .loading-text,
+body.dark-mode .unavailable-text,
+body.dark-mode .topic-meta,
+body.dark-mode .rate-hint,
+body.dark-mode .empty-desc,
+body.dark-mode .message-email {
+  color: #8b93b8;
+}
+
+body.dark-mode .field label,
+body.dark-mode .badge-label,
+body.dark-mode .chip-heading,
+body.dark-mode .subject-group-heading {
+  color: #e8ecf7;
+}
+
+/* ============================================================
+   ADMIN LIVE SESSIONS
+   ============================================================ */
+body.dark-mode .live-session-row,
+body.dark-mode .searching-row {
+  background: #1a2138;
+  border-color: #2a3350;
+}
+body.dark-mode .live-session-names,
+body.dark-mode .searching-name {
+  color: #e8ecf7;
+}
+body.dark-mode .live-session-topic {
+  color: #8b93b8;
+}
+body.dark-mode .searching-cancel-btn {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .field input,
+body.dark-mode .field textarea,
+body.dark-mode .input-wrap input,
+body.dark-mode .input-wrap select,
+body.dark-mode .select-wrap input,
+body.dark-mode .select-wrap select,
+body.dark-mode .user-search,
+body.dark-mode .search-wrap input,
+body.dark-mode .teach-tag-input-row input,
+body.dark-mode .custom-badge-input {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .field input::placeholder,
+body.dark-mode .field textarea::placeholder,
+body.dark-mode .input-wrap input::placeholder,
+body.dark-mode .select-wrap input::placeholder,
+body.dark-mode .search-wrap input::placeholder,
+body.dark-mode .user-search::placeholder {
+  color: #6b7396;
+}
+body.dark-mode .toggle-password-btn,
+body.dark-mode .chevron-icon,
+body.dark-mode .search-icon,
+body.dark-mode .icon-button,
+body.dark-mode .select-icon {
+  color: #8b93b8;
+}
+body.dark-mode .divider-row {
+  color: #6b7396;
+}
+body.dark-mode .divider-row .line {
+  background: #2a3350;
+}
+body.dark-mode .oauth-button {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .login-row,
+body.dark-mode .signup-row,
+body.dark-mode .checkbox-row {
+  color: #8b93b8;
+}
+body.dark-mode .modal-card {
+  background: #1a2138;
+}
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+  border-color: #2a3350;
+}
+body.dark-mode .modal-header h2,
+body.dark-mode .modal-body h3 {
+  color: #e8ecf7;
+}
+body.dark-mode .modal-body p {
+  color: #8b93b8;
+}
+body.dark-mode .modal-close-btn {
+  background: #242c4a;
+  color: #8b93b8;
+}
+body.dark-mode .char-count {
+  color: #6b7396;
+}
+
+/* A white "row/box" card, reused everywhere: topic summary, chips,
+   blocked/saved rows, tip cards, quiz options, badge picker, AI
+   suggestion card, mind-map nodes, admin's user/session/report rows. */
+body.dark-mode .topic-box,
+body.dark-mode .summary-box,
+body.dark-mode .chip,
+body.dark-mode .block-row,
+body.dark-mode .favorite-row,
+body.dark-mode .saved-card,
+body.dark-mode .tip-card,
+body.dark-mode .option-btn,
+body.dark-mode .badge-option,
+body.dark-mode .quiz-card,
+body.dark-mode .ai-card,
+body.dark-mode .request-badge,
+body.dark-mode .branch-detail-item,
+body.dark-mode .summary-card,
+body.dark-mode .faq-item,
+body.dark-mode .teacher-row,
+body.dark-mode .link-box,
+body.dark-mode .scheduled-row,
+body.dark-mode .challenge-row,
+body.dark-mode .user-row,
+body.dark-mode .session-row,
+body.dark-mode .report-row,
+body.dark-mode .message-card,
+body.dark-mode .admin-stat,
+body.dark-mode .msg {
+  background: #1a2138;
+  border-color: #2a3350;
+}
+body.dark-mode .chip-recommended,
+body.dark-mode .teacher-chip,
+body.dark-mode .profile-view-chip,
+body.dark-mode .teach-tag {
+  background: #123625;
+  border-color: #1f5c3c;
+  color: #6fe0a0;
+}
+body.dark-mode .option-btn.selected,
+body.dark-mode .badge-option.selected {
+  background: #23305c;
+  border-color: #3f6fe0;
+}
+body.dark-mode .mini-option-btn {
+  background: #1a2138;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .mini-option-btn.selected {
+  background: #23305c;
+  border-color: #3f6fe0;
+}
+body.dark-mode .mini-option-letter {
+  background: #242c4a;
+  color: #8b93b8;
+}
+body.dark-mode .choose-own-btn.selected {
+  border-color: #3f6fe0;
+  color: #8fb0ff;
+}
+body.dark-mode .save-summary-btn.saved {
+  background: #123625;
+  color: #6fe0a0;
+}
+body.dark-mode .topic-value,
+body.dark-mode .summary-line,
+body.dark-mode .block-name,
+body.dark-mode .favorite-name,
+body.dark-mode .saved-topic,
+body.dark-mode .tip-title,
+body.dark-mode .option-text,
+body.dark-mode .quiz-title,
+body.dark-mode .ai-title,
+body.dark-mode .request-badge,
+body.dark-mode .branch-detail-label,
+body.dark-mode .summary-list li,
+body.dark-mode .faq-question,
+body.dark-mode .teacher-name,
+body.dark-mode .scheduled-names,
+body.dark-mode .challenge-names,
+body.dark-mode .user-name,
+body.dark-mode .session-names,
+body.dark-mode .report-names,
+body.dark-mode .message-sender,
+body.dark-mode .admin-stat-value,
+body.dark-mode .empty-title,
+body.dark-mode .question-text,
+body.dark-mode .quiz-title,
+body.dark-mode .question-block-text,
+body.dark-mode .msg {
+  color: #e8ecf7;
+}
+body.dark-mode .summary-topic,
+body.dark-mode .link-text,
+body.dark-mode .referral-count,
+body.dark-mode .progress-label,
+body.dark-mode .scheduled-with,
+body.dark-mode .scheduled-waiting,
+body.dark-mode .challenge-with,
+body.dark-mode .challenge-waiting,
+body.dark-mode .block-meta,
+body.dark-mode .saved-meta,
+body.dark-mode .tip-desc,
+body.dark-mode .quiz-subtitle,
+body.dark-mode .ai-desc,
+body.dark-mode .faq-answer,
+body.dark-mode .user-email,
+body.dark-mode .session-topic,
+body.dark-mode .user-stats,
+body.dark-mode .admin-stat-label,
+body.dark-mode .session-time,
+body.dark-mode .report-time,
+body.dark-mode .message-time,
+body.dark-mode .msg-time,
+body.dark-mode .branch-detail-text {
+  color: #8b93b8;
+}
+body.dark-mode .option-letter {
+  background: #242c4a;
+  color: #8b93b8;
+}
+body.dark-mode .empty-icon,
+body.dark-mode .avatar-circle {
+  background: #242c4a;
+  color: #6b7396;
+}
+
+/* Outline/secondary/plain-text buttons (Cancel, Home, Support, Unblock,
+   Ban, Bonus, Resolve, quiz nav, admin delete, etc.) */
+body.dark-mode .cancel-btn,
+body.dark-mode .other-link,
+body.dark-mode .home-btn,
+body.dark-mode .home-link-btn,
+body.dark-mode .support-btn,
+body.dark-mode .contact-btn,
+body.dark-mode .nav-text-btn,
+body.dark-mode .submit-btn,
+body.dark-mode .flashcards-btn,
+body.dark-mode .card-nav-btn,
+body.dark-mode .cancel-session-btn,
+body.dark-mode .scheduled-decline-btn,
+body.dark-mode .unblock-btn,
+body.dark-mode .favorite-remove-btn,
+body.dark-mode .ban-btn,
+body.dark-mode .bonus-btn,
+body.dark-mode .message-btn,
+body.dark-mode .resolve-btn,
+body.dark-mode .view-chat-link,
+body.dark-mode .admin-msg-delete-btn,
+body.dark-mode .session-delete-btn,
+body.dark-mode .link-row {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .bonus-form,
+body.dark-mode .message-form {
+  border-color: #2a3350;
+}
+body.dark-mode .bonus-form input,
+body.dark-mode .message-form textarea {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .user-row.banned,
+body.dark-mode .report-row.open,
+body.dark-mode .repeat-row {
+  background: #2a1a1a;
+  border-color: #4a2a2a;
+}
+body.dark-mode .repeat-name {
+  color: #e8ecf7;
+}
+body.dark-mode .block-log-row {
+  background: #1a2138;
+  border-color: #2a3350;
+}
+body.dark-mode .block-log-text {
+  color: #b3bad9;
+}
+body.dark-mode .block-log-time {
+  color: #8b93b8;
+}
+
+/* ============================================================
+   PROFILE-VIEW POPUP (the "who is this?" modal)
+   ============================================================ */
+body.dark-mode .profile-view-card {
+  background: #1a2138;
+}
+body.dark-mode .profile-view-close-btn {
+  background: #242c4a;
+  color: #8b93b8;
+}
+body.dark-mode .profile-view-name {
+  color: #e8ecf7;
+}
+body.dark-mode .profile-view-country,
+body.dark-mode .profile-view-teaches-label {
+  color: #8b93b8;
+}
+body.dark-mode .profile-view-bio {
+  color: #b3bad9;
+}
+body.dark-mode .profile-view-favorite-btn {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .profile-view-favorite-btn.is-favorite {
+  background: #3a1c29;
+  border-color: #d6336c;
+  color: #ff8fb3;
+}
+body.dark-mode .profile-view-schedule-btn {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #8fb0ff;
+}
+body.dark-mode .profile-view-schedule-form input {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .profile-view-schedule-status {
+  color: #8b93b8;
+}
+body.dark-mode .profile-view-challenge-row input {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .warn-form {
+  border-color: #2a3350;
+}
+body.dark-mode .warn-form input {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .propose-form {
+  background: #1a2138;
+  border-color: #2a3350;
+}
+body.dark-mode .propose-form-title {
+  color: #e8ecf7;
+}
+body.dark-mode .propose-form input {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .propose-cancel-btn {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+
+/* ============================================================
+   PEOPLE PICKER (shared "pick a real person" overlay)
+   ============================================================ */
+body.dark-mode .people-picker-card {
+  background: #1a2138;
+}
+body.dark-mode .people-picker-title {
+  color: #e8ecf7;
+}
+body.dark-mode .people-picker-close-btn {
+  background: #242c4a;
+  color: #8b93b8;
+}
+body.dark-mode .people-picker-search-wrap input {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .people-picker-row {
+  color: #e8ecf7;
+}
+body.dark-mode .people-picker-row:hover {
+  background: #242c4a;
+}
+body.dark-mode .people-picker-empty {
+  color: #8b93b8;
+}
+
+/* ============================================================
+   STREAK CALENDAR
+   ============================================================ */
+body.dark-mode .month-nav-btn {
+  background: #242c4a;
+  border-color: #2a3350;
+  color: #e8ecf7;
+}
+body.dark-mode .month-label {
+  color: #e8ecf7;
+}
+body.dark-mode .day-cell {
+  background: #242c4a;
+  color: #8b93b8;
+}
+body.dark-mode .streak-stat {
+  background: #1a2138;
+  border-color: #2a3350;
+}
+body.dark-mode .streak-stat-label {
+  color: #8b93b8;
+}
+body.dark-mode .legend-dot {
+  background: #242c4a;
+}

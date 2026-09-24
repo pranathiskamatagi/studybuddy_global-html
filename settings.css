@@ -168,3 +168,17 @@ input[type="checkbox"]:checked + .toggle-switch::before {
 .logout-btn:hover {
   background: #fdf1f0;
 }
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
+}

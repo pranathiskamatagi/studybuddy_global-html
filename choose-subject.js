@@ -176,4 +176,192 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
+  // ---------------------------------------------------------------
+  // FEATURE 4: Schedule for later - a real future time instead of
+  // searching right now. Posts the SAME kind of HelpRequest as above,
+  // just with a real scheduledFor time attached (see requests.py) -
+  // shows up on the community list with that date/time instead of
+  // "just now", and never drops this person into the live "Finding your
+  // match..." screen at all, since there's nobody to search for yet.
+  // ---------------------------------------------------------------
+  const scheduleToggleBtn = document.getElementById('schedule-later-toggle-btn');
+  const scheduleForm = document.getElementById('schedule-later-form');
+  const scheduleSubmitBtn = document.getElementById('schedule-later-submit-btn');
+
+  // A real calendar + time-slot picker (see date-time-picker.js) instead
+  // of the browser's own unstyleable native date/time popups.
+  let chosenDateTime = null;
+  initDateTimePicker('schedule-later-datetime', (value) => {
+    chosenDateTime = value;
+  });
+
+  scheduleToggleBtn.addEventListener('click', () => {
+    // A subject and topic are required for EITHER path (instant search
+    // or scheduling) - checked here too, not just on the final submit,
+    // so someone can't get all the way through picking a date/time (or
+    // even a specific person) before finding out they skipped this.
+    if (!subjectInput.value.trim() || !topicInput.value.trim()) {
+      errorMessage.textContent = 'Please fill in a subject and topic first.';
+      errorMessage.hidden = false;
+      return;
+    }
+    errorMessage.hidden = true;
+    scheduleForm.hidden = !scheduleForm.hidden;
+    // Opening the form reveals the calendar further down the page - jump
+    // straight to it instead of leaving it to scroll into view themselves.
+    if (!scheduleForm.hidden) {
+      scheduleForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  // ---------------------------------------------------------------
+  // Optional: pick a SPECIFIC person instead of an open request anyone
+  // can answer - recommendations (real people who've marked they teach
+  // this subject) plus a real search for anyone else. If that specific
+  // person later declines, the backend re-opens this as a normal request
+  // AND directly notifies every other qualified teacher (see
+  // routes/scheduled.py's decline_scheduled) - so picking someone never
+  // means losing the open fallback, just trying them first.
+  // ---------------------------------------------------------------
+  const pickPersonToggleBtn = document.getElementById('pick-person-toggle-btn');
+  const pickPersonPanel = document.getElementById('pick-person-panel');
+  const pickPersonHeading = document.getElementById('pick-person-heading');
+  const pickPersonRecommendList = document.getElementById('pick-person-recommend-list');
+  const pickPersonSearchBtn = document.getElementById('pick-person-search-btn');
+  const pickPersonChosen = document.getElementById('pick-person-chosen');
+  const pickPersonChosenName = document.getElementById('pick-person-chosen-name');
+  const pickPersonClearBtn = document.getElementById('pick-person-clear-btn');
+
+  let chosenPersonId = null;
+  let chosenPersonName = null;
+  let recommendationsLoaded = false;
+
+  function choosePerson(person) {
+    chosenPersonId = person.id;
+    chosenPersonName = person.fullname;
+    pickPersonChosenName.textContent = person.fullname;
+    pickPersonChosen.hidden = false;
+    scheduleSubmitBtn.textContent = 'Send request';
+  }
+
+  function clearChosenPerson() {
+    chosenPersonId = null;
+    chosenPersonName = null;
+    pickPersonChosen.hidden = true;
+    scheduleSubmitBtn.textContent = 'Post request';
+  }
+
+  function buildRecommendRow(person) {
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'pick-person-row';
+    const avatar = document.createElement('span');
+    avatar.className = 'pick-person-avatar';
+    avatar.textContent = (person.fullname || '?').trim().charAt(0).toUpperCase();
+    const name = document.createElement('span');
+    name.textContent = person.country ? `${person.fullname}, ${person.country}` : person.fullname;
+    row.append(avatar, name);
+    row.addEventListener('click', () => choosePerson(person));
+    return row;
+  }
+
+  pickPersonToggleBtn.addEventListener('click', () => {
+    pickPersonPanel.hidden = !pickPersonPanel.hidden;
+    if (pickPersonPanel.hidden || recommendationsLoaded) return;
+
+    // Real people who've marked THIS subject as one they teach (see
+    // Edit Profile's "Subjects you teach") - loaded once, using
+    // whatever subject is currently typed above.
+    recommendationsLoaded = true;
+    const subject = subjectInput.value.trim();
+    if (!subject) return;
+    apiFetch(`/users/teaching?subject=${encodeURIComponent(subject)}`)
+      .then((data) => {
+        if (data.users.length === 0) return;
+        pickPersonRecommendList.innerHTML = '';
+        data.users.forEach((u) => pickPersonRecommendList.appendChild(buildRecommendRow(u)));
+        pickPersonHeading.hidden = false;
+      })
+      .catch(() => {});
+  });
+
+  pickPersonSearchBtn.addEventListener('click', () => {
+    showPeoplePicker((person) => choosePerson(person));
+  });
+
+  pickPersonClearBtn.addEventListener('click', clearChosenPerson);
+
+  scheduleSubmitBtn.addEventListener('click', () => {
+    errorMessage.hidden = true;
+
+    if (!subjectInput.value.trim() || !topicInput.value.trim()) {
+      errorMessage.textContent = 'Please fill in a subject and topic to continue.';
+      errorMessage.hidden = false;
+      return;
+    }
+    if (!chosenDateTime) {
+      errorMessage.textContent = 'Pick a real date and time first.';
+      errorMessage.hidden = false;
+      return;
+    }
+    if (chosenDateTime.getTime() <= Date.now()) {
+      errorMessage.textContent = 'Pick a time in the future.';
+      errorMessage.hidden = false;
+      return;
+    }
+
+    scheduleSubmitBtn.disabled = true;
+
+    // A specific person was picked - a real, targeted invite (they can
+    // accept or decline) instead of an open request anyone can answer.
+    if (chosenPersonId) {
+      apiFetch('/scheduled', {
+        method: 'POST',
+        body: JSON.stringify({
+          inviteeId: chosenPersonId,
+          subject: subjectInput.value.trim(),
+          topic: topicInput.value.trim(),
+          mode: 'learn',
+          scheduledFor: chosenDateTime.toISOString(),
+          openToOthers: true,
+        }),
+      })
+        .then(() => {
+          alert(`Invite sent to ${chosenPersonName}! If they can't make it, we'll ask other real teachers of this topic too.`);
+          window.location.href = 'home.html';
+        })
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          scheduleSubmitBtn.disabled = false;
+          errorMessage.textContent = error.message;
+          errorMessage.hidden = false;
+        });
+      return;
+    }
+
+    apiFetch('/help-requests', {
+      method: 'POST',
+      body: JSON.stringify({
+        mode: 'learn',
+        subject: subjectInput.value.trim(),
+        topic: topicInput.value.trim(),
+        scheduledFor: chosenDateTime.toISOString(),
+      }),
+    })
+      .then(() => {
+        // No matching screen to send them to - there's nobody to find
+        // yet. A plain, honest confirmation instead, same wording
+        // philosophy as the rest of this app ("real, not fake" states).
+        showInfoModal("Request posted! We'll notify you once we find you a partner for that time.", {
+          onClose: () => { window.location.href = 'home.html'; },
+        });
+      })
+      .catch((error) => {
+        if (handleAuthError(error)) return;
+        scheduleSubmitBtn.disabled = false;
+        errorMessage.textContent = error.message;
+        errorMessage.hidden = false;
+      });
+  });
+
 });

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blocks - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="admin.css?v=3" />
+  <link rel="stylesheet" href="admin-blocks.css?v=1" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="admin.html" class="back-btn" aria-label="Back to admin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">🛡 Admin</p>
+    </div>
+
+    <h1 class="title">Blocks</h1>
+    <p class="subtitle">Who blocked whom, and who's been blocked by more than one person.</p>
+
+    <div id="repeat-offenders-section" hidden>
+      <p class="section-heading">⚠️ Blocked repeatedly</p>
+      <div class="repeat-list" id="repeat-list"></div>
+    </div>
+
+    <p class="section-heading">All blocks</p>
+    <div class="block-log-list" id="block-log-list"></div>
+
+    <p class="empty-note" id="empty-note" hidden>No blocks yet.</p>
+
+  </div>
+  <script src="dark-mode.js"></script>
+
+  <script src="api.js?v=7"></script>
+  <script src="admin-blocks.js"></script>
+</body>
+</html>

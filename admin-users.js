@@ -52,6 +52,39 @@ document.addEventListener('DOMContentLoaded', () => {
     return form;
   }
 
+  function buildMessageForm(u) {
+    const form = document.createElement('div');
+    form.className = 'message-form';
+    form.hidden = true;
+
+    const textInput = document.createElement('textarea');
+    textInput.rows = 2;
+    textInput.placeholder = `Message to ${u.fullname} only`;
+
+    const sendBtn = document.createElement('button');
+    sendBtn.type = 'button';
+    sendBtn.textContent = 'Send';
+    sendBtn.addEventListener('click', () => {
+      const message = textInput.value.trim();
+      if (!message) return;
+      apiFetch('/admin/announce', {
+        method: 'POST',
+        body: JSON.stringify({ message, userId: u.id }),
+      })
+        .then(() => {
+          textInput.value = '';
+          form.hidden = true;
+        })
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          alert(error.message);
+        });
+    });
+
+    form.append(textInput, sendBtn);
+    return form;
+  }
+
   function buildRow(u) {
     const row = document.createElement('div');
     row.className = 'user-row' + (u.isBanned ? ' banned' : '');
@@ -77,7 +110,27 @@ document.addEventListener('DOMContentLoaded', () => {
     emailP.className = 'user-email';
     emailP.textContent = u.email + (u.country ? ` · ${u.country}` : '');
 
-    body.append(nameP, emailP);
+    // Real gamification stats - same numbers the person sees themselves,
+    // so it's obvious what someone's actually up to, not just who they are.
+    const statsP = document.createElement('p');
+    statsP.className = 'user-stats';
+    const statParts = [
+      `${(u.points || 0).toLocaleString()} coins`,
+      `${u.diamonds || 0} 💎`,
+      `${u.streak || 0}🔥 streak`,
+      `${u.sessionCount || 0} sessions`,
+    ];
+    if (typeof u.rating === 'number') statParts.push(`${u.rating.toFixed(1)}★`);
+    statsP.textContent = statParts.join(' · ');
+
+    // The real "click a person, see everything" drill-down - their full
+    // conversation/ratings/activity history, not just this summary row.
+    const historyLink = document.createElement('a');
+    historyLink.className = 'user-history-link';
+    historyLink.href = `admin-user-detail.html?userId=${u.id}`;
+    historyLink.textContent = 'View full history →';
+
+    body.append(nameP, emailP, statsP, historyLink);
 
     if (u.isBanned) {
       const statusP = document.createElement('p');
@@ -88,6 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const bonusForm = buildBonusForm(u);
     body.appendChild(bonusForm);
+    const messageForm = buildMessageForm(u);
+    body.appendChild(messageForm);
 
     row.append(avatar, body);
 
@@ -100,9 +155,20 @@ document.addEventListener('DOMContentLoaded', () => {
       bonusBtn.className = 'bonus-btn';
       bonusBtn.textContent = '🎁 Bonus';
       bonusBtn.addEventListener('click', () => {
+        messageForm.hidden = true;
         bonusForm.hidden = !bonusForm.hidden;
       });
       actions.appendChild(bonusBtn);
+
+      const messageBtn = document.createElement('button');
+      messageBtn.type = 'button';
+      messageBtn.className = 'message-btn';
+      messageBtn.textContent = '💬 Message';
+      messageBtn.addEventListener('click', () => {
+        bonusForm.hidden = true;
+        messageForm.hidden = !messageForm.hidden;
+      });
+      actions.appendChild(messageBtn);
 
       // No ban control for another admin - the backend already refuses
       // it, this just keeps the button from being offered at all.
@@ -136,19 +202,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function render(users) {
     listEl.innerHTML = '';
+    if (users.length === 0) {
+      listEl.textContent = filterParam === 'banned' ? 'No banned accounts.' : 'No users found.';
+      return;
+    }
     users.forEach((u) => listEl.appendChild(buildRow(u)));
   }
 
   searchInput.addEventListener('input', () => {
     const q = searchInput.value.trim().toLowerCase();
-    render(allUsers.filter((u) => u.fullname.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
+    const base = filterParam === 'banned' ? allUsers.filter((u) => u.isBanned) : allUsers;
+    render(base.filter((u) => u.fullname.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
   });
+
+  // Reached via admin.html's "Banned" stat card - pre-filters to just
+  // banned accounts instead of showing everyone.
+  const filterParam = new URLSearchParams(window.location.search).get('filter');
 
   function load() {
     apiFetch('/admin/users')
       .then((data) => {
         allUsers = data.users;
-        render(allUsers);
+        if (filterParam === 'banned') {
+          document.getElementById('user-subtitle').textContent = 'Showing banned accounts only.';
+          render(allUsers.filter((u) => u.isBanned));
+        } else {
+          render(allUsers);
+        }
       })
       .catch((error) => {
         if (handleAuthError(error)) return;

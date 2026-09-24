@@ -16,12 +16,13 @@ def generate_quiz():
     subject = (data.get('subject') or '').strip()
     topic = (data.get('topic') or '').strip()
     level = (data.get('level') or '').strip()
+    count = data.get('count')
 
     if not topic:
         return jsonify(error='topic is required.'), 400
 
     try:
-        result = get_or_generate_quiz(subject, topic, level)
+        result = get_or_generate_quiz(subject, topic, level, count or 5)
     except RuntimeError as error:
         return jsonify(error=str(error)), 503
     except genai_errors.APIError as error:

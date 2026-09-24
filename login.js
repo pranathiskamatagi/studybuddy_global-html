@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({
           email: emailInput.value.trim(),
           password: passwordInput.value,
+          deviceId: getDeviceId(),
         }),
       });
 
@@ -62,15 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // directly instead of "#".
 
   // ---------------------------------------------------------------
-  // FEATURE 3: Placeholder handlers for the Google/Apple buttons
+  // FEATURE 3: Placeholder handler for the Google button - Apple sign-in
+  // was dropped (requires a paid $99/year Apple Developer account).
   // ---------------------------------------------------------------
-  // Both buttons need near-identical behavior right now, so instead of
-  // writing two separate functions, we loop over both buttons and attach
-  // the SAME function to each one. This is called "reusing a function."
   oauthButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      // data-provider reads the custom data-provider="Google"/"Apple"
-      // attribute we set in the HTML, so one function can handle both.
       const provider = button.dataset.provider;
       alert(`${provider} sign-in isn't connected yet - we'll wire this up once we build the backend.`);
     });

@@ -8,7 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="admin.css?v=4" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
 <body>
 
@@ -25,31 +27,39 @@
     <p class="subtitle">Visible only on your account.</p>
 
     <div class="admin-stats-row" id="admin-stats-row">
-      <div class="admin-stat">
+      <a href="admin-users.html" class="admin-stat">
         <p class="admin-stat-value" id="stat-total-users">—</p>
         <p class="admin-stat-label">Users</p>
-      </div>
-      <div class="admin-stat">
+      </a>
+      <a href="admin-sessions.html" class="admin-stat">
         <p class="admin-stat-value" id="stat-total-sessions">—</p>
         <p class="admin-stat-label">Conversations</p>
-      </div>
-      <div class="admin-stat">
+      </a>
+      <a href="admin-reports.html" class="admin-stat">
         <p class="admin-stat-value" id="stat-open-reports">—</p>
         <p class="admin-stat-label">Open reports</p>
-      </div>
-      <div class="admin-stat">
+      </a>
+      <a href="admin-users.html?filter=banned" class="admin-stat">
         <p class="admin-stat-value" id="stat-banned-users">—</p>
         <p class="admin-stat-label">Banned</p>
-      </div>
+      </a>
     </div>
 
     <div class="settings-group">
+      <a href="admin-live.html" class="link-row">
+        <span>🔴 Live now</span>
+        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </a>
       <a href="admin-sessions.html" class="link-row">
         <span>Browse conversations</span>
         <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
       </a>
       <a href="admin-reports.html" class="link-row">
         <span>Reports <span class="pending-count" id="pending-reports-count" hidden></span></span>
+        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+      </a>
+      <a href="admin-blocks.html" class="link-row">
+        <span>Blocks</span>
         <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
       </a>
       <a href="admin-users.html" class="link-row">
@@ -70,9 +80,13 @@
       </a>
     </div>
 
-  </div>
+    <h2 class="people-heading">Registered people <span id="people-count"></span></h2>
+    <div class="people-list" id="people-list"></div>
 
-  <script src="api.js?v=5"></script>
-  <script src="admin.js"></script>
+  </div>
+  <script src="dark-mode.js"></script>
+
+  <script src="api.js?v=7"></script>
+  <script src="admin.js?v=2"></script>
 </body>
 </html>

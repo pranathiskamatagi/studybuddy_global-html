@@ -1,11 +1,11 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.extensions import db, socketio
-from app.models import User, StudySession, Message, GroupMembership, MessageReadState, HelpRequest
-from app.gamification import award_session_points, MIN_MINUTES_FOR_POINTS
+from app.models import User, StudySession, Message, GroupMembership, MessageReadState, HelpRequest, Block
+from app.gamification import award_session_points, MIN_MINUTES_FOR_POINTS, STREAK_MILESTONES
 from app.notification_helpers import create_notification
 from app.achievements import check_and_notify_eligible
 from app.ai_summary import get_or_create_summary
@@ -44,6 +44,31 @@ def start_session():
         return jsonify(error="mode must be one of 'learn', 'teach', 'group'"), 400
 
     partner_id = data.get('partner_id')
+    # Set only when this came from a SCHEDULED session's "Join now" -
+    # unlike instant matching (where both sides already agreed to search
+    # together, so starting it for one side reasonably starts it for
+    # both), a scheduled session's whole point is that each person clicks
+    # Join THEMSELVES once it's time. Without this, whoever clicked first
+    # silently pulled the other person into a live chat via the same
+    # 'session_started' auto-redirect instant matching uses on purpose
+    # (see api.js's goToStartedSession) - appropriate there, not here.
+    skip_live_redirect = bool(data.get('skip_live_redirect'))
+
+    # The real, final gate - matching.py's own endpoints (match_candidate,
+    # announce_match, matched_with_me's DB fallback) all try to keep a
+    # blocked pair from ever reaching Match Found in the first place, but
+    # this is the ONE place that actually CREATES a real, live chat -
+    # a stale bookmarked/shared URL, a scheduled session proposed before
+    # a later block, or any gap missed upstream all funnel through here,
+    # so this has to refuse it too, not just rely on earlier screens.
+    if mode != 'group' and partner_id:
+        is_blocked = (
+            Block.query.filter_by(blocker_id=user_id, blocked_id=int(partner_id)).first() is not None
+            or Block.query.filter_by(blocker_id=int(partner_id), blocked_id=user_id).first() is not None
+        )
+        if is_blocked:
+            return jsonify(error='blocked'), 403
+
     # Used to hard-block here if the partner's socket wasn't showing as
     # connected at this EXACT instant - but that check was measuring the
     # wrong thing: a backgrounded/incognito tab (or literally any recent
@@ -134,8 +159,12 @@ def start_session():
         db.session.commit()
 
     # Let the other real person know, so they don't need to already be
-    # looking at the right page to find out you're waiting to chat.
-    if mode != 'group' and session.partner_id:
+    # looking at the right page to find out you're waiting to chat. Skipped
+    # entirely for a scheduled join - they already got a real reminder
+    # notification when the time arrived (see scheduled_reminders.py),
+    # and this "wants to study with you" phrasing doesn't fit an
+    # appointment both sides already agreed to.
+    if mode != 'group' and session.partner_id and not skip_live_redirect:
         learner = db.session.get(User, user_id)
         create_notification(
             session.partner_id,
@@ -212,7 +241,7 @@ def end_session(session_id):
         return 'teach' if session.mode == 'learn' else 'learn'
 
     ender = db.session.get(User, user_id)
-    ender_diamond = award_session_points(ender, _mode_for(user_id), minutes)
+    ender_diamond, ender_streak = award_session_points(ender, _mode_for(user_id), minutes)
 
     # Award the OTHER real participant their points too, right now, in
     # this SAME request - they can't make their own POST /end call after
@@ -223,15 +252,26 @@ def end_session(session_id):
     # coming (see sockets.py's 'partner_ended' - the bug this fixes).
     other_id = session.partner_id if user_id == session.learner_id else session.learner_id
     other_diamond = False
+    other_streak = None
     if other_id:
         other_user = db.session.get(User, other_id)
         if other_user:
-            other_diamond = award_session_points(other_user, _mode_for(other_id), minutes)
+            other_diamond, other_streak = award_session_points(other_user, _mode_for(other_id), minutes)
 
     db.session.commit()
     check_and_notify_eligible(user_id)
+    if ender_streak:
+        create_notification(
+            user_id, 'streak_milestone',
+            f"🔥 {ender_streak}-day streak! +{STREAK_MILESTONES[ender_streak]} bonus coins.",
+        )
     if other_id:
         check_and_notify_eligible(other_id)
+        if other_streak:
+            create_notification(
+                other_id, 'streak_milestone',
+                f"🔥 {other_streak}-day streak! +{STREAK_MILESTONES[other_streak]} bonus coins.",
+            )
 
         socketio.emit('partner_ended', {
             'name': ender.fullname,
@@ -252,7 +292,10 @@ def end_session(session_id):
                 _run_teaching_tips_check, app_obj, session_id, teacher_id, learner_id,
             )
 
-    return jsonify(session=session.to_public_dict(), user=ender.to_public_dict(), diamondEarned=ender_diamond)
+    return jsonify(
+        session=session.to_public_dict(), user=ender.to_public_dict(),
+        diamondEarned=ender_diamond, streakMilestone=ender_streak,
+    )
 
 
 def _run_teaching_tips_check(app, session_id, teacher_id, learner_id):
@@ -375,6 +418,40 @@ def send_image_message(session_id):
     # Broadcasts to EVERYONE in the room (including the sender) - same
     # pattern as sockets.py's send_message, so both people's chats render
     # it the exact same way, through the exact same 'new_message' listener.
+    socketio.emit('new_message', message.to_public_dict(), room=f'session-{session_id}')
+    return jsonify(message=message.to_public_dict()), 201
+
+
+# A short voice clip stays well under this even at a generous length -
+# same reasoning as MAX_IMAGE_DATA_URI_LENGTH, just for audio.
+MAX_AUDIO_DATA_URI_LENGTH = 7_000_000
+
+
+@sessions_bp.post('/<int:session_id>/messages/audio')
+@jwt_required()
+def send_audio_message(session_id):
+    # Same real-message pattern as send_image_message above, minus the AI
+    # safety check - there's no fast, reliable way to moderate audio
+    # content the way image_safety.py does for images, so this is a
+    # smaller first version (real audio, no content check yet).
+    user_id = int(get_jwt_identity())
+    session = db.session.get(StudySession, session_id)
+    if not session:
+        return jsonify(error='Session not found.'), 404
+    if not session.has_participant(user_id):
+        return jsonify(error='This is not your session.'), 403
+
+    data = request.get_json(silent=True) or {}
+    audio_data = data.get('audioData')
+    if not audio_data:
+        return jsonify(error='audioData is required.'), 400
+    if len(audio_data) > MAX_AUDIO_DATA_URI_LENGTH:
+        return jsonify(error='That recording is too long to send.'), 413
+
+    message = Message(session_id=session_id, sender_id=user_id, text='', audio_data=audio_data)
+    db.session.add(message)
+    db.session.commit()
+
     socketio.emit('new_message', message.to_public_dict(), room=f'session-{session_id}')
     return jsonify(message=message.to_public_dict()), 201
 
@@ -519,6 +596,58 @@ def active_groups():
     return jsonify(activeGroups=results)
 
 
+@sessions_bp.get('/active-1on1')
+@jwt_required()
+def active_1on1():
+    # A real 1-on-1 session that was left WITHOUT clicking "End session" -
+    # walking away (closing the tab, hitting the browser back button)
+    # never touches ended_at, so the row just sits open indefinitely.
+    # Unlike a group (which tracks real membership separately), a 1-on-1
+    # session has no other record of "did I leave" - being one of its two
+    # people AND it still being open IS the only signal there is. Shown on
+    # Home so it can be resumed, rather than silently lost.
+    user_id = int(get_jwt_identity())
+    # Without a recency cutoff, this would dredge up every session EVER
+    # left open, including ancient ones from early testing/debugging
+    # months ago - a real "you just left this" only makes sense within a
+    # reasonable window, same reasoning as REQUEST_LIFETIME in requests.py.
+    cutoff = datetime.utcnow() - timedelta(hours=24)
+    sessions = (
+        StudySession.query
+        .filter(StudySession.mode != 'group')
+        .filter(StudySession.ended_at.is_(None))
+        .filter(db.or_(StudySession.learner_id == user_id, StudySession.partner_id == user_id))
+        .filter(StudySession.partner_id.isnot(None))
+        .filter(StudySession.started_at >= cutoff)
+        .order_by(StudySession.started_at.desc())
+        .limit(5)
+        .all()
+    )
+
+    results = []
+    for session in sessions:
+        is_learner = session.learner_id == user_id
+        other_id = session.partner_id if is_learner else session.learner_id
+        other = db.session.get(User, other_id)
+        if not other:
+            continue
+        results.append({
+            'id': session.id,
+            'partnerId': other.id,
+            'partnerName': other.fullname,
+            'partnerCountry': other.country,
+            'subject': session.subject,
+            'topic': session.topic,
+            'level': session.level,
+            # session.mode is always stored as the LEARNER's role - flip it
+            # for whichever side of the pair is asking, same convention as
+            # matching.py's opposite_mode.
+            'mode': session.mode if is_learner else ('teach' if session.mode == 'learn' else 'learn'),
+        })
+
+    return jsonify(activeSessions=results)
+
+
 @sessions_bp.get('/<int:session_id>/members')
 @jwt_required()
 def get_members(session_id):
@@ -546,6 +675,25 @@ def leave_group(session_id):
         return jsonify(error="You're not in this group."), 403
 
     db.session.delete(membership)
+    db.session.flush()  # so the count below doesn't still see this membership
+
+    # If that was the LAST real person in this group, the real session it
+    # came from has genuinely run its course - close out any open group
+    # "Schedule for later" request that led to it too, so nobody who
+    # posted/said they're interested keeps getting a "Join now" for a
+    # group that's already happened and finished, forever.
+    remaining = GroupMembership.query.filter_by(session_id=session_id).count()
+    if remaining == 0:
+        matching_request = (
+            HelpRequest.query
+            .filter(HelpRequest.mode == 'group')
+            .filter(HelpRequest.status == 'open')
+            .filter(db.func.lower(HelpRequest.subject) == (session.subject or '').lower())
+            .filter(db.func.lower(HelpRequest.topic) == (session.topic or '').lower())
+            .first()
+        )
+        if matching_request:
+            matching_request.status = 'fulfilled'
 
     data = request.get_json(silent=True) or {}
     minutes = data.get('minutes', 1)
@@ -553,10 +701,15 @@ def leave_group(session_id):
     # Unlike a 1-on-1 session, leaving a group doesn't end it for everyone
     # else - it just awards YOUR points for the time YOU spent, same rule
     # as any other session (including the 10-minute minimum).
-    diamond_earned = award_session_points(user, session.mode, minutes)
+    diamond_earned, streak_milestone = award_session_points(user, session.mode, minutes)
 
     db.session.commit()
     check_and_notify_eligible(user_id)
+    if streak_milestone:
+        create_notification(
+            user_id, 'streak_milestone',
+            f"🔥 {streak_milestone}-day streak! +{STREAK_MILESTONES[streak_milestone]} bonus coins.",
+        )
 
     # Tell everyone ELSE still in the group, right now - this used to
     # happen from the socket 'disconnect' handler instead, which fired on
@@ -564,4 +717,4 @@ def leave_group(session_id):
     # deliberate exit. This is the one place that actually IS a real exit.
     socketio.emit('member_left', {'name': user.fullname}, room=f'session-{session_id}')
 
-    return jsonify(user=user.to_public_dict(), diamondEarned=diamond_earned)
+    return jsonify(user=user.to_public_dict(), diamondEarned=diamond_earned, streakMilestone=streak_milestone)

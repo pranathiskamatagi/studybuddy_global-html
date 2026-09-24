@@ -3,7 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.extensions import db
-from app.models import User, StudySession, Rating
+from app.models import User, StudySession, Rating, GroupMembership
+from app.gamification import MIN_MINUTES_FOR_POINTS
 
 profile_bp = Blueprint('profile', __name__, url_prefix='/api/profile')
 
@@ -43,6 +44,11 @@ def _badges_for_user(user_id):
     # without one), so the total rating count doubles as the total badge
     # count. Grouped by exact badge text, most recent first, with a count
     # for anyone who's received the same badge more than once.
+    #
+    # Badge text is free-typed ("Choose my own" in rate-partner.js), so
+    # there's no way to detect a mean one by its wording - but a badge
+    # attached to a low-star rating is reliably a negative one, so those
+    # are left out of what shows publicly on the profile.
     ratings = (
         Rating.query
         .filter_by(ratee_id=user_id)
@@ -52,6 +58,8 @@ def _badges_for_user(user_id):
     counts = {}
     order = []
     for rating in ratings:
+        if rating.stars <= 2:
+            continue
         label = (rating.badge_text or '').strip()
         if not label:
             continue
@@ -59,7 +67,8 @@ def _badges_for_user(user_id):
             order.append(label)
         counts[label] = counts.get(label, 0) + 1
     badges = [{'text': label, 'count': counts[label]} for label in order]
-    return badges, len(ratings)
+    badge_count = sum(counts.values())
+    return badges, badge_count
 
 
 @profile_bp.get('')
@@ -103,6 +112,24 @@ def update_profile():
             return jsonify(error='That photo is too large.'), 400
         user.photo_data = photo or None
 
+    if 'teachesSubjects' in data:
+        raw = data['teachesSubjects']
+        if not isinstance(raw, list):
+            return jsonify(error='teachesSubjects must be a list.'), 400
+        # Trimmed, deduped (case-insensitive), capped at a sane count/length
+        # so this stays a short list of real subjects, not free-form abuse.
+        cleaned = []
+        seen = set()
+        for item in raw:
+            label = str(item).strip()[:60]
+            if not label or label.lower() in seen:
+                continue
+            seen.add(label.lower())
+            cleaned.append(label)
+            if len(cleaned) >= 12:
+                break
+        user.teaches_subjects = cleaned
+
     db.session.commit()
     return jsonify(user=user.to_public_dict())
 
@@ -131,3 +158,37 @@ def change_password():
     user.password_hash = generate_password_hash(new_password)
     db.session.commit()
     return jsonify(success=True)
+
+
+@profile_bp.get('/activity-calendar')
+@jwt_required()
+def activity_calendar():
+    # Every real calendar day this person had at least one real, completed
+    # session that qualified for points (same MIN_MINUTES_FOR_POINTS bar
+    # gamification.py already uses for streaks) - 1-on-1 (either side) or
+    # group, so this stays a real reflection of the same streak data,
+    # just as a full history instead of only the current running count.
+    user_id = int(get_jwt_identity())
+
+    solo_dates = (
+        db.session.query(StudySession.ended_at)
+        .filter(db.or_(StudySession.learner_id == user_id, StudySession.partner_id == user_id))
+        .filter(StudySession.ended_at.isnot(None))
+        .filter(StudySession.minutes.isnot(None))
+        .filter(StudySession.minutes > MIN_MINUTES_FOR_POINTS)
+        .all()
+    )
+    group_session_ids = [m.session_id for m in GroupMembership.query.filter_by(user_id=user_id).all()]
+    group_dates = []
+    if group_session_ids:
+        group_dates = (
+            db.session.query(StudySession.ended_at)
+            .filter(StudySession.id.in_(group_session_ids))
+            .filter(StudySession.ended_at.isnot(None))
+            .filter(StudySession.minutes.isnot(None))
+            .filter(StudySession.minutes > MIN_MINUTES_FOR_POINTS)
+            .all()
+        )
+
+    active_dates = sorted({row[0].date().isoformat() for row in solo_dates + group_dates})
+    return jsonify(activeDates=active_dates)

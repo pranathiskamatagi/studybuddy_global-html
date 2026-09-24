@@ -17,18 +17,29 @@ document.addEventListener('DOMContentLoaded', () => {
     return avatarColors[id % avatarColors.length];
   }
 
+  // Same formatting scheduled-sessions.js uses for a real future date/time.
+  function formatWhen(iso) {
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {
+      weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+    });
+  }
+
   // Built with safe DOM methods (createElement + textContent), not
   // innerHTML - these values come from real user input elsewhere in the
   // app, so inserting them as raw HTML would be an XSS risk.
   function buildRequestRow(r) {
     const row = document.createElement('div');
     row.className = 'request-row';
-    row.dataset.mode = r.mode === 'learn' ? 'teach' : 'learn';
+    // A group request has no "opposite role" - everyone joining does
+    // the same thing (shows up), so this stays 'group' as-is.
+    row.dataset.mode = r.mode === 'group' ? 'group' : (r.mode === 'learn' ? 'teach' : 'learn');
     row.dataset.realUserId = r.userId;
     row.dataset.realRequestId = r.id;
     row.dataset.subject = r.subject || '';
     row.dataset.level = r.level || '';
     row.dataset.country = r.country || '';
+    row.dataset.scheduledFor = r.scheduledFor || '';
 
     const avatar = document.createElement('span');
     avatar.className = `avatar-sm avatar-${colorFor(r.userId)} avatar-lg`;
@@ -56,18 +67,38 @@ document.addEventListener('DOMContentLoaded', () => {
     descP.className = 'request-desc';
     const strong = document.createElement('strong');
     strong.textContent = r.topic || r.subject || 'something';
-    descP.append(r.mode === 'learn' ? 'Needs help with ' : 'Wants to teach ', strong);
+    if (r.mode === 'group') {
+      descP.append('Wants a group session for ', strong);
+    } else {
+      descP.append(r.mode === 'learn' ? 'Needs help with ' : 'Wants to teach ', strong);
+    }
 
     const timeP = document.createElement('p');
-    timeP.className = 'request-time';
-    timeP.textContent = timeAgo(r.createdAt);
+    // A scheduled-for-later request is a real future ask, not something
+    // that happened X minutes ago - shown with its own distinct styling
+    // so it reads as "plan for this" rather than "recent activity".
+    if (r.scheduledFor) {
+      timeP.className = 'request-time request-time-scheduled';
+      timeP.textContent = '📅 Wants this on ' + formatWhen(r.scheduledFor);
+    } else {
+      timeP.className = 'request-time';
+      timeP.textContent = timeAgo(r.createdAt);
+    }
 
     info.append(nameP, descP, timeP);
 
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'request-btn';
-    btn.textContent = r.mode === 'learn' ? 'Help' : 'Learn from';
+    // Same reasoning as home.js's identical row - amInterested is the
+    // real, server-remembered "did I already click this," so a reload
+    // doesn't make it look like nothing happened the first time.
+    if (r.mode === 'group' && r.amInterested) {
+      btn.textContent = "You're interested ✓";
+      btn.disabled = true;
+    } else {
+      btn.textContent = r.mode === 'group' ? "I'm interested" : (r.scheduledFor ? 'I can help' : (r.mode === 'learn' ? 'Help' : 'Learn from'));
+    }
 
     row.append(avatar, info, btn);
     return row;
@@ -189,6 +220,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const level = row.dataset.level || '';
     // "Help her/him" means YOU teach them; "Learn from" means you learn.
     const mode = row.dataset.mode || 'learn';
+
+    // A group's scheduled ask - unlike a 1-on-1, multiple people can be
+    // interested, so this never closes the request (see requests.py's
+    // interested_in_group_request) - it just tells the poster, and stays
+    // up for anyone else to see too.
+    if (mode === 'group') {
+      apiFetch(`/help-requests/${row.dataset.realRequestId}/interested`, { method: 'POST' })
+        .then(() => {
+          button.textContent = "You're interested ✓";
+          button.disabled = true;
+        })
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          alert(error.message);
+        });
+      return;
+    }
+
+    // A scheduled-for-later request - there's nobody to search for RIGHT
+    // NOW (see requests.py's fulfill_request, which turns this straight
+    // into a real accepted scheduled session instead of a live match).
+    if (row.dataset.scheduledFor) {
+      if (mode === 'teach') {
+        // Still has to prove they actually know the topic first, same as
+        // any other "I'll teach this" commitment - quiz.html already
+        // knows how to fulfill a request once it's done (see quiz.js),
+        // this just tells it not to expect a live partner waiting.
+        const params = new URLSearchParams({
+          with: personName, topic, subject, level, mode,
+          fulfillRequestId: row.dataset.realRequestId, scheduled: '1',
+        });
+        window.location.href = 'quiz.html?' + params.toString();
+        return;
+      }
+      apiFetch(`/help-requests/${row.dataset.realRequestId}/fulfill`, { method: 'POST' })
+        .then(() => {
+          showInfoModal(`You're set! ${personName} will be notified, and this will show up in your Scheduled sessions.`);
+          row.remove();
+          if (!requestsList.children.length) requestsSection.hidden = true;
+        })
+        .catch((error) => {
+          if (handleAuthError(error)) return;
+          alert("Couldn't take this one: " + error.message);
+        });
+      return;
+    }
 
     const params = new URLSearchParams({ with: personName, topic, subject, level, mode });
 

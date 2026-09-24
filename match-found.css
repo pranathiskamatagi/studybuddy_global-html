@@ -80,6 +80,7 @@ body {
   width: 92px;
   height: 92px;
   border-radius: 50%;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,6 +89,11 @@ body {
   font-weight: 800;
   margin-bottom: 18px;
   box-shadow: 0 12px 28px rgba(30, 41, 90, 0.15);
+}
+.partner-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 /* One of these gets added by match-found.js, matching the avatar
    colors already used for people elsewhere in the app (home.html). */
@@ -181,4 +187,18 @@ body {
 }
 .other-link:hover {
   color: #3f6fe0;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
 }

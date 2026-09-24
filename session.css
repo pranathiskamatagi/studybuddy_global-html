@@ -74,6 +74,9 @@ body {
   color: #34c77b;
   font-weight: 600;
 }
+.partner-status.offline {
+  color: #a7b0cc;
+}
 
 .chat-actions {
   display: flex;
@@ -244,6 +247,24 @@ body {
   color: white;
   border-bottom-right-radius: 4px;
 }
+/* A real admin warning sent into this live chat - deliberately distinct
+   from a normal message bubble so it can never be mistaken for either
+   participant, on either side of the conversation. */
+.msg-admin {
+  align-self: center;
+  background: #fff4e5;
+  color: #7a4a00;
+  border: 1.5px solid #f5c877;
+  border-radius: 14px;
+  max-width: 90%;
+}
+.msg-admin-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
 /* WhatsApp-style tick marks - a plain "✓" once sent, brightened to
    "✓✓" once the partner's real read state (see sockets.py's
    'read_receipt') has caught up to this exact message. */
@@ -273,6 +294,71 @@ body {
   max-height: 320px;
   border-radius: 11px;
   object-fit: cover;
+}
+.audio-player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 200px;
+  padding: 2px 0;
+}
+.audio-play-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.25);
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.msg-received .audio-play-btn {
+  background: rgba(63, 111, 224, 0.12);
+  color: #3f6fe0;
+}
+.audio-play-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.audio-track {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  position: relative;
+}
+.msg-received .audio-track {
+  background: rgba(63, 111, 224, 0.18);
+}
+.audio-track-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: currentColor;
+}
+.audio-time {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+/* Pulses red while actively recording, so it's obvious the mic is live -
+   tap again (or wait for the auto-stop cap) to send. */
+#mic-btn.recording {
+  color: #e0453f;
+  animation: mic-pulse 1s ease-in-out infinite;
+}
+@keyframes mic-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 /* A small centered line - "X left"/distraction nudges, distinct from a
@@ -326,6 +412,122 @@ body {
   gap: 8px;
   padding: 14px 16px;
   border-top: 1px solid #eef1fb;
+}
+/* Takes over the exact same spot as .chat-input-row while actually
+   recording - same idea as a real messaging app's recording bar, instead
+   of just a pulsing mic icon with no visible timer or way to cancel. */
+.recording-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1px solid #eef1fb;
+}
+.recording-cancel-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: #a7b0cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.recording-cancel-btn:hover {
+  color: #e0453f;
+}
+.recording-cancel-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.recording-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e0453f;
+  flex-shrink: 0;
+  animation: mic-pulse 1s ease-in-out infinite;
+}
+.recording-time {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b2340;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.recording-hint {
+  flex: 1;
+  font-size: 13px;
+  color: #8892b3;
+}
+.recording-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #3f6fe0, #34c77b);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.recording-send-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.recording-controls,
+.recording-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+.recording-pause-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #dfe6f7;
+  background: white;
+  color: #3f6fe0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.recording-pause-btn svg {
+  width: 16px;
+  height: 16px;
+}
+/* Frozen (no pulse) while paused - the dot itself doubles as a quiet
+   "recording is currently paused" signal. */
+.recording-dot.paused {
+  animation: none;
+  background: #a7b0cc;
+}
+.recording-preview-player {
+  flex: 1;
+  min-width: 0;
+}
+.recording-preview-player .audio-player {
+  width: 100%;
+  color: #3f6fe0;
+}
+.recording-preview-player .audio-play-btn {
+  background: rgba(63, 111, 224, 0.12);
+  color: #3f6fe0;
+}
+.recording-preview-player .audio-track {
+  background: rgba(63, 111, 224, 0.15);
+}
+.recording-preview-player .audio-time {
+  color: #56618a;
 }
 .input-icon-btn {
   width: 36px;
@@ -387,4 +589,17 @@ body {
 }
 .send-btn:hover {
   transform: scale(1.08);
+}
+
+/* Phone-width fix: same idea as the other screens, but height (not
+   min-height) since this card's chat area scrolls inside a fixed box. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+  }
+  .app-screen {
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+  }
 }

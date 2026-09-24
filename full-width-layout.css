@@ -1,0 +1,38 @@
+/* Every screen's own stylesheet still draws a small "phone" card
+   (~400px wide) floating in the middle of a gray backdrop - looks right
+   on an actual phone (each file already has its own @media max-width:480px
+   rule making it edge-to-edge there), but on a laptop/desktop browser it
+   leaves huge dead space on both sides instead of using the window.
+   Loaded LAST on every page that links it (after that page's own
+   stylesheet), so these rules win the cascade without editing every
+   individual CSS file. Deliberately NOT linked on connecting.html/
+   match-found.html - those two stay the small phone-card size on purpose.
+   Only applies above phone width - real phones keep behaving exactly as
+   before either way. */
+@media (min-width: 481px) {
+  body {
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0;
+  }
+  .app-screen {
+    /* min-height (not height) so a page taller than one screen - a long
+       form, a long list - still grows and lets the page scroll to the
+       rest of it, instead of being cut off at the window's edge with no
+       way to reach it. */
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  /* The one real exception: a live chat (session.html/group-chat.html,
+     identified by their unique .chat-input-row) is deliberately a FIXED,
+     exactly-one-screen card with its OWN internal scrolling (just the
+     messages scroll, the header/input bar stay put) - not a page that
+     should grow taller and let the whole window scroll. */
+  body:has(.chat-input-row) .app-screen {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+  }
+}

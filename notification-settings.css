@@ -1,0 +1,34 @@
+.notif-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1b2340;
+  margin-bottom: 14px;
+}
+
+.notif-status {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8892b3;
+  margin: -12px 4px 22px;
+}
+.notif-status.error {
+  color: #e0453f;
+}
+.notif-status.success {
+  color: #34c77b;
+}
+
+.notif-hint {
+  font-size: 12px;
+  color: #8892b3;
+  line-height: 1.5;
+  padding: 0 4px;
+}
+
+/* The category toggles are meaningless until phone notifications are
+   actually on - dimmed and non-interactive rather than hidden, so it's
+   obvious they exist and WHY they're not clickable yet. */
+#category-group.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}

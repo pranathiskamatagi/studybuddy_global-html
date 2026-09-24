@@ -8,7 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="edit-profile.css" />
+  <link rel="stylesheet" href="edit-profile.css?v=3" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
 </head>
 <body>
 
@@ -59,12 +61,23 @@
         <p class="char-count" id="char-count">0/160</p>
       </div>
 
+      <div class="field">
+        <label for="teach-subject-input">Subjects you teach</label>
+        <p class="field-hint" style="margin-top: -4px; margin-bottom: 8px;">Shown on your profile so others can find you before you've ever matched.</p>
+        <div class="teach-tag-input-row">
+          <input type="text" id="teach-subject-input" placeholder="e.g. Algebra" />
+          <button type="button" id="add-teach-subject-btn" class="add-tag-btn">Add</button>
+        </div>
+        <div class="teach-tag-row" id="teach-tag-row"></div>
+      </div>
+
       <button type="submit" class="save-btn">Save changes</button>
     </form>
   </div>
+  <script src="dark-mode.js"></script>
 
-  <script src="api.js?v=5"></script>
+  <script src="api.js?v=7"></script>
   <script src="socket.io.min.js"></script>
-  <script src="edit-profile.js"></script>
+  <script src="edit-profile.js?v=2"></script>
 </body>
 </html>

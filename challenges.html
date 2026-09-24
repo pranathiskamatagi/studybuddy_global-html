@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Challenges - StudyBuddy Global</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="challenges.css?v=4" />
+  <link rel="stylesheet" href="people-picker.css" />
+  <link rel="stylesheet" href="dark-mode.css?v=8" />
+  <link rel="stylesheet" href="full-width-layout.css?v=4" />
+</head>
+<body>
+
+  <div class="app-screen">
+
+    <div class="top-row">
+      <a href="profile.html" class="back-btn" id="back-btn" aria-label="Back to profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <p class="kicker">Profile</p>
+    </div>
+
+    <div class="top-actions-row">
+      <div>
+        <h1 class="title">Quiz challenges</h1>
+        <p class="subtitle">Test each other on the same real quiz.</p>
+      </div>
+      <button type="button" id="add-challenge-btn" class="add-fab" aria-label="Send a new challenge">+</button>
+    </div>
+
+    <!-- Shown after picking someone from the people picker - hidden the
+         rest of the time. -->
+    <div class="propose-form" id="propose-form" hidden>
+      <p class="propose-form-title">Challenge <span id="propose-partner-name"></span></p>
+      <input type="text" id="propose-subject-input" placeholder="Subject (e.g. Math)" />
+      <input type="text" id="propose-topic-input" placeholder="Topic (e.g. Fractions)" />
+      <!-- What difficulty Gemini writes the questions at - see
+           quiz_generator.py, which already reads this straight into the
+           prompt whenever it's set. -->
+      <p class="propose-level-label">Difficulty</p>
+      <div class="propose-level-row" id="propose-level-row">
+        <button type="button" class="propose-level-btn" data-level="Beginner">Beginner</button>
+        <button type="button" class="propose-level-btn" data-level="Medium">Medium</button>
+        <button type="button" class="propose-level-btn" data-level="Advanced">Advanced</button>
+      </div>
+      <p class="propose-level-label">Number of questions</p>
+      <div class="propose-level-row" id="propose-count-row">
+        <button type="button" class="propose-level-btn" data-count="5">5</button>
+        <button type="button" class="propose-level-btn" data-count="10">10</button>
+        <button type="button" class="propose-level-btn" data-count="15">15</button>
+        <button type="button" class="propose-level-btn" data-count="20">20</button>
+      </div>
+      <textarea id="propose-note-input" class="propose-note-input" placeholder="Add a note (optional) - e.g. \"Bet you can't beat this!\"" maxlength="300"></textarea>
+      <div class="propose-form-actions">
+        <button type="button" id="propose-cancel-btn" class="propose-cancel-btn">Cancel</button>
+        <button type="button" id="propose-send-direct-btn" class="propose-send-direct-btn">Send</button>
+        <button type="button" id="propose-send-btn" class="propose-send-btn">Take quiz &amp; send</button>
+      </div>
+      <p class="propose-form-status" id="propose-form-status"></p>
+    </div>
+
+    <!-- challenges.js builds one row per challenge in here -->
+    <div class="challenge-list" id="challenge-list"></div>
+
+    <div class="empty-state" id="empty-state" hidden>
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4.5L6 21l1.5-7.5L2 9h7z"></path></svg>
+      </div>
+      <p class="empty-title">No challenges yet</p>
+      <p class="empty-desc">Send one to a study partner to get started.</p>
+    </div>
+
+  </div>
+  <script src="dark-mode.js"></script>
+
+  <script src="api.js?v=7"></script>
+  <script src="people-picker.js"></script>
+  <script src="challenges.js?v=5"></script>
+</body>
+</html>

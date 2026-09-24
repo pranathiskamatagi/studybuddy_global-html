@@ -129,7 +129,7 @@ body {
   height: 220px;
   background: radial-gradient(circle at 50% 0%, #b9cdf5 0%, #cfe0fb 60%, #eef3fc 100%);
   border-radius: 50%;
-  margin-bottom: -60px;  /* pulls the button up so it overlaps the curve, matching the design */
+  margin-bottom: -110px;  /* pulls the button up so it overlaps the curve, matching the design */
 }
 
 /* ---------- Call-to-action button ---------- */
@@ -176,4 +176,18 @@ body {
   width: 22px;             /* the active dot is stretched into a little pill shape */
   border-radius: 999px;
   background: #4f7de0;
+}
+
+/* Phone-width fix: the fixed-width card below overflows and clips on
+   a real phone screen, so it becomes full-width/edge-to-edge instead. */
+@media (max-width: 480px) {
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+  .app-screen {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+  }
 }

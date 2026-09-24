@@ -42,6 +42,9 @@ def create_app():
     from app.routes.admin import admin_bp
     from app.routes.users import users_bp
     from app.routes.reports import reports_bp
+    from app.routes.favorites import favorites_bp
+    from app.routes.challenges import challenges_bp
+    from app.routes.scheduled import scheduled_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
@@ -58,6 +61,9 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(reports_bp)
+    app.register_blueprint(favorites_bp)
+    app.register_blueprint(challenges_bp)
+    app.register_blueprint(scheduled_bp)
 
     # A ban needs to end an already-open session too, not just block the
     # NEXT login - this runs before every /api/* request and 403s
@@ -85,5 +91,24 @@ def create_app():
     @app.get('/api/health')
     def health():
         return {'status': 'ok'}
+
+    # Serves the frontend (the plain HTML/CSS/JS files one directory up
+    # from backend/) straight from this same Flask process - only needed
+    # so a single tunnel/URL can reach both the app and the API at once
+    # for a quick demo; local dev still normally uses a separate static
+    # server (Live Server, this project's own preview server). Registered
+    # LAST and only matches paths nothing above already claimed (like
+    # /api/*), so it can never shadow a real API route.
+    import os
+    from flask import send_from_directory
+    frontend_dir = os.path.join(os.path.dirname(__file__), '..', '..')
+
+    @app.get('/')
+    def serve_index():
+        return send_from_directory(frontend_dir, 'index.html')
+
+    @app.get('/<path:filename>')
+    def serve_frontend(filename):
+        return send_from_directory(frontend_dir, filename)
 
     return app

@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // No flag emoji here since we don't have a country->flag lookup for
     // the full 195-country list edit-profile.js offers - keeping the
     // format simple and always correct beats guessing a wrong flag.
-    const metaParts = [user.country, user.grade, user.language].filter(Boolean);
+    const metaParts = [user.country, user.grade].filter(Boolean);
     document.getElementById('profile-meta').textContent = metaParts.join(' · ');
     document.getElementById('profile-bio').textContent = user.bio || '';
 
@@ -97,6 +97,12 @@ document.addEventListener('DOMContentLoaded', () => {
     'Saved': 'saved.html',
     'Settings': 'settings.html',
     'Safety Center': 'safety-center.html',
+    'Favorites': 'favorites.html',
+    'Find a teacher': 'browse-teachers.html',
+    'Scheduled sessions': 'scheduled-sessions.html',
+    'Quiz challenges': 'challenges.html',
+    'Invite a friend': 'invite.html',
+    'Streak calendar': 'streak-calendar.html',
   };
 
   document.querySelectorAll('.link-row').forEach((row) => {
