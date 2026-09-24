@@ -1049,3 +1049,31 @@ body {
     font-size: 12px;
   }
 }
+
+/* Phones: coins / diamonds / rating / streak stay on ONE line. */
+@media (max-width: 768px) {
+  .hud-row {
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .hud-chip {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    gap: 5px;
+    padding: 4px 8px 4px 4px;
+  }
+  .hud-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .hud-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .hud-value {
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+}
