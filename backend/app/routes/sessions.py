@@ -627,6 +627,15 @@ def active_1on1():
     results = []
     for session in sessions:
         is_learner = session.learner_id == user_id
+        # The invited side never "left" a session they haven't entered -
+        # someone else starting it (e.g. a friend joining a scheduled
+        # session first) must not show up as "you left without ending
+        # this" for a person who wasn't even in the app. They only count
+        # as having been in it once they've actually said something.
+        if not is_learner:
+            has_spoken = Message.query.filter_by(session_id=session.id, sender_id=user_id).first() is not None
+            if not has_spoken:
+                continue
         other_id = session.partner_id if is_learner else session.learner_id
         other = db.session.get(User, other_id)
         if not other:

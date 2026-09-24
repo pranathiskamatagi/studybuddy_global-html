@@ -1084,3 +1084,42 @@ body {
   -webkit-line-clamp: unset;
   overflow: visible;
 }
+
+/* Phones: section titles and the slim cards get even smaller text. */
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 14px;
+  }
+  .section-header .see-all,
+  .live-badge {
+    font-size: 10.5px;
+  }
+  .requests-list .request-row {
+    width: 260px;
+    padding: 6px 10px;
+  }
+  .request-name {
+    font-size: 11.5px;
+  }
+  .request-desc {
+    font-size: 10px;
+  }
+  .request-time {
+    font-size: 9px;
+  }
+  .request-btn {
+    padding: 4px 10px;
+    font-size: 10.5px;
+  }
+  .avatar-lg {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+  .app-name {
+    font-size: 13px;
+  }
+  .greeting {
+    font-size: 12px;
+  }
+}
