@@ -189,25 +189,15 @@ document.addEventListener('DOMContentLoaded', () => {
     event.returnValue = '';
   });
 
-  // Looks up a topic in quizBank without requiring a perfect match -
-  // typing "algebra" or "Algebra" should still find "Algebra II", since
-  // the Topic field on the previous screen allows free typing.
+  // Looks up a topic in the built-in quizBank. Only an EXACT match counts
+  // (ignoring capitalization): a looser match used to hand someone who
+  // typed "algebra" the harder "Algebra II" questions whenever the AI quiz
+  // was briefly unavailable - a different quiz than the one they asked for.
   function findQuestions(typedTopic) {
     const normalized = typedTopic.trim().toLowerCase();
     if (!normalized) return null;
-
-    const bankKeys = Object.keys(quizBank);
-
-    // 1) Exact match, ignoring capitalization ("algebra ii" = "Algebra II")
-    const exactKey = bankKeys.find((key) => key.toLowerCase() === normalized);
-    if (exactKey) return quizBank[exactKey];
-
-    // 2) Partial match, either direction - covers "Algebra" matching
-    //    "Algebra II", or someone typing extra words around a real topic.
-    const partialKey = bankKeys.find(
-      (key) => key.toLowerCase().includes(normalized) || normalized.includes(key.toLowerCase())
-    );
-    return partialKey ? quizBank[partialKey] : null;
+    const exactKey = Object.keys(quizBank).find((key) => key.toLowerCase() === normalized);
+    return exactKey ? quizBank[exactKey] : null;
   }
 
   const quizView = document.getElementById('quiz-view');
