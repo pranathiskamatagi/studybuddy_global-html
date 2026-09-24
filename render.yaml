@@ -6,6 +6,7 @@ services:
     name: learnora
     runtime: python
     plan: free
+    region: singapore
     buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && flask db upgrade && gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT run:app
     healthCheckPath: /api/health
