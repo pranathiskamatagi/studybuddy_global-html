@@ -132,4 +132,16 @@ def create_app():
             return jsonify(error='Not found.'), 404
         return send_from_directory(frontend_dir, filename)
 
+    # Phones kept showing an OLD copy of a page (and its stylesheet) long
+    # after an update, because browsers cache aggressively when nothing
+    # says otherwise. "no-cache" means: keep a copy, but ask the server
+    # every time whether it changed - a quick check, and updates show up
+    # straight away.
+    @app.after_request
+    def _revalidate_site_files(response):
+        from flask import request
+        if not request.path.startswith('/api/') and not request.path.startswith('/socket.io'):
+            response.headers['Cache-Control'] = 'no-cache'
+        return response
+
     return app
