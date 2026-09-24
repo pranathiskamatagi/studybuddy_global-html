@@ -16,11 +16,15 @@ def create_app():
     # local test preview both need access) - split it into the list
     # flask-cors expects. supports_credentials isn't needed since we use
     # a JWT in the Authorization header, not cookies.
-    allowed_origins = [origin.strip() for origin in app.config['CORS_ORIGIN'].split(',')]
+    # When the site and API share one address (the hosted setup), no
+    # CORS_ORIGIN is needed at all: cross-origin requests are simply
+    # refused and same-origin ones work as normal.
+    raw_origins = app.config.get('CORS_ORIGIN') or ''
+    allowed_origins = [origin.strip() for origin in raw_origins.split(',') if origin.strip()]
     cors.init_app(app, origins=allowed_origins)
     # cors=allowed_origins here too - Socket.IO's handshake is a separate
     # thing from regular HTTP requests, so flask-cors above doesn't cover it.
-    socketio.init_app(app, cors_allowed_origins=allowed_origins)
+    socketio.init_app(app, cors_allowed_origins=allowed_origins or None)
 
     # Importing models here (not at the top of the file) so they're
     # registered with SQLAlchemy before Flask-Migrate looks for them,
@@ -107,8 +111,25 @@ def create_app():
     def serve_index():
         return send_from_directory(frontend_dir, 'index.html')
 
+    # Only real website files, never anything else that happens to sit in
+    # the project folder: the backend source code, database files, .env
+    # secrets, the .git history, migrations... Without this, a URL like
+    # /backend/.env would have handed those straight to any visitor.
+    PUBLIC_EXTENSIONS = {
+        '.html', '.css', '.js', '.png', '.jpg', '.jpeg', '.svg', '.ico',
+        '.webp', '.gif', '.json', '.webmanifest', '.woff', '.woff2', '.mp3',
+    }
+
     @app.get('/<path:filename>')
     def serve_frontend(filename):
+        parts = filename.replace(chr(92), '/').split('/')
+        extension = os.path.splitext(parts[-1])[1].lower()
+        if (
+            parts[0] in ('backend', 'venv', 'node_modules')
+            or any(part.startswith('.') for part in parts)
+            or extension not in PUBLIC_EXTENSIONS
+        ):
+            return jsonify(error='Not found.'), 404
         return send_from_directory(frontend_dir, filename)
 
     return app

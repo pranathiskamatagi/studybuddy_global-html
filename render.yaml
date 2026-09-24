@@ -1,0 +1,32 @@
+# One Render web service runs both the Learnora site and its API (the
+# Flask app also serves the pages). The database lives on Neon (free
+# Postgres) - paste its connection string into DATABASE_URL in Render.
+services:
+  - type: web
+    name: learnora
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && flask db upgrade && gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT run:app
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: FLASK_APP
+        value: run.py
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_CONTACT_EMAIL
+        sync: false

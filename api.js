@@ -4,21 +4,18 @@
 // Auto-detects which backend to talk to, so this never needs manually
 // flipping back and forth between setups:
 //   - localhost/127.0.0.1/a 192.168.x LAN address (Live Server, this
-//     project's own preview server, or a friend on the same WiFi) - the
-//     frontend and backend run as two separate local processes, backend
-//     always on port 5000 of that same machine.
-//   - a temporary demo tunnel (see backend/app/__init__.py - Flask serves
-//     the frontend files itself for this case) - frontend and backend
-//     are the SAME origin, so just use that directly.
-//   - the real deployed site - frontend (Netlify) and backend (Render)
-//     are on two different real domains.
+//     project's own preview server) - the frontend and backend run as two
+//     separate local processes, backend always on port 5000.
+//   - anywhere else (the real hosted site) - the site and the API share
+//     one address, so requests go straight to it.
 const IS_LOCAL_SPLIT = ['localhost', '127.0.0.1'].includes(location.hostname) || location.hostname.startsWith('192.168.');
-const IS_SAME_ORIGIN_SERVER = location.port === '5000' || location.hostname.endsWith('.lhr.life');
-const BACKEND_ORIGIN = IS_LOCAL_SPLIT
+const IS_SAME_ORIGIN_SERVER = location.port === '5000';
+// Anywhere that isn't the local two-server setup, the site and the API are
+// served from the SAME address (the hosted setup - see backend/app/__init__.py,
+// where Flask serves the pages too), so requests just go to that address.
+const BACKEND_ORIGIN = IS_LOCAL_SPLIT && !IS_SAME_ORIGIN_SERVER
   ? `http://${location.hostname}:5000`
-  : IS_SAME_ORIGIN_SERVER
-    ? location.origin
-    : 'https://studybuddy-global-api.onrender.com';
+  : location.origin;
 const API_BASE = BACKEND_ORIGIN + '/api';
 // Same backend, but Socket.IO connects to the plain origin (no /api) -
 // it isn't a normal HTTP route, it upgrades the connection itself.
