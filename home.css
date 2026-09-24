@@ -968,46 +968,84 @@ body {
     font-size: 12px;
   }
 
-  /* Every row-style card on Home gets slimmer... */
+  /* Every row-style card on Home (community requests, scheduled
+     sessions, pending requests, challenges...) is a slim, wide strip:
+     about 25% shorter, and 10% wider than before. */
   .request-row {
-    padding: 10px 12px;
+    padding: 7px 12px;
     gap: 10px;
     border-radius: 12px;
   }
   .avatar-lg {
-    width: 32px;
-    height: 32px;
-    font-size: 13px;
-  }
-  .request-name {
-    font-size: 13px;
-  }
-  .request-desc {
-    font-size: 11.5px;
-  }
-  .request-btn {
-    padding: 7px 14px;
+    width: 28px;
+    height: 28px;
     font-size: 12px;
   }
+  .request-name {
+    font-size: 12.5px;
+    margin-bottom: 0;
+  }
+  .request-country {
+    font-size: 10px;
+  }
+  .request-desc {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+  .request-time {
+    font-size: 10px;
+    margin-top: 1px;
+  }
+  .request-btn {
+    padding: 5px 12px;
+    font-size: 11.5px;
+  }
 
-  /* ...and Community requests becomes ONE sideways-scrolling strip
-     instead of a tall stack of cards. */
-  #requests-list {
+  /* ...and each of those lists scrolls sideways as ONE strip instead
+     of a tall stack. */
+  .requests-list {
     flex-direction: row;
     overflow-x: auto;
     gap: 10px;
     padding-bottom: 6px;
     scroll-snap-type: x mandatory;
   }
-  #requests-list .request-row {
+  .requests-list .request-row {
     flex: 0 0 auto;
-    width: 250px;
+    width: 275px;
     scroll-snap-align: start;
   }
-  #requests-list .request-desc {
+  .requests-list .request-desc {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  /* Active study sessions (group chats): same slim, sideways strip. */
+  .sessions-row {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+  }
+  .session-card {
+    flex: 0 0 275px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    scroll-snap-align: start;
+  }
+  .session-card h4 {
+    font-size: 13px;
+    margin: 8px 0 2px;
+  }
+  .session-sub {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+  .session-card .join-btn {
+    padding: 6px;
+    font-size: 12px;
   }
 }
