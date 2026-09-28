@@ -9,4 +9,5 @@ google-genai
 gunicorn
 pywebpush
 psycopg2-binary
+psycopg[binary]
 simple-websocket
