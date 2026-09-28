@@ -922,7 +922,12 @@ body {
   }
   .cta-card {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    /* minmax(60px, 1fr) guarantees the title/description a real minimum
+       width - without it, anything that makes "Get started" render wider
+       than expected (an unusually large system font size, a long link
+       label...) could squeeze the title down to nothing instead of the
+       link giving up space first. */
+    grid-template-columns: auto minmax(60px, 1fr) auto;
     grid-template-rows: auto auto;
     align-items: center;
     column-gap: 16px;
@@ -964,7 +969,6 @@ body {
     grid-column: 3;
     grid-row: 1 / span 2;
     white-space: nowrap;
-    flex-shrink: 0;
   }
   .hud-row {
     flex-wrap: nowrap;

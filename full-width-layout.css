@@ -16,9 +16,11 @@
    Chrome doesn't boost at all), so this only ever changes tablets, and
    only stops that automatic enlarging - it doesn't shrink anything below
    its real designed size. */
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+html,
+body,
+* {
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
 }
 
 @media (min-width: 481px) {

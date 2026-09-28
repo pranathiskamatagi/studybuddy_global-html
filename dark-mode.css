@@ -1,3 +1,13 @@
+/* Some Android browsers auto-enlarge text past its real CSS size on a
+   wide page ("font boosting") - this stops that everywhere, since this
+   file is loaded on nearly every page regardless of layout. */
+html,
+body,
+* {
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
+
 /* Real dark mode, applied via body.dark-mode, toggled by dark-mode.js.
    This app's CSS was never built on shared color variables (every page
    picks its own hex colors), so this is a deliberate, separate override
