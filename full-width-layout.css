@@ -9,6 +9,18 @@
    match-found.html - those two stay the small phone-card size on purpose.
    Only applies above phone width - real phones keep behaving exactly as
    before either way. */
+/* Android tablets silently blow text up past its real CSS size ("font
+   boosting") whenever a page's text sits inside a much wider column than
+   normal - exactly what an edge-to-edge tablet-width card is. Phones and
+   laptops don't do this (a phone's column is already narrow; desktop
+   Chrome doesn't boost at all), so this only ever changes tablets, and
+   only stops that automatic enlarging - it doesn't shrink anything below
+   its real designed size. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 @media (min-width: 481px) {
   body {
     align-items: flex-start;
